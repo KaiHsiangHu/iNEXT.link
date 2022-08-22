@@ -1,0 +1,44 @@
+Package: iNEXT.link
+Type: Package
+Title: Network diversity iNterpolation/Extrapolation Estimation
+Version: 1.1.1
+Author: Anne Chao, Syuan-Yu Wang
+Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
+Description: Provides functions for network diversity analysis. 
+    (1) The iNEXT standardization for network diversity: computes and plots rarefaction and extrapolation of network diversity based on two types of standardization methods (sample size and sample coverage). 
+    (2) The phylogenetic diversity estimation: computes and plots asymptotic phylogenetic network diversity profile as a function of diversity order (q-profile) or time (time-profile).
+    Provides simple functions to compute and plot two types (sample-size- and coverage-based) rarefaction and 
+    extrapolation of species diversity (Hill numbers) for individual-based (abundance) data
+License: GPL (>= 3)
+Suggests: knitr,
+    rmarkdown,
+    ggpubr
+Imports:
+    tidyverse,
+    magrittr,
+    abind,
+    chaoUtility,
+    phytools,
+    Rcpp,
+    dplyr,
+    ggplot2,
+    colorRamps,
+    tidyr,
+    tidytree,
+    tibble,
+    stats,
+    ape,
+    sets,
+    phyclust,
+    future.apply,
+    future,
+    reshape2,
+    utils,
+    iNEXT.3D,
+    iNEXT.4steps,
+    iNEXT.Beta3D,
+    ade4
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.0
+Remotes: YanHanChen/PhD , chaolab2019/chaoUtility, KaiHsiangHu/iNEXT.3D, KaiHsiangHu/iNEXT.4steps
