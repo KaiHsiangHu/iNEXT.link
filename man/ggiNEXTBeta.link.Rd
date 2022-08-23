@@ -10,7 +10,6 @@ ggiNEXTBeta.link(
   diversity = "TD",
   FDtype = "AUC",
   scale = "free",
-  main = NULL,
   transp = 0.4,
   stript.size = 11,
   text.size = 13
@@ -23,8 +22,6 @@ ggiNEXTBeta.link(
 \code{type = 'D'} for plotting 4 turnover dissimilarities.}
 
 \item{scale}{Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.}
-
-\item{main}{The title of the plot.}
 
 \item{transp}{a value between 0 and 1 controlling transparency. \code{transp = 0} is completely transparent, default is 0.4.}
 

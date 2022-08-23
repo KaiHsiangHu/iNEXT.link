@@ -5,7 +5,6 @@
 #'
 #' @param data  a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param diversity selection of diversity type: \code{'TD'} = 'Taxonomic diversity', \code{'PD'} = 'Phylogenetic diversity', and \code{'FD'} = 'Functional diversity'.
-#' @import tibble
 #' @return
 #' a data.frame of basic data information incliuding sample size, observed species richness, sample coverage estimate, and the first ten abundance frequency counts.
 #' @examples
@@ -142,9 +141,9 @@ ggCompleteness.link <- function(outcome){
 #' @import tidytree
 #' @import colorRamps
 #' @import iNEXT.3D
+#' @import chaoUtility
 #' @import iNEXT.4steps
 #' @import iNEXT.Beta3D
-#' @import chaoUtility
 #' @import future
 #' @import future.apply
 #' @import ade4
@@ -439,27 +438,6 @@ ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3) ,se = TRUE,f
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
-#' @import tidyverse
-#' @import ape
-#' @import dplyr
-#' @import tidyverse
-#' @import magrittr
-#' @import ggplot2
-#' @import abind
-#' @import phytools
-#' @import phyclust
-#' @import tidytree
-#' @import colorRamps
-#' @import iNEXT.3D
-#' @import iNEXT.4steps
-#' @import iNEXT.Beta3D
-#' @import chaoUtility
-#' @import future.apply
-#' @import ade4
-#' @import tidyr
-#' @import tibble
-#' @import reshape2
-#' @import sets
 #' @return a table of Asymptotic network diversity q profile.
 #'
 #' @examples
@@ -657,26 +635,6 @@ ggAO.link <- function(outcome, diversity = 'TD', text.size = 14){
 #' @param row.distM (required only when diversity = "FD"), a row species pairwise distance matrix for all row species of row assemblage in interaction matrix.
 #' @param FDtype (required only when diversity = "FD"), select FD type: FDtype = "tau_values" for FD under specified threshold values, or FDtype = "AUC" (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is "AUC".
 #' @param FDtau (required only when diversity = "FD" and FDtype = "tau_values"), a numerical vector between 0 and 1 specifying tau values (threshold levels). If NULL (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
-#' @import ape
-#' @import dplyr
-#' @import tidyverse
-#' @import magrittr
-#' @import ggplot2
-#' @import abind
-#' @import phytools
-#' @import phyclust
-#' @import tidytree
-#' @import colorRamps
-#' @import iNEXT.3D
-#' @import iNEXT.4steps
-#' @import iNEXT.Beta3D
-#' @import chaoUtility
-#' @import future.apply
-#' @import ade4
-#' @import tidyr
-#' @import tibble
-#' @import reshape2
-#' @import sets
 #' @return a data.frame of species diversity table including the sample size, sample coverage, method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
 #'
 #' @examples
@@ -826,30 +784,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
-#' @import ape
-#' @import dplyr
-#' @import tidyverse
-#' @import magrittr
-#' @import ggplot2
-#' @import abind
-#' @import phytools
-#' @import phyclust
-#' @import tidytree
-#' @import colorRamps
-#' @import iNEXT.3D
-#' @import iNEXT.4steps
-#' @import iNEXT.Beta3D
-#' @import chaoUtility
-#' @import future.apply
-#' @import ade4
-#' @import tidyr
-#' @import tibble
-#' @import reshape2
-#' @import sets
-
 #' @return A list of seven lists with three-diversity and four-dissimilarity.
-
-
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
@@ -1002,7 +937,6 @@ iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), dat
 #' \code{type = 'D'} for plotting 4 turnover dissimilarities.
 #' @param measurement character indicating the label of y-axis.
 #' @param scale Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.
-#' @param main The title of the plot.
 #' @param transp a value between 0 and 1 controlling transparency. \code{transp = 0} is completely transparent, default is 0.4.
 #'
 #' @return a figure for Beta diversity or dissimilarity diversity.
@@ -1039,7 +973,7 @@ iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), dat
 
 ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
                              diversity = 'TD', FDtype = 'AUC',
-                             scale = 'free', main = NULL, transp = 0.4, stript.size = 11, text.size = 13){
+                             scale = 'free', transp = 0.4, stript.size = 11, text.size = 13){
 
   if (type == 'B'){
 
@@ -1137,7 +1071,7 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
     # facet_wrap(div_type~Order, scales = scale, switch="both") +
     theme_bw() +
     theme(legend.position = "bottom", legend.title = element_blank()) +
-    labs(x='Sample coverage', y=ylab, title=main)
+    labs(x='Sample coverage', y=ylab)
 }
 
 
@@ -1151,26 +1085,6 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
 #' @param E.class an integer vector between 1 to 5.
 #' @param C a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, \code{C = Cmax}.
-#' @import ape
-#' @import dplyr
-#' @import tidyverse
-#' @import magrittr
-#' @import ggplot2
-#' @import abind
-#' @import phytools
-#' @import phyclust
-#' @import tidytree
-#' @import colorRamps
-#' @import iNEXT.3D
-#' @import iNEXT.4steps
-#' @import iNEXT.Beta3D
-#' @import chaoUtility
-#' @import future.apply
-#' @import ade4
-#' @import tidyr
-#' @import tibble
-#' @import reshape2
-#' @import sets
 #' @return A list of estimated(empirical) specialization with order q.\cr
 #' Different lists represents different classes of Specialization.\cr
 #' Each list is combined with order.q and sites.\cr
