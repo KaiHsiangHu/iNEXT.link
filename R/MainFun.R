@@ -72,14 +72,14 @@ DataInfo.link <- function(data, diversity = 'TD', datatype = "abundance", row.tr
 #' output
 #'
 #' @references
-#' Chao,A.,Y.Kubota,D.Zelený,C.-H.Chiu.
+#' Chao,A.,Y.Kubota,D.Zelen??,C.-H.Chiu.
 #' Quantifying sample completeness and comparing diversities among assemblages.
 #' @export
 Completeness.link <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 30, conf = 0.95){
   data_long <- lapply(data, function(tab){
     as.matrix(tab)%>%c()}
   )
-  res = iNEXT.4steps::SC(data = data_long, q = q, datatype = datatype, nboot = nboot, conf = conf)
+  res = iNEXT.4steps::Completeness(data = data_long, q = q, datatype = datatype, nboot = nboot, conf = conf)
   return(res)
 }
 
@@ -510,12 +510,21 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
 
   if (diversity == 'PD') {
 
-    NetDiv <- get.netphydiv(data = data,q = q,B = nboot,row.tree = row.tree,
-                            col.tree = col.tree,conf = conf,PDtype = PDtype)%>%
-      filter(Method %in% method)%>%
-      dplyr::select(Order.q, Estimate, s.e., LCL, UCL, Method, Region, PDtype )%>%
-      set_colnames(c('Order.q', 'qD', "s.e.",'qD.LCL','qD.UCL', 'Method',"Network","PDtype"))
-
+    if (sum(method == 'Estimated') == length(method))
+      NetDiv = AsylinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
+                         col.tree = col.tree,conf = conf,PDtype = PDtype) else if (sum(method == 'Empirical') == length(method))
+                           
+                           NetDiv = ObslinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
+                                              col.tree = col.tree,conf = conf,PDtype = PDtype) else if (sum(method == c('Estimated', 'Empirical')) == length(method))
+                                                
+                                                NetDiv = rbind(AsylinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
+                                                                         col.tree = col.tree,conf = conf,PDtype = PDtype),
+                                                               ObslinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
+                                                                         col.tree = col.tree,conf = conf,PDtype = PDtype))
+    NetDiv = NetDiv %>%
+      dplyr::select(Order.q, Estimate, s.e., LCL, UCL, Method, Region, Type ) %>%
+      set_colnames(c('Order.q', 'qD', "s.e.",'qD.LCL','qD.UCL', 'Method',"Network","Type"))
+    
   }
 
   if (diversity == 'FD' & FDtype == 'tau_values') {
@@ -604,7 +613,7 @@ ggAO.link <- function(outcome, diversity = 'TD', text.size = 14){
     }
     ggplot(outcome, aes(x = Order.q, y = qD, colour = Network, lty = Method)) +
       geom_line(size = 1.2) + scale_colour_manual(values = cbPalette) +
-      geom_ribbon(data = outcome[outcome$Method == "Estimated", ],
+      geom_ribbon(data = outcome[outcome$Method == "Asymptotic", ],
                   aes(ymin = qD.LCL, ymax = qD.UCL, fill = Network), alpha = 0.2, linetype = 0) +
       scale_fill_manual(values = cbPalette) +
       scale_linetype_manual(values = c(Estimated = 1, Empirical = 2)) +
