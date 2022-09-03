@@ -12,7 +12,7 @@ ggAO.link(outcome, diversity = "TD", text.size = 14)
 \item{text.size}{control the text size of the output plot.}
 }
 \value{
-a figure of estimated sample completeness with order q\cr\cr
+a figure of asymptotic (or observed) diversity with order q\cr\cr
 }
 \description{
 \code{ggAO.link} Plots q-profile based on the outcome of \code{AO.link} using the ggplot2 package.\cr

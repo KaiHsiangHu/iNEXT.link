@@ -4,16 +4,7 @@
 \alias{ggiNEXTBeta.link}
 \title{ggplot2 extension for outcome from \code{iNEXTBeta.link}}
 \usage{
-ggiNEXTBeta.link(
-  outcome,
-  type = c("B", "D"),
-  diversity = "TD",
-  FDtype = "AUC",
-  scale = "free",
-  transp = 0.4,
-  stript.size = 11,
-  text.size = 13
-)
+ggiNEXTBeta.link(outcome, type = c("B", "D"), scale = "free")
 }
 \arguments{
 \item{outcome}{the outcome from \code{"iNEXTBeta.link"}}
@@ -22,10 +13,6 @@ ggiNEXTBeta.link(
 \code{type = 'D'} for plotting 4 turnover dissimilarities.}
 
 \item{scale}{Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.}
-
-\item{transp}{a value between 0 and 1 controlling transparency. \code{transp = 0} is completely transparent, default is 0.4.}
-
-\item{measurement}{character indicating the label of y-axis.}
 }
 \value{
 a figure for Beta diversity or dissimilarity diversity.
@@ -37,29 +24,29 @@ a figure for Beta diversity or dissimilarity diversity.
 ## Taxonomic diversity
 data(beetles)
 output1 = iNEXTBeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
-ggiNEXTBeta.link(output1, type = 'B', diversity = 'TD')
-ggiNEXTBeta.link(output1, type = 'D', diversity = 'TD')
+ggiNEXTBeta.link(output1, type = 'B')
+ggiNEXTBeta.link(output1, type = 'D')
 
 ## Phylogenetic diversity
 data(beetles)
 data(beetles_col_tree)
 output2 = iNEXTBeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
-ggiNEXTBeta.link(output2, type = 'B', diversity = 'PD')
-ggiNEXTBeta.link(output2, type = 'D', diversity = 'PD')
+ggiNEXTBeta.link(output2, type = 'B')
+ggiNEXTBeta.link(output2, type = 'D')
 
 
 ## Functional diversity under single threshold
 data(beetles)
 data(beetles_col_distM)
 output3 = iNEXTBeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
-ggiNEXTBeta.link(output3, type = 'B', diversity = 'FD')
-ggiNEXTBeta.link(output3, type = 'D', diversity = 'FD')
+ggiNEXTBeta.link(output3, type = 'B')
+ggiNEXTBeta.link(output3, type = 'D')
 
 
 ## Functional diversity with thresholds integrating from 0 to 1
 data(beetles)
 data(beetles_col_distM)
 output4 = iNEXTBeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
-ggiNEXTBeta.link(output4, type = 'B', diversity = 'FD')
-ggiNEXTBeta.link(output4, type = 'D', diversity = 'FD')
+ggiNEXTBeta.link(output4, type = 'B')
+ggiNEXTBeta.link(output4, type = 'D')
 }

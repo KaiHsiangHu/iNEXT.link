@@ -2,7 +2,7 @@
 % Please edit documentation in R/MainFun.R
 \name{AO.link}
 \alias{AO.link}
-\title{Asymptotic and Empirical diversity q profile}
+\title{Asymptotic and Observed diversity q profile}
 \usage{
 AO.link(
   data,
@@ -11,7 +11,7 @@ AO.link(
   datatype = "abundance",
   nboot = 30,
   conf = 0.95,
-  method = c("Estimated", "Empirical"),
+  method = c("Asymptotic", "Observed"),
   row.tree = NULL,
   col.tree = NULL,
   PDtype = "meanPD",
@@ -32,7 +32,7 @@ AO.link(
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
 
-\item{method}{asymptotic or empirical}
+\item{method}{asymptotic or Observed}
 
 \item{row.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.}
 
@@ -52,7 +52,7 @@ AO.link(
 a table of Asymptotic network diversity q profile.
 }
 \description{
-\code{AO.link}: The estimated diversity of order q
+\code{AO.link}: The asymptotic (or observed) diversity of order q
 }
 \examples{
 ## Taxonomic diversity

@@ -320,8 +320,8 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' output4 = iNEXT.link(data = beetles, diversity = 'FD', q = c(0,1,2), col.distM = beetles_col_distM, FDtype = "AUC")
 #' ggiNEXT.link(output4, diversity = 'FD')
 #' @export
-ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3) ,se = TRUE,facet.var = "Assemblage",
-                         color.var = "Order.q", text.size = 12, stript.size = 12){
+ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3), se = TRUE, facet.var = "Assemblage",
+                         color.var = "Order.q"){
   if(diversity == 'TD'){
     res = iNEXT.3D::ggiNEXT3D(outcome, type = c(1,2,3),facet.var = facet.var)
     res[[1]] = res[[1]]+ylab("Taxonomic network diversity")+xlab("Sample size")
@@ -421,16 +421,16 @@ ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3) ,se = TRUE,f
 
 
 # AO.link -------------------------------------------------------------------
-#' Asymptotic and Empirical diversity q profile
+#' Asymptotic and Observed diversity q profile
 #'
-#' \code{AO.link}: The estimated diversity of order q
+#' \code{AO.link}: The asymptotic (or observed) diversity of order q
 #'
 #' @param data a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
 #' @param q a numerical vector specifying the diversity orders. Default is \code{c(0,1,2)}.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
-#' @param method asymptotic or empirical
+#' @param method asymptotic or Observed
 #' @param col.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.
 #' @param row.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.
 #' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or \code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.
@@ -468,7 +468,7 @@ ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3) ,se = TRUE,f
 #'                   col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
 #' output4
 #' @export
-AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 30, conf = 0.95, method = c("Estimated", "Empirical"),
+AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 30, conf = 0.95, method = c("Asymptotic", "Observed"),
                     row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
 
   if ( !(diversity %in% c('TD', 'PD', 'FD')) )
@@ -476,10 +476,10 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
 
   if (diversity == 'TD') {
 
-    if (sum(method == 'Estimated') == length(method))
-      NetDiv <- AsylinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95) else if (sum(method == 'Empirical') == length(method))
+    if (sum(method == 'Asymptotic') == length(method))
+      NetDiv <- AsylinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95) else if (sum(method == 'Observed') == length(method))
 
-        NetDiv <- ObslinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95) else if (sum(method == c('Estimated', 'Empirical')) == length(method))
+        NetDiv <- ObslinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95) else if (sum(method == c('Asymptotic', 'Observed')) == length(method))
 
           NetDiv = rbind(AsylinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95),
                          ObslinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95))
@@ -488,12 +488,12 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
 
   if (diversity == 'PD') {
 
-    if (sum(method == 'Estimated') == length(method))
+    if (sum(method == 'Asymptotic') == length(method))
       NetDiv = AsylinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
-                         col.tree = col.tree,conf = conf,PDtype = PDtype) else if (sum(method == 'Empirical') == length(method))
+                         col.tree = col.tree,conf = conf,PDtype = PDtype) else if (sum(method == 'Observed') == length(method))
                            
                            NetDiv = ObslinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
-                                              col.tree = col.tree,conf = conf,PDtype = PDtype) else if (sum(method == c('Estimated', 'Empirical')) == length(method))
+                                              col.tree = col.tree,conf = conf,PDtype = PDtype) else if (sum(method == c('Asymptotic', 'Observed')) == length(method))
                                                 
                                                 NetDiv = rbind(AsylinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
                                                                          col.tree = col.tree,conf = conf,PDtype = PDtype),
@@ -507,12 +507,12 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
 
   if (diversity == 'FD' & FDtype == 'tau_values') {
 
-    if (sum(method == 'Estimated') == length(method))
+    if (sum(method == 'Asymptotic') == length(method))
       NetDiv = AsylinkFD(data = data, q = q, datatype = datatype, nboot = nboot, conf = conf,
-                         row.distM = row.distM, col.distM = col.distM, threshold = FDtau) else if (sum(method == 'Empirical') == length(method))
+                         row.distM = row.distM, col.distM = col.distM, threshold = FDtau) else if (sum(method == 'Observed') == length(method))
 
                            NetDiv = ObslinkFD(data = data, q = q, datatype = datatype, nboot = nboot, conf = conf,
-                                              row.distM = row.distM, col.distM = col.distM, threshold = FDtau) else if (sum(method == c('Estimated', 'Empirical')) == length(method))
+                                              row.distM = row.distM, col.distM = col.distM, threshold = FDtau) else if (sum(method == c('Asymptotic', 'Observed')) == length(method))
 
                                                 NetDiv = rbind(AsylinkFD(data = data, q = q, datatype = datatype, nboot = nboot, conf = conf,
                                                                          row.distM = row.distM, col.distM = col.distM, threshold = FDtau),
@@ -523,12 +523,12 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
 
   if (diversity == 'FD' & FDtype == 'AUC') {
 
-    if (sum(method == 'Estimated') == length(method))
+    if (sum(method == 'Asymptotic') == length(method))
       NetDiv = AsylinkAUC(data = data, q = q, datatype = datatype, nboot = nboot, conf = conf,
-                          row.distM = row.distM, col.distM = col.distM) else if (sum(method == 'Empirical') == length(method))
+                          row.distM = row.distM, col.distM = col.distM) else if (sum(method == 'Observed') == length(method))
 
                          NetDiv = ObslinkAUC(data = data, q = q, datatype = datatype, nboot = nboot, conf = conf,
-                                             row.distM = row.distM, col.distM = col.distM) else if (sum(method == c('Estimated', 'Empirical')) == length(method))
+                                             row.distM = row.distM, col.distM = col.distM) else if (sum(method == c('Asymptotic', 'Observed')) == length(method))
 
                                                 NetDiv = rbind(AsylinkAUC(data = data, q = q, datatype = datatype, nboot = nboot, conf = conf,
                                                                           row.distM = row.distM, col.distM = col.distM),
@@ -548,8 +548,9 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
 #' \code{ggAO.link} Plots q-profile based on the outcome of \code{AO.link} using the ggplot2 package.\cr
 #'
 #' @param outcome the outcome of the functions \code{AO.link} .\cr
+#' @param diversity
 #' @param text.size control the text size of the output plot.
-#' @return a figure of estimated sample completeness with order q\cr\cr
+#' @return a figure of asymptotic (or observed) diversity with order q\cr\cr
 #'
 #' @examples
 #' ## Taxonomic diversity
@@ -581,7 +582,7 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
 ggAO.link <- function(outcome, diversity = 'TD', text.size = 14){
   cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
-  # if (sum(unique(outcome$method) %in% c("Estimate", "Empirical")) == 0)
+  # if (sum(unique(outcome$method) %in% c("Estimate", "Observed")) == 0)
   #   stop("Please use the outcome from specified function 'AsyD'")
   if(diversity %in% c('TD','PD')){
     if(diversity == 'TD'){
@@ -594,7 +595,7 @@ ggAO.link <- function(outcome, diversity = 'TD', text.size = 14){
       geom_ribbon(data = outcome[outcome$Method == "Asymptotic", ],
                   aes(ymin = qD.LCL, ymax = qD.UCL, fill = Network), alpha = 0.2, linetype = 0) +
       scale_fill_manual(values = cbPalette) +
-      scale_linetype_manual(values = c(Estimated = 1, Empirical = 2)) +
+      scale_linetype_manual(values = c(Asymptotic = 1, Empirical = 2)) +
       labs(x = "Order q", y = ylab) + theme_bw() + theme(text = element_text(size = 10)) +
       theme(legend.position = "bottom", legend.box = "vertical",
             legend.key.width = unit(1.1, "cm"), legend.title = element_blank(),
@@ -646,8 +647,8 @@ ggAO.link <- function(outcome, diversity = 'TD', text.size = 14){
 #'                        base = "size", level = NULL, nboot = 30)
 #' }
 #' @export
-estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "abundance",base = "size",
-                          level = NULL,nboot = 50, conf = 0.95,
+estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "abundance", base = "size",
+                          level = NULL, nboot = 50, conf = 0.95,
                           row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
   if(diversity == 'TD'){
 
@@ -935,45 +936,41 @@ iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), dat
 #' @param outcome the outcome from \code{"iNEXTBeta.link"}
 #' @param type selection of plot type : \code{type = 'B'} for plotting the gamma, alpha, and beta diversity ;
 #' \code{type = 'D'} for plotting 4 turnover dissimilarities.
-#' @param measurement character indicating the label of y-axis.
 #' @param scale Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.
-#' @param transp a value between 0 and 1 controlling transparency. \code{transp = 0} is completely transparent, default is 0.4.
 #'
 #' @return a figure for Beta diversity or dissimilarity diversity.
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
 #' output1 = iNEXTBeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
-#' ggiNEXTBeta.link(output1, type = 'B', diversity = 'TD')
-#' ggiNEXTBeta.link(output1, type = 'D', diversity = 'TD')
+#' ggiNEXTBeta.link(output1, type = 'B')
+#' ggiNEXTBeta.link(output1, type = 'D')
 #'
 #' ## Phylogenetic diversity
 #' data(beetles)
 #' data(beetles_col_tree)
 #' output2 = iNEXTBeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
-#' ggiNEXTBeta.link(output2, type = 'B', diversity = 'PD')
-#' ggiNEXTBeta.link(output2, type = 'D', diversity = 'PD')
+#' ggiNEXTBeta.link(output2, type = 'B')
+#' ggiNEXTBeta.link(output2, type = 'D')
 #'
 #'
 #' ## Functional diversity under single threshold
 #' data(beetles)
 #' data(beetles_col_distM)
 #' output3 = iNEXTBeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
-#' ggiNEXTBeta.link(output3, type = 'B', diversity = 'FD')
-#' ggiNEXTBeta.link(output3, type = 'D', diversity = 'FD')
+#' ggiNEXTBeta.link(output3, type = 'B')
+#' ggiNEXTBeta.link(output3, type = 'D')
 #'
 #'
 #' ## Functional diversity with thresholds integrating from 0 to 1
 #' data(beetles)
 #' data(beetles_col_distM)
 #' output4 = iNEXTBeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
-#' ggiNEXTBeta.link(output4, type = 'B', diversity = 'FD')
-#' ggiNEXTBeta.link(output4, type = 'D', diversity = 'FD')
+#' ggiNEXTBeta.link(output4, type = 'B')
+#' ggiNEXTBeta.link(output4, type = 'D')
 #' @export
 
-ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
-                             diversity = 'TD', FDtype = 'AUC',
-                             scale = 'free', transp = 0.4, stript.size = 11, text.size = 13){
+ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 
   if (type == 'B'){
 
@@ -984,7 +981,7 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
     beta[beta == 'Observed_alpha'] = 'Observed'
 
     df = rbind(gamma, alpha, beta)
-    for (i in unique(gamma$Order)) df$Order[df$Order==i] = paste0('q = ', i)
+    for (i in unique(gamma$Order.q)) df$Order.q[df$Order.q==i] = paste0('q = ', i)
     df$div_type <- factor(df$div_type, levels = c("Gamma","Alpha","Beta"))
 
     id_obs = which(df$Method == 'Observed')
@@ -1003,10 +1000,10 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
 
     }
 
-    if (diversity=='TD') { ylab = "Taxonomic diversity" }
-    if (diversity=='PD') { ylab = "Phylogenetic diversity" }
-    if (diversity=='FD' & FDtype == 'tau_values') { ylab = "Functional diversity" }
-    if (diversity=='FD' & FDtype == 'AUC') { ylab = "Functional diversity (AUC)" }
+    if (unique(outcome[[1]]$gamma$diversity) == 'TD') { ylab = "Taxonomic diversity" }
+    if (unique(outcome[[1]]$gamma$diversity) %in% c('PD','meanPD')) { ylab = "Phylogenetic diversity" }
+    if (unique(outcome[[1]]$gamma$diversity) == 'FD_tau') { ylab = "Functional diversity" }
+    if (unique(outcome[[1]]$gamma$diversity) == 'FD_AUC') { ylab = "Functional diversity (AUC)" }
 
   }
   if (type=='D'){
@@ -1022,7 +1019,7 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
     C[C == 'Observed_alpha'] = U[U == 'Observed_alpha'] = V[V == 'Observed_alpha'] = S[S == 'Observed_alpha'] = 'Observed'
 
     df = rbind(C, U, V, S)
-    for (i in unique(C$Order)) df$Order[df$Order==i] = paste0('q = ', i)
+    for (i in unique(C$Order.q)) df$Order.q[df$Order.q==i] = paste0('q = ', i)
     df$div_type <- factor(df$div_type, levels = c("1-CqN","1-UqN","1-VqN","1-SqN"))
 
     id_obs = which(df$Method == 'Observed')
@@ -1040,10 +1037,10 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
       df = rbind(df, new, newe)
 
     }
-    if (diversity=='TD') { ylab = "Taxonomic dissimilarity" }
-    if (diversity=='PD') { ylab = "Phylogenetic dissimilarity" }
-    if (diversity=='FD' & FDtype == 'tau_values') { ylab = "Functional dissimilarity" }
-    if (diversity=='FD' & FDtype == 'AUC') { ylab = "Functional dissimilarity (AUC)" }
+    if (unique(outcome[[1]]$gamma$diversity) == 'TD') { ylab = "Taxonomic dissimilarity" }
+    if (unique(outcome[[1]]$gamma$diversity) %in% c('PD','meanPD')) { ylab = "Phylogenetic dissimilarity" }
+    if (unique(outcome[[1]]$gamma$diversity) == 'FD_tau') { ylab = "Functional dissimilarity" }
+    if (unique(outcome[[1]]$gamma$diversity) == 'FD_AUC') { ylab = "Functional dissimilarity (AUC)" }
 
   }
   lty = c(Interpolated = "solid", Extrapolated = "dashed")
@@ -1058,7 +1055,7 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
   point_size = 2
 
   ggplot(data = df, aes(x = SC, y = Estimate, col = Region)) +
-    geom_ribbon(aes(ymin = LCL, ymax = UCL, fill = Region, col = NULL), alpha=transp) +
+    geom_ribbon(aes(ymin = LCL, ymax = UCL, fill = Region, col = NULL), alpha=0.4) +
     geom_line(data = subset(df, Method!='Observed'), aes(linetype=Method), size=1.1) +
     scale_linetype_manual(values = lty) +
     scale_fill_manual(values = cbPalette) + scale_colour_manual(values = cbPalette)+
@@ -1067,8 +1064,8 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
     geom_point(data = subset(df, Method=='Observed' & div_type!="Gamma"),shape=1, size=point_size,stroke=1.5)+
     geom_point(data = subset(double_extrapolation, div_type == "Gamma"),shape=17, size=point_size) +
     geom_point(data = subset(double_extrapolation, div_type!="Gamma"),shape=2, size=point_size,stroke=1.5) +
-    facet_grid(div_type~Order, scales = scale) +
-    # facet_wrap(div_type~Order, scales = scale, switch="both") +
+    facet_grid(div_type~Order.q, scales = scale) +
+    # facet_wrap(div_type~Order.q, scales = scale, switch="both") +
     theme_bw() +
     theme(legend.position = "bottom", legend.title = element_blank()) +
     labs(x='Sample coverage', y=ylab)
@@ -1076,16 +1073,16 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'),
 
 
 # Spec.link -------------------------------------------------------------------
-#' Estimation (Empirical) of Specialization with order q
+#' Estimation (Observed) of Specialization with order q
 #' @param data  a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param q a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.
-#' @param method abinary calculation method with 'Estimated' or 'Empirical'.
+#' @param method abinary calculation method with 'Estimated' or 'Observed'.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
 #' @param E.class an integer vector between 1 to 5.
 #' @param C a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, \code{C = Cmax}.
-#' @return A list of estimated(empirical) specialization with order q.\cr
+#' @return A list of estimated(Observed) specialization with order q.\cr
 #' Different lists represents different classes of Specialization.\cr
 #' Each list is combined with order.q and sites.\cr
 #'
@@ -1117,15 +1114,15 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
             rename('Specialization'='Evenness', 'Spec.LCL' ='Even.LCL', 'Spec.UCL' ='Even.UCL')%>%
             mutate(Network = names(long)[[i]])
         })
-        # if(method == "Empirical") index = 1
+        # if(method == "Observed") index = 1
         # if(method == "Estimated") index = 2
         # return(res[[index]]%>%mutate(Assemblage = names(long)[[i]]))
         return(res[[1]])
       })%>%do.call("rbind",.)
 
-      each_class%>%mutate(class = paste0("1-E",e))
+      each_class%>%mutate(class = paste0("1 - E",e))
     })
-    names(Spec) = paste0("1-E",E.class)
+    names(Spec) = paste0("1 - E",E.class)
     return(Spec)
 
   }else if (diversity == 'PD'){
@@ -1148,7 +1145,7 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
             rename('Specialization'='Evenness', 'Spec.LCL' ='Even.LCL', 'Spec.UCL' ='Even.UCL')%>%
             mutate(Network = names(long)[[i]])
         })
-        # if(method == "Empirical") index = 1
+        # if(method == "Observed") index = 1
         # if(method == "Estimated") index = 2
         # return(res[[index]]%>%mutate(Assemblage = names(long)[[i]]))
         return(res[[1]])
@@ -1213,13 +1210,13 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
             rename('Specialization'='Evenness', 'Spec.LCL' ='Even.LCL', 'Spec.UCL' ='Even.UCL')%>%
             mutate(Assemblage = names(long)[[i]])
         })
-        # if(method == "Empirical") index = 1
+        # if(method == "Observed") index = 1
         # if(method == "Estimated") index = 2
         # return(res[[index]]%>%mutate(Assemblage = names(long)[[i]]))
         return(res[[1]])
       })%>%do.call("rbind",.)
 
-      each_class%>%mutate(class = paste0("1-E",e))
+      each_class%>%mutate(class = paste0("1 - E",e))
     })
     # ### not finished yet
     # long = lapply(data, function(da){da%>%as.data.frame()%>%gather(key = "col_sp", value = "abundance")%>%.[,2]})
@@ -1235,7 +1232,7 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
     #         rename('Specialization'='Evenness', 'Spec.LCL' ='Even.LCL', 'Spec.UCL' ='Even.UCL')%>%
     #         mutate(Assemblage = names(long)[[i]])
     #     })
-    #     # if(method == "Empirical") index = 1
+    #     # if(method == "Observed") index = 1
     #     # if(method == "Estimated") index = 2
     #     # return(res[[index]]%>%mutate(Assemblage = names(long)[[i]]))
     #     return(res[[1]])

@@ -10,9 +10,7 @@ ggiNEXT.link(
   type = c(1, 2, 3),
   se = TRUE,
   facet.var = "Assemblage",
-  color.var = "Order.q",
-  text.size = 12,
-  stript.size = 12
+  color.var = "Order.q"
 )
 }
 \arguments{

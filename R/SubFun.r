@@ -1035,32 +1035,32 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
     gamma = (gamma %>%
                mutate(Method = ifelse(level>=ref_gamma,
                                       ifelse(level==ref_gamma, 'Observed', 'Extrapolated'), 'Interpolated')))[,c(2,1,6,3,5)] %>%
-      set_colnames(c('Estimate', 'Order', 'Method', 'SC', 'Size'))
+      set_colnames(c('Estimate', 'Order.q', 'Method', 'SC', 'Size'))
 
     if (max_alpha_coverage==T) {
-      under_max_alpha = !((gamma$Order==0) & (gamma$level>ref_alpha_max))
+      under_max_alpha = !((gamma$Order.q==0) & (gamma$level>ref_alpha_max))
     }else{
       under_max_alpha = level>0
     }
     gamma = gamma[under_max_alpha,]
-    gamma$Order = as.numeric(gamma$Order)
+    gamma$Order.q = as.numeric(gamma$Order.q)
 
 
     alpha = (alpha %>%
                mutate(Method = ifelse(level>=ref_alpha, ifelse(level==ref_alpha, 'Observed', 'Extrapolated'), 'Interpolated')))[,c(2,1,6,3,5)] %>%
-      set_colnames(c('Estimate', 'Order', 'Method', 'SC', 'Size'))
+      set_colnames(c('Estimate', 'Order.q', 'Method', 'SC', 'Size'))
 
     alpha = alpha[under_max_alpha,]
-    alpha$Order = as.numeric(alpha$Order)
+    alpha$Order.q = as.numeric(alpha$Order.q)
 
     beta = alpha
     beta$Estimate = gamma$Estimate/alpha$Estimate
     beta[beta == "Observed"] = "Observed_alpha"
     beta = beta %>% rbind(., cbind(gamma %>% filter(Method == "Observed") %>% select(Estimate) / alpha %>% filter(Method == "Observed") %>% select(Estimate),
-                                   Order = q, Method = "Observed", SC = NA, Size = beta[beta$Method == "Observed_alpha", 'Size']))
+                                   Order.q = q, Method = "Observed", SC = NA, Size = beta[beta$Method == "Observed_alpha", 'Size']))
 
-    C = beta %>% mutate(Estimate = ifelse(Order==1, log(Estimate)/log(N), (Estimate^(1-Order) - 1)/(N^(1-Order)-1)))
-    U = beta %>% mutate(Estimate = ifelse(Order==1, log(Estimate)/log(N), (Estimate^(Order-1) - 1)/(N^(Order-1)-1)))
+    C = beta %>% mutate(Estimate = ifelse(Order.q==1, log(Estimate)/log(N), (Estimate^(1-Order.q) - 1)/(N^(1-Order.q)-1)))
+    U = beta %>% mutate(Estimate = ifelse(Order.q==1, log(Estimate)/log(N), (Estimate^(Order.q-1) - 1)/(N^(Order.q-1)-1)))
     V = beta %>% mutate(Estimate = (Estimate-1)/(N-1))
     S = beta %>% mutate(Estimate = (1/Estimate-1)/(1/N-1))
 
@@ -1279,12 +1279,12 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
         alpha = c(alpha, rep(0, length(q)))
         beta = c(beta, beta_obs)
 
-        order = rep(q, each=length(level) + 1)[under_max_alpha]
+        Order.q = rep(q, each=length(level) + 1)[under_max_alpha]
 
-        beta = data.frame(Estimate=beta, order)
+        beta = data.frame(Estimate=beta, Order.q)
 
-        C = (beta %>% mutate(Estimate = ifelse(order==1,log(Estimate)/log(N),(Estimate^(1-order) - 1)/(N^(1-order)-1))))$Estimate
-        U = (beta %>% mutate(Estimate = ifelse(order==1,log(Estimate)/log(N),(Estimate^(order-1) - 1)/(N^(order-1)-1))))$Estimate
+        C = (beta %>% mutate(Estimate = ifelse(Order.q==1,log(Estimate)/log(N),(Estimate^(1-Order.q) - 1)/(N^(1-Order.q)-1))))$Estimate
+        U = (beta %>% mutate(Estimate = ifelse(Order.q==1,log(Estimate)/log(N),(Estimate^(Order.q-1) - 1)/(N^(Order.q-1)-1))))$Estimate
         V = (beta %>% mutate(Estimate = (Estimate-1)/(N-1)))$Estimate
         S = (beta %>% mutate(Estimate = (1/Estimate-1)/(1/N-1)))$Estimate
 
@@ -1311,38 +1311,45 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
     gamma = gamma %>% mutate(s.e. = se$gamma[1:(nrow(se)-length(q))],
                              LCL = Estimate - tmp * se$gamma[1:(nrow(se)-length(q))],
                              UCL = Estimate + tmp * se$gamma[1:(nrow(se)-length(q))],
-                             Region = region_name)
+                             Region = region_name,
+                             diversity = 'PD')
 
     alpha = alpha %>% mutate(s.e. = se$alpha[1:(nrow(se)-length(q))],
                              LCL = Estimate - tmp * se$alpha[1:(nrow(se)-length(q))],
                              UCL = Estimate + tmp * se$alpha[1:(nrow(se)-length(q))],
-                             Region = region_name)
+                             Region = region_name,
+                             diversity = 'PD')
 
     beta = beta %>% mutate(  s.e. = se$beta,
                              LCL = Estimate - tmp * se$beta,
                              UCL = Estimate + tmp * se$beta,
-                             Region = region_name)
+                             Region = region_name,
+                             diversity = 'PD')
 
     C = C %>% mutate(        s.e. = se$C,
                              LCL = Estimate - tmp * se$C,
                              UCL = Estimate + tmp * se$C,
-                             Region = region_name)
+                             Region = region_name,
+                             diversity = 'PD')
 
 
     U = U %>% mutate(        s.e. = se$U,
                              LCL = Estimate - tmp * se$U,
                              UCL = Estimate + tmp * se$U,
-                             Region = region_name)
+                             Region = region_name,
+                             diversity = 'PD')
 
     V = V %>% mutate(        s.e. = se$V,
                              LCL = Estimate - tmp * se$V,
                              UCL = Estimate + tmp * se$V,
-                             Region = region_name)
+                             Region = region_name,
+                             diversity = 'PD')
 
     S = S %>% mutate(        s.e. = se$S,
                              LCL = Estimate - tmp * se$S,
                              UCL = Estimate + tmp * se$S,
-                             Region = region_name)
+                             Region = region_name,
+                             diversity = 'PD')
 
     list(gamma = gamma, alpha = alpha, beta = beta, C = C, U = U, V = V, S = S)
   }
@@ -1524,11 +1531,11 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   index <- AO.link(data = data, diversity = "PD",row.tree = row.tree, col.tree  = col.tree,
                    q = c(0, 1, 2), datatype = datatype, PDtype = type, nboot = nboot, conf = 0.95)
   index = index[order(index$Network), ]
-  LCL <- index$qD.LCL[index$Method == "Estimated"]
-  UCL <- index$qD.UCL[index$Method == "Estimated"]
+  LCL <- index$qD.LCL[index$Method == "Asymptotic"]
+  UCL <- index$qD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Network + Order.q ~ Method,
                  value.var = "qD")
-  index <- cbind(index, se = (UCL - index$Estimated)/qnorm(1 -
+  index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 -
                                                              (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
     index$LCL[index$LCL < index$Empirical & index$Order.q ==
@@ -2402,7 +2409,7 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
                       UCL = est[[i]] + est.sd[[i]]*ci,
                       LCL = est[[i]] - est.sd[[i]]*ci,
                       Region = region_names[[i]],
-                      PDtype = PDtype)
+                      Type = PDtype)
     
     out <- rbind(out,tmp)
   }

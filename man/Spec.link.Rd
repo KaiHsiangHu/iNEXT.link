@@ -2,7 +2,7 @@
 % Please edit documentation in R/MainFun.R
 \name{Spec.link}
 \alias{Spec.link}
-\title{Estimation (Empirical) of Specialization with order q}
+\title{Estimation (Observed) of Specialization with order q}
 \usage{
 Spec.link(
   data,
@@ -21,7 +21,7 @@ Spec.link(
 
 \item{q}{a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.}
 
-\item{method}{abinary calculation method with 'Estimated' or 'Empirical'.}
+\item{method}{abinary calculation method with 'Estimated' or 'Observed'.}
 
 \item{nboot}{a positive integer specifying the number of bootstrap replications when assessing
 sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.}
@@ -33,12 +33,12 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 \item{C}{a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, \code{C = Cmax}.}
 }
 \value{
-A list of estimated(empirical) specialization with order q.\cr
+A list of estimated(Observed) specialization with order q.\cr
 Different lists represents different classes of Specialization.\cr
 Each list is combined with order.q and sites.\cr
 }
 \description{
-Estimation (Empirical) of Specialization with order q
+Estimation (Observed) of Specialization with order q
 }
 \examples{
 data(beetles)
