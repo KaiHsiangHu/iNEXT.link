@@ -41,6 +41,85 @@ long_to_wide = function(data_long = data_gamma){
   return(mat)
 }
 
+phyExpandData <- function(x, labels, phy, datatype="abundance"){
+  if (!inherits(phy, "chaophytree"))
+    stop("Non convenient data : only for chaophytree object")
+  
+  datatype <- iNEXT.3D:::check_datatype(datatype)
+  
+  if(datatype=="incidence_freq" | datatype=="incidence")
+    stop('only support datatype="incidence_raw"')
+  
+  if(class(x)=="list"){
+    lapply(x, function(x) phyExpandData_(x, labels, phy, datatype))
+  }else if(class(x) %in% c("matrix","data.frame") & datatype=="abundance"){
+    apply(x, 2, function(x) phyExpandData_(x, labels, phy, datatype))
+  }else{
+    phyExpandData_(x, labels, phy, datatype)
+  }
+}
+
+phyExpandData_ <- function(x, labels, phy, datatype="abundance"){
+  if (!inherits(phy, "chaophytree"))
+    stop("Non convenient data : only for chaophytree object")
+  
+  datatype <- iNEXT.3D:::check_datatype(datatype)
+  
+  if(datatype=="incidence_freq" | datatype=="incidence")
+    stop('only support datatype="incidence_raw"')
+  
+  my_match <- match(labels, names(phy$tips))
+  if(sum(is.na(my_match)) > 0) stop("Argument labels and tree Tip not matach")
+  
+  
+  
+  if(datatype=="abundance"){
+    if(length(x) !=length(labels)) stop("Length of labels and abundance data not matach")
+    tmp<-data.frame(label=labels,x=x)
+    tmp$label<-as.character(tmp$label)
+    treeNdata<-full_join(phy$phytree, tmp, by="label")
+    inodelist<-treeNdata %>% filter(tgroup !="Tip") %>% pull(node)
+    names(inodelist)<-treeNdata %>% filter(tgroup !="Tip") %>% pull(label)
+    inode_x<-sapply(inodelist,function(x){offspring(treeNdata,x,tiponly=T) %>% select(x) %>% sum()})
+    
+    tmp1<-data.frame(label=names(inode_x),branch.abun=inode_x)
+    tmp2<-tmp %>% rename(branch.abun=x)
+    tmp_all<-rbind(tmp2,tmp1)
+    treeNdata<-full_join(treeNdata, tmp_all, by="label") %>% select(-x)
+    
+    
+  }else if(datatype=="incidence_raw"){
+    
+    if(nrow(x) !=length(labels)) stop("Length of labels and incidence data not matach")
+    y <- iNEXT::as.incfreq(x)
+    t <- y[1]
+    y <- y[-1]
+    names(y) <- labels
+    tmp.tip<-data.frame(label=labels,x=y)
+    tmp.tip$label<-as.character(tmp.tip$label)
+    treeNdata<-full_join(phy$phytree, tmp.tip, by="label")
+    
+    
+    inode_each<-apply(x,2,function(i){
+      tmp<-data.frame(label=labels,x=i)
+      tmp$label<-as.character(tmp$label)
+      tmp.treeNdata<-full_join(phy$phytree, tmp, by="label")
+      inodelist<-tmp.treeNdata %>% filter(tgroup !="Tip") %>% pull(node)
+      names(inodelist)<-tmp.treeNdata %>% filter(tgroup !="Tip") %>% pull(label)
+      ivalue_each<-sapply(inodelist,function(x){offspring(tmp.treeNdata,x,tiponly=T) %>% select(x) %>% max()})
+    })
+    inode_x <- rowSums(inode_each)
+    tmp.inode<-data.frame(label=names(inode_x),branch.abun=inode_x)
+    
+    tmp.tip<-tmp.tip %>% rename(branch.abun=x)
+    tmp_all<-rbind(tmp.tip,tmp.inode)
+    treeNdata<-full_join(treeNdata, tmp_all, by="label") %>% select(-x)
+    
+    
+  }
+  return(treeNdata)
+}
+
 create.aili <- function(data,row.tree = NULL,col.tree = NULL) {
 
   if (class(data)[1] != "matrix") { data <- as.matrix(data) }
@@ -50,7 +129,7 @@ create.aili <- function(data,row.tree = NULL,col.tree = NULL) {
     mytree <- drop.tip(row.tree,tip)
     mytree <- iNEXT.3D:::phylo2phytree(mytree)
     tmp <- apply(data, 2, function(abun){
-      chaoUtility:::phyExpandData(x=abun, labels=rownames(data), phy=mytree, datatype="abundance")
+      phyExpandData(x=abun, labels=rownames(data), phy=mytree, datatype="abundance")
     })
     tmp <- lapply(1:length(tmp), function(x){
       tmp1 <- as.data.frame(tmp[[x]])
@@ -70,7 +149,7 @@ create.aili <- function(data,row.tree = NULL,col.tree = NULL) {
 
     tmp <- apply(data, 1, function(abun){
       # phyBranchAL_Abu(phylo = mytree, data = abun, rootExtend = T, refT = NULL)
-      chaoUtility:::phyExpandData(x=abun, labels=colnames(data), phy=mytree, datatype="abundance")
+      phyExpandData(x=abun, labels=colnames(data), phy=mytree, datatype="abundance")
     })
     tmp <- lapply(1:length(tmp), function(x){
       tmp1 <- tmp[[x]]%>%as.data.frame()
@@ -93,7 +172,7 @@ create.aili <- function(data,row.tree = NULL,col.tree = NULL) {
 
     # create aiLi tables by col.tree (row by row)
     tmp0 <- apply(data, 1, function(abun){
-      chaoUtility:::phyExpandData(x=abun, labels=colnames(data), phy=mytree.col, datatype="abundance")
+      phyExpandData(x=abun, labels=colnames(data), phy=mytree.col, datatype="abundance")
     })
 
     # combine

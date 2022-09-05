@@ -9,6 +9,8 @@ ggAO.link(outcome, diversity = "TD", text.size = 14)
 \arguments{
 \item{outcome}{the outcome of the functions \code{AO.link} .\cr}
 
+\item{diversity}{diversity type}
+
 \item{text.size}{control the text size of the output plot.}
 }
 \value{

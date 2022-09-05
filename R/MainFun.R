@@ -141,7 +141,6 @@ ggCompleteness.link <- function(outcome){
 #' @import tidytree
 #' @import colorRamps
 #' @import iNEXT.3D
-#' @import chaoUtility
 #' @import iNEXT.4steps
 #' @import iNEXT.Beta3D
 #' @import future
@@ -548,7 +547,7 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
 #' \code{ggAO.link} Plots q-profile based on the outcome of \code{AO.link} using the ggplot2 package.\cr
 #'
 #' @param outcome the outcome of the functions \code{AO.link} .\cr
-#' @param diversity
+#' @param diversity diversity type
 #' @param text.size control the text size of the output plot.
 #' @return a figure of asymptotic (or observed) diversity with order q\cr\cr
 #'
