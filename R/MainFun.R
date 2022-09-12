@@ -756,8 +756,9 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
                          Method = ifelse(level > ref, 'Extrapolation', 'Rarefaction'),
                          Order.q = q,
                          qPD = qPDm,
-                         qPD.LCL = qPDm-1.96*PD.sd,
-                         qPD.UCL = qPDm+1.96*PD.sd,
+                         qPD.LCL = qPDm-tmp*PD.sd,
+                         qPD.UCL = qPDm+tmp*PD.sd,
+                         s.e. = PD.sd,
                          Reftime = tbar, 
                          Type = PDtype
         )
