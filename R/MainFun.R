@@ -701,7 +701,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
 
     for_each_region = function(data_2d, region_name, N){
       if (datatype=='abundance') {
-
+        
         n = sum(data_2d)
         if(base == 'coverage'){
           size_m = sapply(level, function(i) coverage_to_size(data_2d, i, datatype='abundance'))

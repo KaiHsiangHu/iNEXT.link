@@ -2554,9 +2554,8 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
     lapply(x, function(y){
       # PD = iNEXT.3D:::PD.qprofile(y,q,cal = "PD",nt = sum(y[y$tgroup == "Tip",]$branch.abun))/sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)
       PD = iNEXT.3D:::PD.Tprofile(ai = y$branch.abun, Lis = as.matrix(y[, "branch.length", drop = F]), q = q,
-                                  reft = sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun), cal = PDtype, nt = sum(y[y$tgroup == "Tip","branch.abun"]))
+                                  reft = reft, cal = PDtype, nt = sum(y[y$tgroup == "Tip","branch.abun"]))
       return(PD)
-      
     })
   }, future.seed=NULL)
   mle.sd <- lapply(mle.boot, function(x){
