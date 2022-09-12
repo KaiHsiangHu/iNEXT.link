@@ -962,7 +962,7 @@ get.netphydiv_iNE <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, kno
       PD.sd <- sapply(1:length(m), function(x){
         sd(PD.sd[x,])
       })
-      PD.table <- data.frame(m=m,method = ifelse(m<n,"interpolated",ifelse(n == m,"observed","extrapolated")),
+      PD.table <- data.frame(m=m,method = ifelse(m<n,"Rarefaction",ifelse(n == m,"observed","Extrapolation")),
                              Order.q = q_,PD = PD, PD.UCL = PD+ci * PD.sd,PD.LCL = PD - ci * PD.sd)
       out <- left_join(PD.table,sc.table)
       out
@@ -988,7 +988,7 @@ get.netphydiv_iNE <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, kno
 
 iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
                              nboot = 20, conf = 0.95,
-                             row.tree = NULL,col.tree = NULL){
+                             row.tree = NULL,col.tree = NULL, PDtype){
   max_alpha_coverage = F
 
   if(datatype=='abundance'){
@@ -1059,18 +1059,18 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
               if(mm == round(mm)){
                 qPDm <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                              Lis = aL_table$branch.length%>%as.matrix(),m = mm,
-                                             q = q,nt = n,cal = 'PD')
+                                             q = q,nt = n,cal = PDtype)
                 return(qPDm)
               }else {
                 qPDm_raw <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                                  Lis = aL_table$branch.length%>%as.matrix(),m = mm,
-                                                 q = q,nt = n,cal = 'PD')
+                                                 q = q,nt = n,cal = PDtype)
                 qPDm_floor <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                                    Lis = aL_table$branch.length%>%as.matrix(),m = floor(mm),
-                                                   q = q,nt = n,cal = 'PD')
+                                                   q = q,nt = n,cal = PDtype)
                 qPDm_ceil <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                                   Lis = aL_table$branch.length%>%as.matrix(),m = ceiling(mm),
-                                                  q = q,nt = n,cal = 'PD')
+                                                  q = q,nt = n,cal = PDtype)
                 # y = [ (y2 -y1) / (x2 - x1) ] (x - x1) + y1
                 qPDm_interpolated = ((qPDm_ceil - qPDm_floor) / (ceiling(mm) - floor(mm)) ) *(mm - floor(mm)) + qPDm_floor
                 return(qPDm_interpolated)
@@ -1078,7 +1078,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
             }else{
               qPDm <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                            Lis = aL_table$branch.length%>%as.matrix(),m = mm,
-                                           q = q,nt = n,cal = 'PD')
+                                           q = q,nt = n,cal = PDtype)
               return(qPDm)
             }
 
@@ -1091,13 +1091,13 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
           set_colnames(q) %>% gather(Order, Estimate) %>%
           mutate(level=rep(level, 3), Coverage_real=rep(iNEXT.3D:::Coverage(data_gamma, m_gamma, datatype = 'abundance'), 3),
                  Size=rep(m_gamma, 3))%>%
-          mutate(Method = ifelse(level>=ref_gamma, ifelse(level==ref_gamma, 'Observed', 'Extrapolated'), 'Interpolated'))
+          mutate(Method = ifelse(level>=ref_gamma, ifelse(level==ref_gamma, 'Observed', 'Extrapolation'), 'Rarefaction'))
         ## alpha
         qPDm_alpha = qPDm_alpha/N
         alpha = qPDm_alpha %>% t %>% as.data.frame %>%
           set_colnames(q) %>% gather(Order, Estimate) %>%
           mutate(level=rep(level, 3), Coverage_real=rep(iNEXT.3D:::Coverage(data_alpha, m_alpha, datatype = 'abundance'), 3), Size=rep(m_alpha, 3))%>%
-          mutate(Method = ifelse(level>=ref_gamma, ifelse(level==ref_alpha, 'Observed', 'Extrapolated'), 'Interpolated'))
+          mutate(Method = ifelse(level>=ref_gamma, ifelse(level==ref_alpha, 'Observed', 'Extrapolation'), 'Rarefaction'))
 
         res = list()
         res[['gamma']] = gamma
@@ -1109,11 +1109,12 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
                                                 n = sum(data_gamma), m_gamma, m_alpha)
       gamma = PD_results$gamma
       alpha = PD_results$alpha
+      
     }
 
     gamma = (gamma %>%
                mutate(Method = ifelse(level>=ref_gamma,
-                                      ifelse(level==ref_gamma, 'Observed', 'Extrapolated'), 'Interpolated')))[,c(2,1,6,3,5)] %>%
+                                      ifelse(level==ref_gamma, 'Observed', 'Extrapolation'), 'Rarefaction')))[,c(2,1,6,3,5)] %>%
       set_colnames(c('Estimate', 'Order.q', 'Method', 'SC', 'Size'))
 
     if (max_alpha_coverage==T) {
@@ -1126,7 +1127,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
 
 
     alpha = (alpha %>%
-               mutate(Method = ifelse(level>=ref_alpha, ifelse(level==ref_alpha, 'Observed', 'Extrapolated'), 'Interpolated')))[,c(2,1,6,3,5)] %>%
+               mutate(Method = ifelse(level>=ref_alpha, ifelse(level==ref_alpha, 'Observed', 'Extrapolation'), 'Rarefaction')))[,c(2,1,6,3,5)] %>%
       set_colnames(c('Estimate', 'Order.q', 'Method', 'SC', 'Size'))
 
     alpha = alpha[under_max_alpha,]
@@ -1597,7 +1598,7 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   FUN <- function(e) {
     if (class(data) == "list") {
       inextPDlink(datalist = data, datatype = datatype,
-                  col.tree = col.tree,row.tree = row.tree, q = q, reft = reftime, m = size,
+                  col.tree = col.tree, row.tree = row.tree, q = q, reft = reftime, m = size,
                   cal = type, nboot = nboot, conf = conf, unconditional_var = TRUE)
     }
     else {
@@ -1729,9 +1730,9 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
                        length(reft))
       reft_ <- rep(rep(reft, each = length(q)), length(m[[i]]))
       out_m <- tibble(Assemblage = nms[i], m = m_, Method = method,
-                      Order.q = orderq, qPD = qPDm, s.e. = ses_pd,
+                      Order.q = orderq, qPD = qPDm, 
                       qPD.LCL = qPDm - qtile * ses_pd, qPD.UCL = qPDm +
-                        qtile * ses_pd, SC = SC_, SC.s.e. = SC.se,
+                        qtile * ses_pd, SC = SC_, 
                       SC.LCL = SC.LCL_, SC.UCL = SC.UCL_, Reftime = reft_,
                       Type = cal) %>% arrange(Reftime, Order.q, m)
       out_m$qPD.LCL[out_m$qPD.LCL < 0] <- 0
@@ -1741,11 +1742,10 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
         ses_pd_unc <- ses[-(1:(length(qPDm) + length(covm)))]
         out_C <- qPD_unc %>% mutate(qPD.LCL = qPD -
                                       qtile * ses_pd_unc, qPD.UCL = qPD + qtile *
-                                      ses_pd_unc, s.e. = ses_pd_unc, Type = cal,
+                                      ses_pd_unc, Type = cal,
                                     Assemblage = nms[i])
-        id_C <- match(c("Assemblage", "goalSC", "SC",
-                        "m", "Method", "Order.q", "qPD", "s.e.", "qPD.LCL",
-                        "qPD.UCL", "Reftime", "Type"), names(out_C),
+        id_C <- match(c("Assemblage", "goalSC", "SC", "m", "Method", "Order.q", 
+                        "qPD", "qPD.LCL", "qPD.UCL", "Reftime", "Type"), names(out_C),
                       nomatch = 0)
         out_C <- out_C[, id_C] %>% arrange(Reftime,
                                            Order.q, m)
@@ -2097,6 +2097,8 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
         colnames(temp2)[colnames(temp2) == "m"] = "nt"
       temp1$Type = "FD"
       temp2$Type = "FD"
+      temp1 = temp1 %>% select(-c("s.e.", "SC.s.e."))
+      temp2 = temp2 %>% select(-"s.e.")
       ans <- list(size_based = temp1, coverage_based = temp2)
       return(ans)
     }
@@ -2361,6 +2363,8 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
         colnames(temp2)[colnames(temp2) == "m"] = "nt"
       temp1$Type = "FD"
       temp2$Type = "FD"
+      temp1 = temp1 %>% select(-c("s.e.", "SC.s.e."))
+      temp2 = temp2 %>% select(-"s.e.")
       ans <- list(size_based = temp1, coverage_based = temp2)
       return(ans)
     }
@@ -2405,7 +2409,7 @@ AsylinkTD = function (data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "ab
     # please note that nboot has to larger than 0
     res = MakeTable_Proposeprofile(data = x, B = nboot, q, conf = conf)%>%
       mutate(Network = assemblage, method = "Asymptotic")%>%
-      filter(Target == "Diversity")%>%select(-Target, -`s.e.`)%>%
+      filter(Target == "Diversity")%>%select(-Target)%>%
       rename("qD"="Estimate", "qD.LCL"="LCL", "qD.UCL"="UCL", 'Method' = 'method')
 
     return(res)
@@ -2423,7 +2427,7 @@ ObslinkTD = function (data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "ab
     ## nboot has to larger than 0
     res = MakeTable_Empericalprofile(data = x, B = nboot, q, conf = conf)%>%
       mutate(Network = assemblage, method = "Empirical")%>%
-      filter(Target == "Diversity")%>%select(-Target, -`s.e.`)%>%
+      filter(Target == "Diversity")%>%select(-Target)%>%
       rename("qD"="Emperical", "qD.LCL"="LCL", "qD.UCL"="UCL", 'Method' = 'method')
     return(res)
   })%>%do.call("rbind",.)
@@ -2454,10 +2458,14 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
       filter(branch.abun > 0)
   })
   
+  rt = c()
+  for(i in 1:length(phydata)){
+    rt[i] = sum(phydata[[i]]$branch.abun * phydata[[i]]$branch.length/sum(phydata[[i]][phydata[[i]]$tgroup == "Tip",]$branch.abun))
+  }
+  reft = max(rt)
+  
   est <- lapply(phydata,function(x){
-    PD = my_PhD.q.est(ai = x$branch.abun,Lis = x$branch.length,q,nt = sum(x[x$tgroup == "Tip","branch.abun"]), cal = 'PD')/
-      sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun)
-    if(PDtype == 'PD'){PD = PD/sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun)}
+    PD = my_PhD.q.est(ai = x$branch.abun,Lis = x$branch.length,q,nt = sum(x[x$tgroup == "Tip","branch.abun"]), cal = PDtype)
     return(PD)
   })
   boot.sam <- lapply(data, function(x){
@@ -2467,9 +2475,7 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   est.boot <- lapply(boot.sam, function(x){
     lapply(x, function(y){
       ## NEW
-      PD = my_PhD.q.est(ai = y$branch.abun,Lis = y$branch.length,q,nt = sum(y[y$tgroup == "Tip","branch.abun"]), cal = 'PD')/
-        sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)
-      if(PDtype == 'PD'){PD = PD*sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)}
+      PD = my_PhD.q.est(ai = y$branch.abun,Lis = y$branch.length,q,nt = sum(y[y$tgroup == "Tip","branch.abun"]), cal = PDtype)
       return(PD)
       
     })
@@ -2488,6 +2494,7 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
                       UCL = est[[i]] + est.sd[[i]]*ci,
                       LCL = est[[i]] - est.sd[[i]]*ci,
                       Region = region_names[[i]],
+                      Reftime = reft,
                       Type = PDtype)
     
     out <- rbind(out,tmp)
@@ -2518,13 +2525,17 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
       filter(branch.abun > 0)
   })
   
+  rt = c()
+  for(i in 1:length(phydata)){
+    rt[i] = sum(phydata[[i]]$branch.abun * phydata[[i]]$branch.length/sum(phydata[[i]][phydata[[i]]$tgroup == "Tip",]$branch.abun))
+  }
+  reft = max(rt)
+  
   mle <- lapply(phydata, function(x){
     
     PD = iNEXT.3D:::PD.Tprofile(ai = x$branch.abun, Lis = as.matrix(x[, "branch.length", drop = F]), q = q,
-                                reft = sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun), cal = "PD", nt = sum(x[x$tgroup == "Tip","branch.abun"]))/
-      sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun)
+                                reft = reft, cal = PDtype, nt = sum(x[x$tgroup == "Tip","branch.abun"]))
     
-    if(PDtype == 'PD'){PD = PD*sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun)}
     return(PD)
   })
   boot.sam <- lapply(data, function(x){
@@ -2535,10 +2546,7 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
     lapply(x, function(y){
       # PD = iNEXT.3D:::PD.qprofile(y,q,cal = "PD",nt = sum(y[y$tgroup == "Tip",]$branch.abun))/sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)
       PD = iNEXT.3D:::PD.Tprofile(ai = y$branch.abun, Lis = as.matrix(y[, "branch.length", drop = F]), q = q,
-                                  reft = sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun), cal = "PD", nt = sum(y[y$tgroup == "Tip","branch.abun"]))/
-        sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)
-      
-      if(PDtype == 'PD'){PD = PD*sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)}
+                                  reft = sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun), cal = PDtype, nt = sum(y[y$tgroup == "Tip","branch.abun"]))
       return(PD)
       
     })
@@ -2557,6 +2565,7 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
                       UCL = mle[[i]][1,] + mle.sd[[i]]*ci,
                       LCL = mle[[i]][1,] - mle.sd[[i]]*ci,
                       Region = region_names[[i]],
+                      Reftime = reft,
                       Type = PDtype)
     
     out <- rbind(out,tmp)

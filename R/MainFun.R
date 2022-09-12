@@ -250,7 +250,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
     if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
     res = iNEXTPDlink(data, q = q, datatype = datatype, size = size,
                       endpoint = endpoint, knots = knots, conf = conf,
-                      nboot = nboot,col.tree = col.tree,row.tree = row.tree,type = PDtype)
+                      nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
 
   }else if (diversity == "FD" & FDtype == "tau_values") {
 
@@ -353,11 +353,11 @@ ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3), se = TRUE, 
     # # iNEXT.3D::ggiNEXT3D(output, type = 1)
     # iNE <- outcome$iNextEst
     # iNE.sub <- iNE[iNE$method == "observed",]
-    # iNE[iNE$method == "observed",]$method <-  "interpolated"
+    # iNE[iNE$method == "observed",]$method <-  "Rarefaction"
     # ex <- iNE.sub
-    # ex$method <- "extrapolated"
+    # ex$method <- "Extrapolation"
     # iNE <- rbind(iNE,ex)
-    # iNE$method <- factor(iNE$method,levels = c("interpolated","extrapolated"))
+    # iNE$method <- factor(iNE$method,levels = c("Rarefaction","Extrapolation"))
     # iNE$Order.q = paste0("q = ", iNE$Order.q)
     # iNE.sub$Order.q = paste0("q = ", iNE.sub$Order.q)
     #
@@ -629,6 +629,8 @@ ggAO.link <- function(outcome, diversity = 'TD', text.size = 14){
 #' If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes.
 #' If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes.
 #' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
+#' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
+#' \code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.
 #' @param col.tree phylogenetic tree of column assemblage in interaction matrix.
 #' @param row.tree phylogenetic tree of row assemblage in interaction matrix.
 #' @param col.distM (required only when diversity = "FD"), a column species pairwise distance matrix for all column species of column assemblage in interaction matrix.
@@ -639,15 +641,35 @@ ggAO.link <- function(outcome, diversity = 'TD', text.size = 14){
 #'
 #' @examples
 #' \dontrun{
+#' ## Taxonomic diversity
 #' data(beetles)
-#' out1 <- estimateD.link(beetles, diversity = 'TD', datatype = "abundance",
-#'                        base = "coverage", level = 0.7, nboot = 30)
-#' out2 <- estimateD.link(beetles, diversity = 'TD', datatype = "abundance",
-#'                        base = "size", level = NULL, nboot = 30)
+#' output1 <- estimateD.link(beetles, diversity = 'TD', datatype = "abundance",
+#'                           base = "coverage", level = 0.7, nboot = 30)
+#' output1
+#' 
+#' ## Phylogenetic diversity
+#' output2 <- estimateD.link(beetles, diversity = 'PD', datatype = "abundance",
+#'                           base = "size", level = NULL, nboot = 30, col.tree = beetles_col_tree)
+#' output2
+#' 
+#' ## Functional diversity under single threshold
+#' data(beetles)
+#' data(beetles_col_distM)
+#' output3 = estimateD.link(data = beetles, diversity = 'FD', col.distM = beetles_col_distM, FDtype = "tau_values")
+#' output3
+#'
+#'
+#' ## Functional diversity with thresholds integrating from 0 to 1
+#' data(beetles)
+#' data(beetles_col_distM)
+#' output4 = estimateD.link(data = beetles, diversity = 'FD',
+#'                          col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
+#' output4
+#' 
 #' }
 #' @export
-estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "abundance", base = "size",
-                          level = NULL, nboot = 50, conf = 0.95,
+estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "abundance", base = "coverage",
+                          level = NULL, nboot = 50, conf = 0.95, PDtype = 'meanPD',
                           row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
   if(diversity == 'TD'){
 
@@ -699,14 +721,16 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
         aL_table = create.aili(data_2d, row.tree = row.tree, col.tree = col.tree) %>%
           select(branch.abun, branch.length, tgroup)%>%
           filter(branch.abun>0)
+        
+        ## boot
+        tbar <- sum(aL_table$branch.length*aL_table$branch.abun)/n
+        
         qPDm <-iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                     Lis = aL_table$branch.length%>%as.matrix(),
                                     m = size_m,
-                                    q = q,nt = n,cal = 'PD') %>% as.vector()
+                                    q = q,nt = n, reft = tbar,cal = PDtype) %>% as.vector()
 
-        ## boot
-        tbar <- sum(aL_table$branch.length*aL_table$branch.abun)/n
-
+        
         if(nboot >1 ){
           boot.sam <- sample.boot.phy(data_2d,nboot,row.tree = row.tree,col.tree = col.tree)
           PD.sd <- lapply(boot.sam, function(aL_boot){
@@ -714,7 +738,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
             tmp = iNEXT.3D:::PhD.m.est(ai = aL_boot$branch.abun,
                                        Lis = aL_boot$branch.length%>%as.matrix(),
                                        m = size_m,
-                                       q = q,nt = n,cal = 'PD')%>%
+                                       q = q,nt = n,cal = PDtype)%>%
               as.vector()%>%as.data.frame()
             return(tmp)
           })%>%
@@ -722,22 +746,20 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
         }else{
           PD.sd = c(0,0,0)
         }
-
-
-
-
-
-
+        
+        
         ##
         len = length(q)
         res = data.frame(Assemblage = rep(region_name,len),
                          SC = rep(level, rep(len,length(size_m))),
                          m = rep(size_m,rep(len,length(size_m))),
-                         Method = ifelse(level > ref, 'Extrapolated', 'Interpolated'),
+                         Method = ifelse(level > ref, 'Extrapolation', 'Rarefaction'),
                          Order.q = q,
                          qPD = qPDm,
                          qPD.UCL = qPDm+1.96*PD.sd,
-                         qPD.LCL = qPDm-1.96*PD.sd
+                         qPD.LCL = qPDm-1.96*PD.sd,
+                         Reftime = tbar, 
+                         Type = PDtype
         )
         return(res)
       }
@@ -816,7 +838,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
 #' @export
 
 iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), datatype = 'abundance',
-                          q = c(0, 1, 2), nboot = 20, conf = 0.95,
+                          q = c(0, 1, 2), nboot = 20, conf = 0.95, PDtype = 'meanPD',
                           row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL,
                           FDtype = "AUC", FDtau = NULL, FDcut_number = 30){
 
@@ -843,7 +865,7 @@ iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), dat
     if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
 
     dissimilarity = iNEXTbeta.PDlink(data = combined_list, level = level, datatype = datatype,
-                                     q =q ,row.tree = row.tree,col.tree = col.tree, nboot = nboot)
+                                     q =q ,row.tree = row.tree,col.tree = col.tree, nboot = nboot, PDtype = PDtype)
   }else if(diversity == 'FD' & FDtype == 'tau_values'){
     row_sp = c()
     col_sp = c()
@@ -989,11 +1011,11 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 
       new = df[id_obs[i],]
       new$SC = new$SC - 0.0001
-      new$Method = 'Interpolated'
+      new$Method = 'Rarefaction'
 
       newe = df[id_obs[i],]
       newe$SC = newe$SC + 0.0001
-      newe$Method = 'Extrapolated'
+      newe$Method = 'Extrapolation'
 
       df = rbind(df, new, newe)
 
@@ -1027,11 +1049,11 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 
       new = df[id_obs[i],]
       new$SC = new$SC - 0.0001
-      new$Method = 'Interpolated'
+      new$Method = 'Rarefaction'
 
       newe = df[id_obs[i],]
       newe$SC = newe$SC + 0.0001
-      newe$Method = 'Extrapolated'
+      newe$Method = 'Extrapolation'
 
       df = rbind(df, new, newe)
 
@@ -1042,13 +1064,13 @@ ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
     if (unique(outcome[[1]]$gamma$diversity) == 'FD_AUC') { ylab = "Functional dissimilarity (AUC)" }
 
   }
-  lty = c(Interpolated = "solid", Extrapolated = "dashed")
-  # lty = c(Interpolated = "solid", Extrapolated = "twodash")
+  lty = c(Rarefaction = "solid", Extrapolation = "dashed")
+  # lty = c(Rarefaction = "solid", Extrapolation = "twodash")
 
-  df$Method = factor(df$Method, levels = c('Interpolated', 'Extrapolated', 'Observed'))
+  df$Method = factor(df$Method, levels = c('Rarefaction', 'Extrapolation', 'Observed'))
 
   double_size = unique(df[df$Method=="Observed",]$Size)*2
-  double_extrapolation = df %>% filter(Method=="Extrapolated" & round(Size) %in% double_size)
+  double_extrapolation = df %>% filter(Method=="Extrapolation" & round(Size) %in% double_size)
   cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
   point_size = 2

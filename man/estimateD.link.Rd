@@ -9,10 +9,11 @@ estimateD.link(
   diversity = "TD",
   q = c(0, 1, 2),
   datatype = "abundance",
-  base = "size",
+  base = "coverage",
   level = NULL,
   nboot = 50,
   conf = 0.95,
+  PDtype = "meanPD",
   row.tree = NULL,
   col.tree = NULL,
   row.distM = NULL,
@@ -42,6 +43,9 @@ sampling uncertainty and constructing confidence intervals. Enter 0 to skip the 
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval, default is 0.95.}
 
+\item{PDtype}{(required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
+\code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.}
+
 \item{row.tree}{phylogenetic tree of row assemblage in interaction matrix.}
 
 \item{col.tree}{phylogenetic tree of column assemblage in interaction matrix.}
@@ -62,10 +66,30 @@ a data.frame of species diversity table including the sample size, sample covera
 }
 \examples{
 \dontrun{
+## Taxonomic diversity
 data(beetles)
-out1 <- estimateD.link(beetles, diversity = 'TD', datatype = "abundance",
-                       base = "coverage", level = 0.7, nboot = 30)
-out2 <- estimateD.link(beetles, diversity = 'TD', datatype = "abundance",
-                       base = "size", level = NULL, nboot = 30)
+output1 <- estimateD.link(beetles, diversity = 'TD', datatype = "abundance",
+                          base = "coverage", level = 0.7, nboot = 30)
+output1
+
+## Phylogenetic diversity
+output2 <- estimateD.link(beetles, diversity = 'PD', datatype = "abundance",
+                          base = "size", level = NULL, nboot = 30, col.tree = beetles_col_tree)
+output2
+
+## Functional diversity under single threshold
+data(beetles)
+data(beetles_col_distM)
+output3 = estimateD.link(data = beetles, diversity = 'FD', col.distM = beetles_col_distM, FDtype = "tau_values")
+output3
+
+
+## Functional diversity with thresholds integrating from 0 to 1
+data(beetles)
+data(beetles_col_distM)
+output4 = estimateD.link(data = beetles, diversity = 'FD',
+                         col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
+output4
+
 }
 }
