@@ -1649,15 +1649,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
 
   nms <- names(datalist)
   qtile <- qnorm(1 - (1 - conf)/2)
-  rt = c()
-  for(i in 1:length(datalist)){
-    aL <- create.aili(data = datalist[[i]],row.tree = row.tree,col.tree = col.tree)
-
-    x <- as.vector(datalist[[i]]) %>% .[. > 0]
-    n <- sum(x)
-    rt[i] = sum(aL$branch.abun*aL$branch.length/n)
-  }
-  reft = max(rt)
+  
   if (datatype == "abundance") {
     Estoutput <- lapply(1:length(datalist), function(i) {
 
@@ -1666,9 +1658,10 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
       x <- as.vector(datalist[[i]]) %>% .[. > 0]
       n <- sum(x)
       aL = filter(aL,branch.abun >0)
+      reft = sum(aL$branch.abun*aL$branch.length/n)
       qPDm <- iNEXT.3D:::PhD.m.est(ai = aL$branch.abun%>%as.matrix(),
-                                   Lis = aL$branch.length%>%as.matrix(), m = m[[i]], q = q, nt = n, reft = reft,
-                                   cal = cal) %>% as.numeric()
+                                   Lis = aL$branch.length%>%as.matrix(), m = m[[i]], q = q, nt = n, 
+                                   reft = reft, cal = cal) %>% as.numeric()
       covm = iNEXT.3D:::Coverage(x, datatype, m[[i]])
       if (unconditional_var) {
         goalSC <- unique(covm)
@@ -1694,8 +1687,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
                                                                        , drop = F], m = m[[i]], q = q, nt = n,
                                            reft = reft, cal = cal) %>% as.numeric()
             covm_b <- iNEXT.3D:::Coverage(ai_B[isn0], datatype, m[[i]])
-            qPD_unc_b <- unique(iNEXT.3D:::invChatPD_abu(x = ai_B[isn0], ai = ai_B[isn0], Lis = Li_b[isn0,
-                                                                                                     , drop = F], q = q, Cs = goalSC, n = n,
+            qPD_unc_b <- unique(iNEXT.3D:::invChatPD_abu(x = ai_B[isn0], ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], q = q, Cs = goalSC, n = n,
                                                          reft = reft, cal = cal))$qPD
             return(c(qPDm_b, covm_b, qPD_unc_b))
           }) %>% apply(., 1, sd)
@@ -1706,8 +1698,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
             Li_b <- boot.sam[[B]]$branch.length %>% as.matrix()
             colnames(Li_b) = paste0("T",reft)
             isn0 <- ai_B > 0
-            qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0,
-                                                                       , drop = F], m = m[[i]], q = q, nt = n,
+            qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], m = m[[i]], q = q, nt = n,
                                            reft = reft, cal = cal) %>% as.numeric()
             covm_b <- iNEXT.3D:::Coverage(ai_B[isn0], datatype, m[[i]])
             return(c(qPDm_b, covm_b))
@@ -1772,6 +1763,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
       x <- datalist[[i]] %>% .[rowSums(.) > 0, colSums(.) >
                                  0]
       n <- ncol(x)
+      reft = sum(aL$branch.abun*aL$branch.length/n)
       qPDm <- iNEXT.3D:::PhD.m.est(ai = aL$treeNabu$branch.abun,
                                    Lis = aL$BLbyT, m = m[[i]], q = q, nt = n, reft = reft,
                                    cal = cal) %>% as.numeric()
@@ -2470,7 +2462,6 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   for(i in 1:length(phydata)){
     rt[i] = sum(phydata[[i]]$branch.abun * phydata[[i]]$branch.length/sum(phydata[[i]][phydata[[i]]$tgroup == "Tip",]$branch.abun))
   }
-  reft = max(rt)
   
   est <- lapply(phydata,function(x){
     PD = my_PhD.q.est(ai = x$branch.abun,Lis = x$branch.length,q,nt = sum(x[x$tgroup == "Tip","branch.abun"]), cal = PDtype)
@@ -2502,7 +2493,7 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
                       UCL = est[[i]] + est.sd[[i]]*ci,
                       LCL = est[[i]] - est.sd[[i]]*ci,
                       Region = region_names[[i]],
-                      Reftime = reft,
+                      Reftime = rt[i],
                       Type = PDtype)
     
     out <- rbind(out,tmp)
@@ -2535,14 +2526,14 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   
   rt = c()
   for(i in 1:length(phydata)){
-    rt[i] = sum(phydata[[i]]$branch.abun * phydata[[i]]$branch.length/sum(phydata[[i]][phydata[[i]]$tgroup == "Tip",]$branch.abun))
+    rt[i] = sum(x$branch.abun * x$branch.length/sum(x[x$tgroup == "Tip",]$branch.abun))
   }
-  reft = max(rt)
   
   mle <- lapply(phydata, function(x){
     
     PD = iNEXT.3D:::PD.Tprofile(ai = x$branch.abun, Lis = as.matrix(x[, "branch.length", drop = F]), q = q,
-                                reft = reft, cal = PDtype, nt = sum(x[x$tgroup == "Tip","branch.abun"]))
+                                reft = sum(x$branch.abun * x$branch.length/sum(x[x$tgroup == "Tip",]$branch.abun)), 
+                                cal = PDtype, nt = sum(x[x$tgroup == "Tip","branch.abun"]))
     
     return(PD)
   })
@@ -2552,9 +2543,9 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   plan(multisession)
   mle.boot <- future_lapply(boot.sam, function(x){
     lapply(x, function(y){
-      # PD = iNEXT.3D:::PD.qprofile(y,q,cal = "PD",nt = sum(y[y$tgroup == "Tip",]$branch.abun))/sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)
       PD = iNEXT.3D:::PD.Tprofile(ai = y$branch.abun, Lis = as.matrix(y[, "branch.length", drop = F]), q = q,
-                                  reft = reft, cal = PDtype, nt = sum(y[y$tgroup == "Tip","branch.abun"]))
+                                  reft = sum(x$branch.abun * x$branch.length/sum(x[x$tgroup == "Tip",]$branch.abun)), 
+                                  cal = PDtype, nt = sum(y[y$tgroup == "Tip","branch.abun"]))
       return(PD)
     })
   }, future.seed=NULL)
@@ -2572,7 +2563,7 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
                       UCL = mle[[i]][1,] + mle.sd[[i]]*ci,
                       LCL = mle[[i]][1,] - mle.sd[[i]]*ci,
                       Region = region_names[[i]],
-                      Reftime = reft,
+                      Reftime = rt[i],
                       Type = PDtype)
     
     out <- rbind(out,tmp)
