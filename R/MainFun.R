@@ -499,8 +499,8 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
                                                                ObslinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
                                                                          col.tree = col.tree,conf = conf,PDtype = PDtype))
     NetDiv = NetDiv %>%
-      dplyr::select(Order.q, Estimate, s.e., LCL, UCL, Method, Region, Type ) %>%
-      set_colnames(c('Order.q', 'qD', "s.e.",'qD.LCL','qD.UCL', 'Method',"Network","Type"))
+      dplyr::select(Order.q, Estimate, s.e., LCL, UCL, Method, Region, Reftime, Type ) %>%
+      set_colnames(c('Order.q', 'qD', "s.e.",'qD.LCL','qD.UCL', 'Method',"Network", "Reftime","Type"))
     
   }
 
