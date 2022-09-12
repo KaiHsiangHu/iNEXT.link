@@ -1623,11 +1623,9 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   UCL <- index$qD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Network + Order.q ~ Method,
                  value.var = "qD")
-  index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 -
-                                                             (1 - conf)/2), LCL, UCL)
+  index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
-    index$LCL[index$LCL < index$Empirical & index$Order.q ==
-                0] <- index$Empirical[index$LCL < index$Empirical &
+    index$LCL[index$LCL < index$Empirical & index$Order.q == 0] <- index$Empirical[index$LCL < index$Empirical &
                                         index$Order.q == 0]
   index$Order.q <- c("Species richness", "Shannon diversity",
                      "Simpson diversity")
@@ -2526,7 +2524,7 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   
   rt = c()
   for(i in 1:length(phydata)){
-    rt[i] = sum(x$branch.abun * x$branch.length/sum(x[x$tgroup == "Tip",]$branch.abun))
+    rt[i] = sum(phydata[[i]]$branch.abun * phydata[[i]]$branch.length/sum(phydata[[i]][phydata[[i]]$tgroup == "Tip",]$branch.abun))
   }
   
   mle <- lapply(phydata, function(x){

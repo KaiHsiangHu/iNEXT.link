@@ -744,7 +744,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
           })%>%
             abind(along=3) %>% apply(1:2, sd)%>%as.vector()
         }else{
-          PD.sd = c(0,0,0)
+          PD.sd = rep(NA, length(qPDm))
         }
         
         
