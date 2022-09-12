@@ -1064,13 +1064,19 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
               }else {
                 qPDm_raw <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                                  Lis = aL_table$branch.length%>%as.matrix(),m = mm,
-                                                 q = q,nt = n,cal = PDtype)
+                                                 q = q,nt = n,
+                                                 reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
+                                                 cal = PDtype)
                 qPDm_floor <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                                    Lis = aL_table$branch.length%>%as.matrix(),m = floor(mm),
-                                                   q = q,nt = n,cal = PDtype)
+                                                   q = q,nt = n,
+                                                   reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
+                                                   cal = PDtype)
                 qPDm_ceil <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                                   Lis = aL_table$branch.length%>%as.matrix(),m = ceiling(mm),
-                                                  q = q,nt = n,cal = PDtype)
+                                                  q = q,nt = n,
+                                                  reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
+                                                  cal = PDtype)
                 # y = [ (y2 -y1) / (x2 - x1) ] (x - x1) + y1
                 qPDm_interpolated = ((qPDm_ceil - qPDm_floor) / (ceiling(mm) - floor(mm)) ) *(mm - floor(mm)) + qPDm_floor
                 return(qPDm_interpolated)
@@ -1078,7 +1084,9 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
             }else{
               qPDm <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                            Lis = aL_table$branch.length%>%as.matrix(),m = mm,
-                                           q = q,nt = n,cal = PDtype)
+                                           q = q,nt = n,
+                                           reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
+                                           cal = PDtype)
               return(qPDm)
             }
 
