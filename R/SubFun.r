@@ -841,13 +841,9 @@ get.netphydiv <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype 
 
   mle <- lapply(phydata, function(x){
 
-    # PD = iNEXT.3D:::PD.qprofile(aL = x, q = q, cal = "PD", nt = sum(x[x$tgroup == "Tip","branch.abun"]))/
-    #   sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun)
     PD = iNEXT.3D:::PD.Tprofile(ai = x$branch.abun, Lis = as.matrix(x[, "branch.length", drop = F]), q = q,
-                                reft = sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun), cal = "PD", nt = sum(x[x$tgroup == "Tip","branch.abun"]))/
-      sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun)
-
-    if(PDtype == 'PD'){PD = PD*sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun)}
+                                reft = sum(x$branch.abun*x$branch.length)/sum(x[x$tgroup == "Tip",]$branch.abun), cal = PDtype, nt = sum(x[x$tgroup == "Tip","branch.abun"]))
+    
     return(PD)
   })
   est <- lapply(phydata,function(x){
@@ -857,10 +853,8 @@ get.netphydiv <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype 
     # q = c(0,1,2)
     # nt = nt = sum(x[x$tgroup == "Tip",]$branch.abun)
     # cal = 'PD'
-
-    PD = my_PhD.q.est(ai = x$branch.abun,Lis = x$branch.length,q,nt = sum(x[x$tgroup == "Tip","branch.abun"]), cal = 'PD')/
-      sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun)
-    if(PDtype == 'PD'){PD = PD/sum(x$branch.abun*x$branch.length)*sum(x[x$tgroup == "Tip",]$branch.abun)}
+    PD = my_PhD.q.est(ai = x$branch.abun,Lis = x$branch.length,q,nt = sum(x[x$tgroup == "Tip","branch.abun"]), cal = PDtype)
+    
     return(PD)
   })
   boot.sam <- lapply(data, function(x){
@@ -871,10 +865,8 @@ get.netphydiv <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype 
     lapply(x, function(y){
       # PD = iNEXT.3D:::PD.qprofile(y,q,cal = "PD",nt = sum(y[y$tgroup == "Tip",]$branch.abun))/sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)
       PD = iNEXT.3D:::PD.Tprofile(ai = y$branch.abun, Lis = as.matrix(y[, "branch.length", drop = F]), q = q,
-                                  reft = sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun), cal = "PD", nt = sum(y[y$tgroup == "Tip","branch.abun"]))/
-        sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)
-
-      if(PDtype == 'PD'){PD = PD*sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)}
+                                  reft = sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun), cal = PDtype, nt = sum(y[y$tgroup == "Tip","branch.abun"]))
+      
       return(PD)
 
     })
@@ -888,9 +880,8 @@ get.netphydiv <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype 
   est.boot <- lapply(boot.sam, function(x){
     lapply(x, function(y){
       ## NEW
-      PD = my_PhD.q.est(ai = y$branch.abun,Lis = y$branch.length,q,nt = sum(y[y$tgroup == "Tip","branch.abun"]), cal = 'PD')/
-        sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)
-      if(PDtype == 'PD'){PD = PD*sum(y$branch.abun*y$branch.length)*sum(y[y$tgroup == "Tip",]$branch.abun)}
+      PD = my_PhD.q.est(ai = y$branch.abun,Lis = y$branch.length,q,nt = sum(y[y$tgroup == "Tip","branch.abun"]), cal = PDtype)
+      
       return(PD)
 
     })
@@ -947,14 +938,12 @@ get.netphydiv_iNE <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, kno
     out <- lapply(q, function(q_){
 
       PD <- lapply(m,function(y){
-        my_PhD.m.est(ai = phydata$branch.abun, Lis = phydata$branch.length, m = y, q = q_, nt = n, cal = 'PD')/tbar
+        my_PhD.m.est(ai = phydata$branch.abun, Lis = phydata$branch.length, m = y, q = q_, nt = n, cal = PDtype)
       })%>%unlist()
-
-      if(PDtype == 'meanPD'){PD = PD/tbar}
 
       PD.sd <- lapply(boot.sam, function(z){
         tmp <- lapply(m,function(y){
-          my_PhD.m.est(ai = z$branch.abun, Lis = z$branch.length, m = y, q = q_, nt = n, cal = 'PD')/tbar
+          my_PhD.m.est(ai = z$branch.abun, Lis = z$branch.length, m = y, q = q_, nt = n, cal = PDtype)
         })
         unlist(tmp)
       })
@@ -2542,7 +2531,7 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   mle.boot <- future_lapply(boot.sam, function(x){
     lapply(x, function(y){
       PD = iNEXT.3D:::PD.Tprofile(ai = y$branch.abun, Lis = as.matrix(y[, "branch.length", drop = F]), q = q,
-                                  reft = sum(x$branch.abun * x$branch.length/sum(x[x$tgroup == "Tip",]$branch.abun)), 
+                                  reft = sum(y$branch.abun * y$branch.length/sum(y[y$tgroup == "Tip",]$branch.abun)), 
                                   cal = PDtype, nt = sum(y[y$tgroup == "Tip","branch.abun"]))
       return(PD)
     })
