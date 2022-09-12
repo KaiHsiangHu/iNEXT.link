@@ -738,7 +738,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
             tmp = iNEXT.3D:::PhD.m.est(ai = aL_boot$branch.abun,
                                        Lis = aL_boot$branch.length%>%as.matrix(),
                                        m = size_m,
-                                       q = q,nt = n,cal = PDtype)%>%
+                                       q = q,nt = n, reft = tbar, cal = PDtype)%>%
               as.vector()%>%as.data.frame()
             return(tmp)
           })%>%
