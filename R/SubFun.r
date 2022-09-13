@@ -128,6 +128,8 @@ create.aili <- function(data,row.tree = NULL,col.tree = NULL) {
     tip <- row.tree$tip.label[-match(rownames(data),row.tree$tip.label)]
     mytree <- drop.tip(row.tree,tip)
     mytree <- iNEXT.3D:::phylo2phytree(mytree)
+    mytree$phytree[mytree$phytree$tgroup == 'Root', "branch.length"] = 0
+    
     tmp <- apply(data, 2, function(abun){
       phyExpandData(x=abun, labels=rownames(data), phy=mytree, datatype="abundance")
     })
