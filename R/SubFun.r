@@ -148,7 +148,8 @@ create.aili <- function(data,row.tree = NULL,col.tree = NULL) {
     tip <- col.tree$tip.label[-match(colnames(data),col.tree$tip.label)]
     mytree <- drop.tip(col.tree,tip)
     mytree <- iNEXT.3D:::phylo2phytree(mytree)
-
+    mytree$phytree[mytree$phytree$tgroup == 'Root', "branch.length"] = 0
+    
     tmp <- apply(data, 1, function(abun){
       # phyBranchAL_Abu(phylo = mytree, data = abun, rootExtend = T, refT = NULL)
       phyExpandData(x=abun, labels=colnames(data), phy=mytree, datatype="abundance")
@@ -168,9 +169,11 @@ create.aili <- function(data,row.tree = NULL,col.tree = NULL) {
     col.tip <- col.tree$tip.label[-match(colnames(data),col.tree$tip.label)]
     mytree.col <- drop.tip(col.tree,col.tip)
     mytree.col <- iNEXT.3D:::phylo2phytree(mytree.col)
+    mytree.col$phytree[mytree.col$phytree$tgroup == 'Root', "branch.length"] = 0
     row.tip <- row.tree$tip.label[-match(rownames(data),row.tree$tip.label)]
     mytree.row <- drop.tip(row.tree,row.tip)
     mytree.row <- iNEXT.3D:::phylo2phytree(mytree.row)
+    mytree.row$phytree[mytree.row$phytree$tgroup == 'Root', "branch.length"] = 0
 
     # create aiLi tables by col.tree (row by row)
     tmp0 <- apply(data, 1, function(abun){
