@@ -1057,6 +1057,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
               if(mm == round(mm)){
                 qPDm <- iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                              Lis = aL_table$branch.length%>%as.matrix(),m = mm,
+                                             reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
                                              q = q,nt = n,cal = PDtype)
                 return(qPDm)
               }else {
@@ -1331,16 +1332,20 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
           ## 1. gamma
           gamma <- iNEXT.3D:::PhD.m.est(ai = aL_table_gamma$branch.abun,
                                         Lis = aL_table_gamma$branch.length%>%as.matrix(),m = m_gamma,
+                                        reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
                                         q = q,nt = n,cal = 'PD')%>%t%>% as.vector()
           ## 2. alpha
           alpha =(iNEXT.3D:::PhD.m.est(ai = aL_table_alpha$branch.abun, Lis = aL_table_alpha$branch.length%>%as.matrix(),
+                                       reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
                                        m = m_alpha,q = q,nt = n,cal = 'PD')/N)%>%t%>% as.vector()
           ## 3. beta
           beta_obs = (iNEXT.3D:::PD.Tprofile(ai=aL_table_gamma$branch.abun,
                                              Lis=as.matrix(aL_table_gamma$branch.length),
+                                             reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
                                              q=q, nt=n, cal="PD") /
                         (iNEXT.3D:::PD.Tprofile(ai=aL_table_alpha$branch.abun,
                                                 Lis=as.matrix(aL_table_alpha$branch.length),
+                                                reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
                                                 q=q, nt=n, cal="PD") / N)) %>% unlist()%>%as.vector()
 
           res = list()
@@ -1679,8 +1684,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
             Li_b <- boot.sam[[B]]$branch.length %>% as.matrix()
             colnames(Li_b) = paste0("T",reft)
             isn0 <- ai_B > 0
-            qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0,
-                                                                       , drop = F], m = m[[i]], q = q, nt = n,
+            qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], m = m[[i]], q = q, nt = n,
                                            reft = reft, cal = cal) %>% as.numeric()
             covm_b <- iNEXT.3D:::Coverage(ai_B[isn0], datatype, m[[i]])
             qPD_unc_b <- unique(iNEXT.3D:::invChatPD_abu(x = ai_B[isn0], ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], q = q, Cs = goalSC, n = n,
@@ -1789,8 +1793,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
           ses <- sapply(1:nboot, function(B) {
             ai_B <- Boots$boot_data[, B]
             isn0 <- ai_B > 0
-            qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0,
-                                                                       , drop = F], m = m[[i]], q = q, nt = n,
+            qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], m = m[[i]], q = q, nt = n,
                                            reft = reft, cal = cal) %>% as.numeric()
             covm_b = Coverage(c(n, ai_B[isn0 & tgroup_B ==
                                           "Tip"]), "incidence_freq", m[[i]])
@@ -1805,8 +1808,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
           ses <- sapply(1:nboot, function(B) {
             ai_B <- Boots$boot_data[, B]
             isn0 <- ai_B > 0
-            qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0,
-                                                                       , drop = F], m = m[[i]], q = q, nt = n,
+            qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], m = m[[i]], q = q, nt = n,
                                            reft = reft, cal = cal) %>% as.numeric()
             covm_b = Coverage(c(n, ai_B[isn0 & tgroup_B ==
                                           "Tip"]), "incidence_freq", m[[i]])
