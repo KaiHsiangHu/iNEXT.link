@@ -170,12 +170,12 @@ create.aili <- function(data,row.tree = NULL,col.tree = NULL) {
     col.tip <- col.tree$tip.label[-match(colnames(data),col.tree$tip.label)]
     mytree.col <- drop.tip(col.tree,col.tip)
     mytree.col <- iNEXT.3D:::phylo2phytree(mytree.col)
-    mytree.col$phytree[mytree.col$phytree$tgroup == 'Root', "branch.length"] = max(ape::node.depth.edgelength(col.tree)) - mytree$phytree[mytree$phytree$tgroup == 'Root', ]$node.age
+    mytree.col$phytree[mytree.col$phytree$tgroup == 'Root', "branch.length"] = max(ape::node.depth.edgelength(col.tree)) - mytree.col$phytree[mytree.col$phytree$tgroup == 'Root', ]$node.age
     
     row.tip <- row.tree$tip.label[-match(rownames(data),row.tree$tip.label)]
     mytree.row <- drop.tip(row.tree,row.tip)
     mytree.row <- iNEXT.3D:::phylo2phytree(mytree.row)
-    mytree.row$phytree[mytree.row$phytree$tgroup == 'Root', "branch.length"] = max(ape::node.depth.edgelength(row.tree)) - mytree$phytree[mytree$phytree$tgroup == 'Root', ]$node.age
+    mytree.row$phytree[mytree.row$phytree$tgroup == 'Root', "branch.length"] = max(ape::node.depth.edgelength(row.tree)) - mytree.row$phytree[mytree.row$phytree$tgroup == 'Root', ]$node.age
 
     # create aiLi tables by col.tree (row by row)
     tmp0 <- apply(data, 1, function(abun){
@@ -3506,16 +3506,22 @@ bootstrap_forq = function(data,B,q,conf,FUNNAME){
   pi_hat = (data/n)*(1-lamda_hat*((1-data/n)^n))
   p_hat = c( pi_hat, rep( (1-C_hat)/f0, f0 ))
   random = rmultinom( B, n, p_hat )
-  #Bt_estimate <- sapply(c(1:B),function(i) FUNNAME(random[,i],q))
-  Bt_estimate <- apply(random,MARGIN = 2,function(i) FUNNAME(i,q))
   estimate <- FUNNAME(data,q)
-  #Interval_mean = apply( Bt_estimate, 1, mean)
-  Interval_mean = rowMeans(Bt_estimate)
-  Interval_sd = apply(Bt_estimate, 1, sd)
-  Interval_quantileL = apply( Bt_estimate, 1, quantile, p=(1-conf)/2)
-  Interval_quantileU = apply( Bt_estimate, 1, quantile, p=1-(1-conf)/2)
-  Upper_bound = estimate+Interval_quantileU-Interval_mean
-  Lower_bound = estimate+Interval_quantileL-Interval_mean
+  if (B > 0) {
+    #Bt_estimate <- sapply(c(1:B),function(i) FUNNAME(random[,i],q))
+    Bt_estimate <- apply(random,MARGIN = 2,function(i) FUNNAME(i,q))
+    #Interval_mean = apply( Bt_estimate, 1, mean)
+    Interval_mean = rowMeans(Bt_estimate)
+    Interval_sd = apply(Bt_estimate, 1, sd)
+    Interval_quantileL = apply( Bt_estimate, 1, quantile, p=(1-conf)/2)
+    Interval_quantileU = apply( Bt_estimate, 1, quantile, p=1-(1-conf)/2)
+    Upper_bound = estimate+Interval_quantileU-Interval_mean
+    Lower_bound = estimate+Interval_quantileL-Interval_mean
+  } else {
+    Interval_sd = NA
+    Upper_bound = NA
+    Lower_bound = NA
+  }
   result <- cbind("estimate"=estimate,"sd"=Interval_sd,"LCL"=Lower_bound,"UCL"=Upper_bound)
   result
 }
