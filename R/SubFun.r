@@ -821,6 +821,8 @@ sample.boot.phy <- function(data,B,row.tree = NULL,col.tree = NULL) {
     colnames(out)[1] = 'branch.abun'
     # out <- data.frame(branch.abun = ai,branch.length = p$branch.length,tgroup = p$tgroup,interaction = p$interaction)
     out <- out[out$branch.abun>0,]
+    out[out$tgroup == 'Root', "branch.abun"] = phy[phy$tgroup == 'Root', "branch.abun"]
+    out
   })
 }
 
