@@ -2,7 +2,7 @@ Package: iNEXT.link
 Type: Package
 Title: Network diversity iNterpolation/Extrapolation Estimation
 Version: 1.0.1
-Author: Anne Chao, Syuan-Yu Wang
+Author: Anne Chao, K.S. Hu, K.W. Chen, C.G. Lo, S.Y. Wang
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 Description: Provides functions for network diversity analysis. 
     (1) The iNEXT standardization for network diversity: computes and plots rarefaction and extrapolation of network diversity based on two types of standardization methods (sample size and sample coverage). 
@@ -40,4 +40,4 @@ Imports:
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.0
-Remotes: KaiHsiangHu/iNEXT.3D, KaiHsiangHu/iNEXT.4steps, KaiHsiangHu/iNEXT.Beta3D
+Remotes: AnneChao/iNEXT.3D, AnneChao/iNEXT.4steps, AnneChao/iNEXT.Beta3D
