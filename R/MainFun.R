@@ -1124,7 +1124,9 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
                       C = NULL){
   if (diversity == 'TD'){
     long = lapply(data, function(da){da%>%as.data.frame()%>%gather(key = "col_sp", value = "abundance")%>%.[,2]})
-
+    
+    if (is.null(C)) C = sapply(long, function(x) iNEXT.3D:::Coverage(x, datatype = 'abundance', 2 * sum(x))) %>% min
+    
     Spec <- lapply(E.class, function(e){
       each_class = lapply(seq_along(long), function(i){
         res = iNEXT.4steps::Evenness(long[[i]], q = q,datatype = datatype,
@@ -1145,6 +1147,11 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
       each_class%>%mutate(class = paste0("1 - E",e))
     })
     names(Spec) = paste0("1 - E",E.class)
+    
+    if (method == "Estimated") {
+      Spec <- append(list('Coverage' = C), Spec)
+    }
+    
     return(Spec)
 
   }else if (diversity == 'PD'){
@@ -1287,18 +1294,23 @@ ggSpec.link = function (output)
                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
   classdata = cbind(do.call(rbind, output))
   fig = ggplot(classdata, aes(x = Order.q, y = Specialization, colour = Network)) +
-    geom_line(size = 1.2) + geom_ribbon(aes(ymin = Spec.LCL,
-                                            ymax = Spec.UCL, fill = Network), alpha = 0.2, linetype = 0) +
-    scale_colour_manual(values = cbPalette) + scale_fill_manual(values = cbPalette) +
-    labs(x = "Order q", y = "Specialization") + theme_bw() + theme(legend.position = "bottom",
-                                                                   legend.box = "vertical", legend.key.width = unit(1.2,
-                                                                                                                    "cm"), legend.title = element_blank(), legend.margin = margin(0,
-                                                                                                                                                                                  0, 0, 0), legend.box.margin = margin(-10, -10, -5,
-                                                                                                                                                                                                                       -10), text = element_text(size = 16), plot.margin = unit(c(5.5,
-                                                                                                                                                                                                                                                                                  5.5, 5.5, 5.5), "pt")) + guides(linetype = guide_legend(keywidth = 2.5))
+    geom_line(size = 1.2) + 
+    geom_ribbon(aes(ymin = Spec.LCL, ymax = Spec.UCL, fill = Network), alpha = 0.2, linetype = 0) +
+    scale_colour_manual(values = cbPalette) + 
+    scale_fill_manual(values = cbPalette) +
+    labs(x = "Order q", y = "Specialization") + 
+    theme_bw() + 
+    theme(legend.position = "bottom", legend.box = "vertical", 
+          legend.key.width = unit(1.2, "cm"), 
+          legend.title = element_blank(), 
+          legend.margin = margin(0, 0, 0, 0), 
+          legend.box.margin = margin(-10, -10, -5, -10), 
+          text = element_text(size = 16), plot.margin = unit(c(5.5, 5.5, 5.5, 5.5), "pt")) + 
+    guides(linetype = guide_legend(keywidth = 2.5))
   if (length(output) != 1)
-    fig = fig + facet_wrap(~class) + theme(strip.text.x = element_text(size = 12,
-                                                                       colour = "purple", face = "bold"))
+    fig = fig + facet_wrap(~class) + 
+    theme(strip.text.x = element_text(size = 12, colour = "purple", face = "bold"))
+  
   return(fig)
 }
 
