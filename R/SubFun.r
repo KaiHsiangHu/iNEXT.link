@@ -2093,8 +2093,6 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
       temp2$qFD.LCL[temp2$qFD.LCL < 0] <- 0
       if (datatype == "incidence_freq")
         colnames(temp2)[colnames(temp2) == "m"] = "nt"
-      temp1$Type = "FD"
-      temp2$Type = "FD"
       temp1 = temp1 %>% select(-c("s.e.", "SC.s.e."))
       temp2 = temp2 %>% select(-"s.e.")
       ans <- list(size_based = temp1, coverage_based = temp2)
@@ -2359,8 +2357,6 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
       temp2$qAUC.LCL[temp2$qAUC.LCL < 0] <- 0
       if (datatype == "incidence_freq")
         colnames(temp2)[colnames(temp2) == "m"] = "nt"
-      temp1$Type = "FD"
-      temp2$Type = "FD"
       temp1 = temp1 %>% select(-c("s.e.", "SC.s.e."))
       temp2 = temp2 %>% select(-"s.e.")
       ans <- list(size_based = temp1, coverage_based = temp2)
