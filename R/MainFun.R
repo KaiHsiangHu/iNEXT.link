@@ -209,8 +209,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
   if(pmatch(datatype, TYPE) == -1)
     stop("ambiguous datatype")
   datatype <- match.arg(datatype, TYPE)
-  class_x <- class(data)[1]
-
+  
   if(datatype == "incidence"){
     stop('datatype="incidence" was no longer supported after v2.0.8,
          please try datatype="incidence_freq".')
@@ -218,7 +217,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
   if(datatype=="incidence_freq") datatype <- "incidence"
 
   if(datatype=="incidence_raw"){
-    if(class_x=="list"){
+    if(inherits(class(data)[1], "list")){
       data <- lapply(data, as.incfreq)
     }else{
       data <- as.incfreq(data)
@@ -687,9 +686,9 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
 
     if(datatype=='abundance'){
 
-      if(class(data)=="data.frame" | class(data)=="matrix"| class(data)=="integer" ) data = list(Region_1 = data)
+      if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Region_1 = data)
 
-      if(class(data)== "list"){
+      if(inherits(data, "list")){
         if(is.null(names(data))) region_names = paste0("Region_", 1:length(data)) else region_names = names(data)
         Ns = sapply(data, ncol)
         data_list = data
@@ -843,7 +842,7 @@ iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), dat
                           row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL,
                           FDtype = "AUC", FDtau = NULL, FDcut_number = 30){
 
-  if(class(data[[1]]) == 'data.frame' ){dat = list(data); }else{dat = data}
+  if(inherits(data[[1]], "data.frame")){dat = list(data); }else{dat = data}
 
   combined_list = lapply(dat, function(y){
 

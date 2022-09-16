@@ -50,9 +50,9 @@ phyExpandData <- function(x, labels, phy, datatype="abundance"){
   if(datatype=="incidence_freq" | datatype=="incidence")
     stop('only support datatype="incidence_raw"')
   
-  if(class(x)=="list"){
+  if(inherits(x, "list")){
     lapply(x, function(x) phyExpandData_(x, labels, phy, datatype))
-  }else if(class(x) %in% c("matrix","data.frame") & datatype=="abundance"){
+  }else if(inherits(x, c("data.frame", "matrix")) & datatype=="abundance"){
     apply(x, 2, function(x) phyExpandData_(x, labels, phy, datatype))
   }else{
     phyExpandData_(x, labels, phy, datatype)
@@ -122,7 +122,7 @@ phyExpandData_ <- function(x, labels, phy, datatype="abundance"){
 
 create.aili <- function(data,row.tree = NULL,col.tree = NULL) {
 
-  if (class(data)[1] != "matrix") { data <- as.matrix(data) }
+  if (inherits(data, "matrix")) { data <- as.matrix(data) }
 
   if ((is.null(row.tree)) == 0 & (is.null(col.tree) == 1)){
     tip <- row.tree$tip.label[-match(rownames(data),row.tree$tip.label)]
@@ -340,7 +340,7 @@ Evenness.profile <- function(x, q, datatype = c("abundance","incidence_freq"), m
 
     out = lapply(E.class, function(i) {
       tmp = sapply(1:length(x), function(k) even.class(q, empqD[empqD$Assemblage == names(x)[k], "qD"], empS[empS$Assemblage == names(x)[k], "qD"], i, x[[k]]/sum(x[[k]])))
-      if (class(tmp)[1] %in% c("numeric","integer")) {tmp = t(as.matrix(tmp, nrow = 1))}
+      if (inherits(tmp, c("numeric","integer"))) {tmp = t(as.matrix(tmp, nrow = 1))}
       rownames(tmp) = q
       tmp
     })
@@ -355,7 +355,7 @@ Evenness.profile <- function(x, q, datatype = c("abundance","incidence_freq"), m
                                                        S = empS[empS$Assemblage == names(x)[k], "qD"],
                                                        E.class = i))
       # x[[k]]/sum(x[[k]])))
-      if (class(tmp)[1] %in% c("numeric","integer")) {tmp = t(as.matrix(tmp, nrow = 1))}
+      if (inherits(tmp, c("numeric","integer"))) {tmp = t(as.matrix(tmp, nrow = 1))}
       rownames(tmp) = q
       tmp
     })
@@ -403,7 +403,7 @@ expanddata <- function(data){
 }
 
 datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
-  if (class(data)!="dataframe") data <- as.data.frame(data)
+  if (!inherits(data, "data.frame")) data <- as.data.frame(data)
 
   if(is.null(row.distM)){
     rdd = matrix(1,ncol = nrow(data),nrow = nrow(data))
@@ -448,7 +448,7 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
 }
 
 datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
-  if (class(data)!="dataframe") data <- as.data.frame(data)
+  if (!inherits(data, "data.frame")) data <- as.data.frame(data)
 
   rownames(data) = gsub('\\.', '_',rownames(data))
   colnames(data) = gsub('\\.', '_',colnames(data))
@@ -483,7 +483,7 @@ datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   return(res)
 }
 datainf <- function(data, datatype){
-  if (class(data)!="dataframe") data <- as.data.frame(data)
+  if (!inherits(data, "data.frame")) data <- as.data.frame(data)
   res <- matrix(0,16,1,dimnames=list(1:16, "value"))
 
   if(datatype == "abundance"){
@@ -991,9 +991,9 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
 
   if(datatype=='abundance'){
 
-    if(class(data)=="data.frame" | class(data)=="matrix" ) data = list(Region_1 = data)
+    if(inherits(data, c("data.frame", "matrix"))) data = list(Region_1 = data)
 
-    if(class(data)== "list"){
+    if(inherits(data, "list")){
       if(is.null(names(data))) region_names = paste0("Region_", 1:length(data)) else region_names = names(data)
       Ns = sapply(data, ncol)
       data_list = data
@@ -1478,7 +1478,7 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   if (is.na(pmatch(type, divtype)) == T)
     stop("Incorrect type of desired diversity type, please use either PD or meanPD.",
          call. = FALSE)
-  if (class(q) != "numeric")
+  if (!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a nonnegative integer value",
          call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F))
@@ -1587,8 +1587,7 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
     })
   }
   else {
-    if (class(size) == "numeric" | class(size) == "integer" |
-        class(size) == "double") {
+    if (inherits(data, c("numeric", "integer", "double"))) {
       size <- list(size = size)
     }
     if (length(size) != length(mydata))
@@ -1607,7 +1606,7 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
     })
   }
   FUN <- function(e) {
-    if (class(data) == "list") {
+    if (inherits(data, "list")) {
       inextPDlink(datalist = data, datatype = datatype,
                   col.tree = col.tree, row.tree = row.tree, q = q, reft = reftime, m = size,
                   cal = type, nboot = nboot, conf = conf, unconditional_var = TRUE)
@@ -1962,7 +1961,7 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
   # DATATYPE <- c("abundance", "incidence_freq")
   # if (is.na(pmatch(datatype, DATATYPE)) == T)
   #   stop("invalid datatype", call. = FALSE)
-  if (class(q) != "numeric")
+  if (!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a nonnegative integer value",
          call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F))
@@ -2059,8 +2058,7 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
       unique(mi)
     })
   }else {
-    if (class(size) == "numeric" | class(size) == "integer" |
-        class(size) == "double") {
+    if (inherits(size, c("numeric", "integer", "double"))) {
       size <- list(size = size)
     }
     if (length(size) != length(dat))
@@ -2076,7 +2074,7 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
     })
   }
   FUN <- function(e) {
-    if (class(dat) == "list") {
+    if (inherits(dat, "list")) {
       temp1 = iNEXT.3D:::iNextFD(datalist = dat, dij = distM, q = q,
                                  datatype = datatype, tau = threshold, nboot = nboot,
                                  conf = conf, m = size)
@@ -2223,7 +2221,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
   # DATATYPE <- c("abundance", "incidence_freq")
   # if (is.na(pmatch(datatype, DATATYPE)) == T)
   #   stop("invalid datatype", call. = FALSE)
-  if (class(q) != "numeric")
+  if (!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a nonnegative integer value",
          call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F))
@@ -2319,8 +2317,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
       unique(mi)
     })
   }else {
-    if (class(size) == "numeric" | class(size) == "integer" |
-        class(size) == "double") {
+    if (inherits(size, c("numeric", "integer", "double"))) {
       size <- list(size = size)
     }
     if (length(size) != length(dat))
@@ -2337,7 +2334,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
   }
 
   FUN <- function(e) {
-    if (class(dat) == "list") {
+    if (inherits(dat, "list")) {
       tau <- seq(0, 1, length.out = 30)
       temp1 = iNEXT.3D:::AUCtable_iNextFD(datalist = dat, dij = distM, q = q,
                                           datatype = datatype, tau = tau, nboot = nboot,
@@ -2646,7 +2643,7 @@ AsylinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = "abun
   DATATYPE <- c("abundance", "incidence_freq")
   if (is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
-  if (class(q) != "numeric")
+  if (!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a nonnegative integer value",
          call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F))
@@ -2785,7 +2782,7 @@ AsylinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype = "abu
   DATATYPE <- c("abundance", "incidence_freq")
   if (is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
-  if (class(q) != "numeric")
+  if (!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a nonnegative integer value",
          call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F))
@@ -2907,7 +2904,7 @@ ObslinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = "abun
   DATATYPE <- c("abundance", "incidence_freq")
   if (is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
-  if (class(q) != "numeric")
+  if (!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a nonnegative integer value",
          call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F))
@@ -3047,7 +3044,7 @@ ObslinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype = "abu
   DATATYPE <- c("abundance", "incidence_freq")
   if (is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
-  if (class(q) != "numeric")
+  if (!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a nonnegative integer value",
          call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F))
@@ -3170,7 +3167,7 @@ estimatelinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = 
   DATATYPE <- c("abundance", "incidence_freq")
   if (is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
-  if (class(q) != "numeric")
+  if (!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a nonnegative integer value",
          call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F))
@@ -3352,7 +3349,7 @@ estimatelinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype =
   DATATYPE <- c("abundance", "incidence_freq")
   if (is.na(pmatch(datatype, DATATYPE)) == T)
     stop("invalid datatype", call. = FALSE)
-  if (class(q) != "numeric")
+  if (!inherits(q, "numeric"))
     stop("invlid class of order q, q should be a nonnegative integer value",
          call. = FALSE)
   if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F))
