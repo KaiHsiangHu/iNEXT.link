@@ -545,7 +545,9 @@ ggAO.link <- function(outcome){
     
     names(outcome)[names(outcome) == 'Network'] = 'Assemblage'
     
-    iNEXT.3D::ggAO3D(outcome) + ylab('Phylogenetic network diversity')
+    iNEXT.3D::ggAO3D(outcome) + 
+      facet_grid(. ~ .) + 
+      ylab('Phylogenetic network diversity')
     
   }else if(diversity == 'FD'){
     
