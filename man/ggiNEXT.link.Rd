@@ -6,9 +6,7 @@
 \usage{
 ggiNEXT.link(
   outcome,
-  diversity = "TD",
   type = c(1, 2, 3),
-  se = TRUE,
   facet.var = "Assemblage",
   color.var = "Order.q"
 )
@@ -18,8 +16,6 @@ ggiNEXT.link(
 
 \item{type}{three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1});
 sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).}
-
-\item{se}{a logical variable to display confidence interval around the estimated sampling curve.}
 
 \item{facet.var}{create a separate plot for each value of a specified variable:
 no separation \cr (\code{facet.var="None"});
@@ -33,8 +29,6 @@ use different colors for diversity orders (\code{color.var="Order.q"});
 use different colors for sites (\code{color.var="Assemblage"});
 use different colors for combinations of order x assemblage (\code{color.var="Both"}).}
 
-\item{grey}{a logical variable to display grey and white ggplot2 theme.}
-
 \item{...}{other arguments passed on to methods. Not currently used.}
 }
 \value{
@@ -47,26 +41,26 @@ a ggplot2 object
 ## Taxonomic diversity
 data(beetles)
 output1 = iNEXT.link(data = beetles, diversity = 'TD', q = c(0,1,2))
-ggiNEXT.link(output1, diversity = 'TD')
+ggiNEXT.link(output1)
 
 
 ## Phylogenetic diversity
 data(beetles)
 data(beetles_col_tree)
 output2 = iNEXT.link(data = beetles, diversity = 'PD', q = c(0,1,2), col.tree = beetles_col_tree)
-ggiNEXT.link(output2, diversity = 'PD')
+ggiNEXT.link(output2)
 
 
 ## Functional diversity under single threshold
 data(beetles)
 data(beetles_col_distM)
 output3 = iNEXT.link(data = beetles, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "tau_values")
-ggiNEXT.link(output3, diversity = 'FD')
+ggiNEXT.link(output3)
 
 
 ## Functional diversity with thresholds integrating from 0 to 1
 data(beetles)
 data(beetles_col_distM)
 output4 = iNEXT.link(data = beetles, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "AUC")
-ggiNEXT.link(output4, diversity = 'FD')
+ggiNEXT.link(output4)
 }

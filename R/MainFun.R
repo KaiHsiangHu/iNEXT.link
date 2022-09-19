@@ -277,7 +277,6 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' @param outcome a list object computed by \code{\link{iNEXT.link}}.
 #' @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1});
 #' sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).
-#' @param se a logical variable to display confidence interval around the estimated sampling curve.
 #' @param facet.var create a separate plot for each value of a specified variable:
 #'  no separation \cr (\code{facet.var="None"});
 #'  a separate plot for each diversity order (\code{facet.var="Order.q"});
@@ -288,40 +287,47 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #'  use different colors for diversity orders (\code{color.var="Order.q"});
 #'  use different colors for sites (\code{color.var="Assemblage"});
 #'  use different colors for combinations of order x assemblage (\code{color.var="Both"}).
-#' @param grey a logical variable to display grey and white ggplot2 theme.
 #' @param ... other arguments passed on to methods. Not currently used.
 #' @return a ggplot2 object
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
 #' output1 = iNEXT.link(data = beetles, diversity = 'TD', q = c(0,1,2))
-#' ggiNEXT.link(output1, diversity = 'TD')
+#' ggiNEXT.link(output1)
 #'
 #'
 #' ## Phylogenetic diversity
 #' data(beetles)
 #' data(beetles_col_tree)
 #' output2 = iNEXT.link(data = beetles, diversity = 'PD', q = c(0,1,2), col.tree = beetles_col_tree)
-#' ggiNEXT.link(output2, diversity = 'PD')
+#' ggiNEXT.link(output2)
 #'
 #'
 #' ## Functional diversity under single threshold
 #' data(beetles)
 #' data(beetles_col_distM)
 #' output3 = iNEXT.link(data = beetles, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "tau_values")
-#' ggiNEXT.link(output3, diversity = 'FD')
+#' ggiNEXT.link(output3)
 #'
 #'
 #' ## Functional diversity with thresholds integrating from 0 to 1
 #' data(beetles)
 #' data(beetles_col_distM)
 #' output4 = iNEXT.link(data = beetles, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "AUC")
-#' ggiNEXT.link(output4, diversity = 'FD')
+#' ggiNEXT.link(output4)
 #' @export
-ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3), se = TRUE, facet.var = "Assemblage",
-                         color.var = "Order.q"){
+ggiNEXT.link <- function(outcome, type = c(1,2,3), facet.var = "Assemblage", color.var = "Order.q"){
+  
+  if (names(outcome)[1] == 'DataInfo') {
+    diversity = 'TD'
+  } else if (names(outcome)[1] == "PDInfo") {
+    diversity = 'PD'
+  } else if (names(outcome)[1] %in% c("FDInfo", "AUCInfo")) {
+    diversity = 'FD'
+  }
+  
   if(diversity == 'TD'){
-    res = iNEXT.3D::ggiNEXT3D(outcome, type = c(1,2,3),facet.var = facet.var)
+    res = iNEXT.3D::ggiNEXT3D(outcome, type = c(1,2,3), facet.var = facet.var)
     res[[1]] = res[[1]]+ylab("Taxonomic network diversity")+xlab("Sample size")
     res[[2]] = res[[2]]+xlab("Sample size")
     res[[3]] = res[[3]]+ylab("Taxonomic network diversity")
@@ -334,7 +340,7 @@ ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3), se = TRUE, 
     }
     out
   }else if(diversity == 'PD'){
-    res = iNEXT.3D::ggiNEXT3D(outcome, type = type,facet.var = facet.var)
+    res = iNEXT.3D::ggiNEXT3D(outcome, type = c(1,2,3), facet.var = facet.var)
     res[[1]] = res[[1]]+ylab("Phylogenetic network diversity")+xlab("Sample size")
     res[[2]] = res[[2]]+xlab("Sample size")
     res[[3]] = res[[3]]+ylab("Phylogenetic network diversity")
@@ -346,63 +352,9 @@ ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3), se = TRUE, 
       j = j+1
     }
     out
-    # # output = outcome
-    # # output$iNextEst$size_based = output$iNextEst$size_based%>%
-    # #   rename('qD'="PD", 'qD.UCL'="PD.UCL",'qD.LCL'="PD.LCL")
-    # # iNEXT.3D::ggiNEXT3D(output, type = 1)
-    # iNE <- outcome$iNextEst
-    # iNE.sub <- iNE[iNE$method == "observed",]
-    # iNE[iNE$method == "observed",]$method <-  "Rarefaction"
-    # ex <- iNE.sub
-    # ex$method <- "Extrapolation"
-    # iNE <- rbind(iNE,ex)
-    # iNE$method <- factor(iNE$method,levels = c("Rarefaction","Extrapolation"))
-    # iNE$Order.q = paste0("q = ", iNE$Order.q)
-    # iNE.sub$Order.q = paste0("q = ", iNE.sub$Order.q)
-    #
-    # if(type == 1){
-    #   # size-based
-    #   plot <- ggplot(iNE, aes(x = m,y = PD)) + geom_line(aes(color = Region,linetype = method),size = 1.2) +
-    #     facet_wrap(~Order.q, scales = "free") +
-    #     # facet_grid()
-    #     geom_ribbon(aes(x = m,ymax = PD.UCL ,ymin = PD.LCL,fill = Region),alpha = 0.25) + theme_bw()+
-    #     geom_point(aes(x = m,y = PD ,color = Region,shape = Region),size = 5,data = iNE.sub) +
-    #     xlab("Number of individuals")
-    # }else if(type == 2){
-    #   # output <- outcome$size_based
-    #   # if (length(unique(output$Order.q)) > 1) output <- subset(output, Order.q == unique(output$Order.q)[1])
-    #   # output$y.lwr <- output$SC.LCL
-    #   # output$y.upr <- output$SC.UCL
-    #   # id <- match(c(x_name, "Method", "SC", "SC.LCL", "SC.UCL", "Assemblage", "Order.q", "qD", "qD.LCL", "qD.UCL"), names(output), nomatch = 0)
-    #   # output[,1:10] <- output[, id]
-    #   #
-    #   # xlab_name <- paste0("Number of ", xlab_name)
-    #   # ylab_name <- "Sample Coverage"
-    #
-    # }else if(type == 3){
-    #   # coverage-based
-    #   plot <- ggplot(iNE) + geom_line(aes(x = SC,y = PD,color = Region,linetype = method),size = 1.2) +
-    #     facet_wrap(~Order.q, scales = "free") +
-    #     geom_ribbon(aes(x = SC,ymax = PD.UCL ,ymin = PD.LCL,fill = Region),alpha = 0.25) +
-    #     geom_point(aes(x = SC,y = PD ,color = Region,shape = Region),size = 5,data = iNE.sub) + theme_bw() +
-    #     xlab("Sample coverage")
-    # }
-    #
-    # plot +
-    #   theme(legend.position = "bottom",
-    #         legend.title=element_blank(), strip.text = element_text(size = stript.size),
-    #         text=element_text(size=text.size),
-    #         legend.key.width = unit(0.8,"cm"))  +
-    #   labs(y = "Phylogenetic network diversity", lty = "Method")
-    # # if(grey){
-    # #   g <- g +
-    # #     scale_fill_grey(start = 0, end = .4) +
-    # #     scale_colour_grey(start = .2, end = .2)
-    # # }
-
 
   }else if(diversity == 'FD'){
-    res = iNEXT.3D::ggiNEXT3D(outcome, type = type,facet.var = facet.var)
+    res = iNEXT.3D::ggiNEXT3D(outcome, type = c(1,2,3), facet.var = facet.var)
     res[[1]] = res[[1]]+ylab("Functional network diversity")+xlab("Sample size")
     res[[2]] = res[[2]]+xlab("Sample size")
     res[[3]] = res[[3]]+ylab("Functional network diversity")
@@ -415,6 +367,7 @@ ggiNEXT.link <- function(outcome, diversity = 'TD', type = c(1,2,3), se = TRUE, 
     }
     out
   }
+  
 }
 
 
@@ -497,9 +450,6 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
                                                                          col.tree = col.tree,conf = conf,PDtype = PDtype),
                                                                ObslinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
                                                                          col.tree = col.tree,conf = conf,PDtype = PDtype))
-    NetDiv = NetDiv %>%
-      dplyr::select(Order.q, Estimate, s.e., LCL, UCL, Method, Region, Reftime, Type ) %>%
-      set_colnames(c('Order.q', 'qD', "s.e.",'qD.LCL','qD.UCL', 'Method',"Network", "Reftime","Type"))
     
   }
 
@@ -546,65 +496,61 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
 #' \code{ggAO.link} Plots q-profile based on the outcome of \code{AO.link} using the ggplot2 package.\cr
 #'
 #' @param outcome the outcome of the functions \code{AO.link} .\cr
-#' @param diversity diversity type
-#' @param text.size control the text size of the output plot.
 #' @return a figure of asymptotic (or observed) diversity with order q\cr\cr
 #'
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
 #' output1 = AO.link(data = beetles, diversity = 'TD', q = seq(0, 2, 0.2))
-#' ggAO.link(output1, diversity = 'TD')
+#' ggAO.link(output1)
 #'
 #'
 #' ## Phylogenetic diversity
 #' data(beetles)
 #' data(beetles_col_tree)
 #' output2 = AO.link(data = beetles, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
-#' ggAO.link(output2, diversity = 'PD')
+#' ggAO.link(output2)
 #'
 #'
 #' ## Functional diversity under single threshold
 #' data(beetles)
 #' data(beetles_col_distM)
 #' output3 = AO.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.2), col.distM = beetles_col_distM, FDtype = "tau_values")
-#' ggAO.link(output3, diversity = 'FD')
+#' ggAO.link(output3)
 #'
 #'
 #' ## Functional diversity with thresholds integrating from 0 to 1
 #' data(beetles)
 #' data(beetles_col_distM)
 #' output4 = AO.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-#' ggAO.link(output4, diversity = 'FD')
+#' ggAO.link(output4)
 #' @export
-ggAO.link <- function(outcome, diversity = 'TD', text.size = 14){
-  cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
-                     "#330066", "#CC79A7", "#0072B2", "#D55E00"))
-  # if (sum(unique(outcome$method) %in% c("Estimate", "Observed")) == 0)
-  #   stop("Please use the outcome from specified function 'AsyD'")
-  if(diversity %in% c('TD','PD')){
-    if(diversity == 'TD'){
-      ylab = 'Taxonomic network diversity'
-    }else if(diversity == 'PD') {
-      ylab = 'Phylogenetic network diversity'
-    }
-    ggplot(outcome, aes(x = Order.q, y = qD, colour = Network, lty = Method)) +
-      geom_line(size = 1.2) + scale_colour_manual(values = cbPalette) +
-      geom_ribbon(data = outcome[outcome$Method == "Asymptotic", ],
-                  aes(ymin = qD.LCL, ymax = qD.UCL, fill = Network), alpha = 0.2, linetype = 0) +
-      scale_fill_manual(values = cbPalette) +
-      scale_linetype_manual(values = c(Asymptotic = 1, Empirical = 2)) +
-      labs(x = "Order q", y = ylab) + theme_bw() + theme(text = element_text(size = 10)) +
-      theme(legend.position = "bottom", legend.box = "vertical",
-            legend.key.width = unit(1.1, "cm"), legend.title = element_blank(),
-            legend.margin = margin(0, 0, 0, 0), legend.box.margin = margin(-10,-10, -5, -10),
-            text = element_text(size = text.size)
-      )
-
-    # +labs(x = "Order q", y = "Network phylogenetic diversity", lty = "Method") + scale_linetype_manual(values=c("dashed","solid"))
-
+ggAO.link <- function(outcome){
+  
+  if (colnames(outcome)[2] == 'qD') {
+    diversity = 'TD'
+  } else if (colnames(outcome)[2] == 'qPD') {
+    diversity = 'PD'
+  } else if (colnames(outcome)[2] %in% c('qFD', 'qAUC')) {
+    diversity = 'FD'
+  }
+  
+  if(diversity == 'TD'){
+    
+    names(outcome)[names(outcome) == 'Network'] = 'Assemblage'
+    
+    iNEXT.3D::ggAO3D(outcome) + ylab('Taxonomic network diversity')
+    
+  }else if(diversity == 'PD') {
+    
+    names(outcome)[names(outcome) == 'Network'] = 'Assemblage'
+    
+    iNEXT.3D::ggAO3D(outcome) + ylab('Phylogenetic network diversity')
+    
   }else if(diversity == 'FD'){
-    iNEXT.3D:::ggAO3D(outcome)+ylab("Functional network diversity")
+    
+    iNEXT.3D::ggAO3D(outcome) + ylab("Functional network diversity")
+    
   }
 
 }

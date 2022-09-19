@@ -4,14 +4,10 @@
 \alias{ggAO.link}
 \title{ggplot for Asymptotic Network diversity}
 \usage{
-ggAO.link(outcome, diversity = "TD", text.size = 14)
+ggAO.link(outcome)
 }
 \arguments{
 \item{outcome}{the outcome of the functions \code{AO.link} .\cr}
-
-\item{diversity}{diversity type}
-
-\item{text.size}{control the text size of the output plot.}
 }
 \value{
 a figure of asymptotic (or observed) diversity with order q\cr\cr
@@ -23,26 +19,26 @@ a figure of asymptotic (or observed) diversity with order q\cr\cr
 ## Taxonomic diversity
 data(beetles)
 output1 = AO.link(data = beetles, diversity = 'TD', q = seq(0, 2, 0.2))
-ggAO.link(output1, diversity = 'TD')
+ggAO.link(output1)
 
 
 ## Phylogenetic diversity
 data(beetles)
 data(beetles_col_tree)
 output2 = AO.link(data = beetles, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
-ggAO.link(output2, diversity = 'PD')
+ggAO.link(output2)
 
 
 ## Functional diversity under single threshold
 data(beetles)
 data(beetles_col_distM)
 output3 = AO.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.2), col.distM = beetles_col_distM, FDtype = "tau_values")
-ggAO.link(output3, diversity = 'FD')
+ggAO.link(output3)
 
 
 ## Functional diversity with thresholds integrating from 0 to 1
 data(beetles)
 data(beetles_col_distM)
 output4 = AO.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-ggAO.link(output4, diversity = 'FD')
+ggAO.link(output4)
 }

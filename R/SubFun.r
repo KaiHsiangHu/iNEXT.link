@@ -1620,17 +1620,18 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   })
   index <- AO.link(data = data, diversity = "PD",row.tree = row.tree, col.tree  = col.tree,
                    q = c(0, 1, 2), datatype = datatype, PDtype = type, nboot = nboot, conf = 0.95)
-  index = index[order(index$Network), ]
-  LCL <- index$qD.LCL[index$Method == "Asymptotic"]
-  UCL <- index$qD.UCL[index$Method == "Asymptotic"]
-  index <- dcast(index, formula = Network + Order.q ~ Method,
-                 value.var = "qD")
+  index = index[order(index$Assemblage), ]
+  LCL <- index$qPD.LCL[index$Method == "Asymptotic"]
+  UCL <- index$qPD.UCL[index$Method == "Asymptotic"]
+  index <- dcast(index, formula = Assemblage + Order.q ~ Method,
+                 value.var = "qPD")
   index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
     index$LCL[index$LCL < index$Empirical & index$Order.q == 0] <- index$Empirical[index$LCL < index$Empirical &
                                         index$Order.q == 0]
   index$Order.q <- c("Species richness", "Shannon diversity",
                      "Simpson diversity")
+  index[, 3:4] = index[, 4:3]
   colnames(index) <- c("Assemblage", "Phylogenetic Diversity",
                        "Phylogenetic Observed", "Phylogenetic Estimator", "s.e.",
                        "LCL", "UCL")
@@ -2479,11 +2480,13 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   ci <- qnorm(conf/2+0.5)
   out <- c()
   for (i in 1:length(data)) {
-    tmp <- data.frame(Order.q = q,Estimate = est[[i]],Method = "Asymptotic",
+    tmp <- data.frame(Order.q = q,
+                      qPD = est[[i]],
                       s.e. = est.sd[[i]],
-                      UCL = est[[i]] + est.sd[[i]]*ci,
-                      LCL = est[[i]] - est.sd[[i]]*ci,
-                      Region = region_names[[i]],
+                      qPD.LCL = est[[i]] - est.sd[[i]]*ci,
+                      qPD.UCL = est[[i]] + est.sd[[i]]*ci,
+                      Network = region_names[[i]],
+                      Method = "Asymptotic",
                       Reftime = rt[i],
                       Type = PDtype)
     
@@ -2549,11 +2552,13 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   ci <- qnorm(conf/2+0.5)
   out <- c()
   for (i in 1:length(data)) {
-    tmp <- data.frame(Order.q = q,Estimate = mle[[i]][1,],Method = "Empirical",
+    tmp <- data.frame(Order.q = q,
+                      qPD = mle[[i]][1,],
                       s.e. = mle.sd[[i]],
-                      UCL = mle[[i]][1,] + mle.sd[[i]]*ci,
-                      LCL = mle[[i]][1,] - mle.sd[[i]]*ci,
-                      Region = region_names[[i]],
+                      qPD.LCL = mle[[i]][1,] - mle.sd[[i]]*ci,
+                      qPD.UCL = mle[[i]][1,] + mle.sd[[i]]*ci,
+                      Network = region_names[[i]],
+                      Method = "Empirical",
                       Reftime = rt[i],
                       Type = PDtype)
     
