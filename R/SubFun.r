@@ -1620,10 +1620,10 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   })
   index <- AO.link(data = data, diversity = "PD",row.tree = row.tree, col.tree  = col.tree,
                    q = c(0, 1, 2), datatype = datatype, PDtype = type, nboot = nboot, conf = 0.95)
-  index = index[order(index$Assemblage), ]
+  index = index[order(index$Network), ]
   LCL <- index$qPD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qPD.UCL[index$Method == "Asymptotic"]
-  index <- dcast(index, formula = Assemblage + Order.q ~ Method,
+  index <- dcast(index, formula = Network + Order.q ~ Method,
                  value.var = "qPD")
   index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
