@@ -142,7 +142,7 @@ ggCompleteness.link <- function(outcome){
 #' @import colorRamps
 #' @import iNEXT.3D
 #' @import iNEXT.4steps
-#' @import iNEXT.Beta3D
+#' @import iNEXT.beta3D
 #' @import future
 #' @import future.apply
 #' @import ade4
@@ -734,10 +734,10 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
 
 
 
-# iNEXTBeta.link ---------------------------
-#' Interpolation (rarefaction) and extrapolation of network Beta diversity
+# iNEXTbeta.link ---------------------------
+#' Interpolation (rarefaction) and extrapolation of network beta diversity
 
-#' Function \code{iNEXTBeta.link} Interpolation and extrapolation of Beta diversity with order q
+#' Function \code{iNEXTbeta.link} Interpolation and extrapolation of beta diversity with order q
 #'
 #' @param data data can be input as a \code{lisst} of \code{data.frame}, each \code{data.frame} represents col.species-by-row.species abundance matrix; see Note 1 for an example.
 #' @param diversity selection of diversity type: \code{'TD'} = 'Taxonomic diversity', \code{'PD'} = 'Phylogenetic diversity', and \code{'FD'} = 'Functional diversity'.
@@ -758,34 +758,34 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
-#' output1 = iNEXTBeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
+#' output1 = iNEXTbeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
 #' output1
 #'
 #' ## Phylogenetic diversity
 #' data(beetles)
 #' data(beetles_col_tree)
-#' output2 = iNEXTBeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
+#' output2 = iNEXTbeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
 #' output2
 #'
 #'
 #' ## Functional diversity under single threshold
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output3 = iNEXTBeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
+#' output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
 #' output3
 #'
 #'
 #' ## Functional diversity with thresholds integrating from 0 to 1
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output4 = iNEXTBeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+#' output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
 #' output4
 #' @references
 #' Chao, A., Chazdon, R. L., Colwell, R. K. and Shen, T.-J.(2005). A new statistical approach for assessing similarity of species composition with incidence and abundance data. Ecology Letters 8, 148-159. (pdf file) Spanish translation in pp. 85-96 of Halffter, G. Soberon, J., Koleff, P. and Melic, A. (eds) 2005 Sobre Diversidad Biologica: el Sognificado de las Diversidades Alfa, Beta y Gamma. m3m-Monografias 3ercer Milenio, vol. 4, SEA, CONABIO, Grupo DIVERSITAS & CONACYT, Zaragoza. IV +242 pp.
 #' Chiu, C.-H., Jost, L. and Chao*, A. (2014). Phylogenetic beta diversity, similarity, and differentiation measures based on Hill numbers. Ecological Monographs 84, 21-44.
 #' @export
 
-iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), datatype = 'abundance',
+iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), datatype = 'abundance',
                           q = c(0, 1, 2), nboot = 20, conf = 0.95, PDtype = 'meanPD',
                           row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL,
                           FDtype = "AUC", FDtau = NULL, FDcut_number = 30){
@@ -801,7 +801,7 @@ iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), dat
   })
 
   if(diversity == 'TD'){
-    dissimilarity <- iNEXTBeta3D(data = combined_list, diversity = 'TD',level = level, datatype = datatype,
+    dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'TD',level = level, datatype = datatype,
                                  q = q ,nboot = nboot, conf = conf)
 
 
@@ -848,7 +848,7 @@ iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), dat
     colnames(distM) = distM_name
     rownames(distM) = distM_name
 
-    dissimilarity <- iNEXTBeta3D(data = combined_list, diversity = 'FD',level = level, datatype = datatype,
+    dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'FD',level = level, datatype = datatype,
                                  q =q ,nboot = nboot, conf = conf, FDdistM = distM, FDtype = "tau_value", FDtau = FDtau)
   }else if(diversity == 'FD' & FDtype == 'AUC'){
 
@@ -889,7 +889,7 @@ iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), dat
     rownames(distM) = distM_name
 
 
-    dissimilarity <- iNEXTBeta3D(data = combined_list, diversity = 'FD', level = level, datatype = datatype,
+    dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'FD', level = level, datatype = datatype,
                                  q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDcut_number = FDcut_number)
   }
 
@@ -897,49 +897,49 @@ iNEXTBeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), dat
 }
 
 
-# ggiNEXTBeta.link -------------------------------------------------------------------
-#' ggplot2 extension for outcome from \code{iNEXTBeta.link}
+# ggiNEXTbeta.link -------------------------------------------------------------------
+#' ggplot2 extension for outcome from \code{iNEXTbeta.link}
 #'
-#' \code{ggiNEXTBeta.link}: ggplot for Interpolation and extrapolation of Beta diversity with order q
+#' \code{ggiNEXTbeta.link}: ggplot for Interpolation and extrapolation of beta diversity with order q
 #'
-#' @param outcome the outcome from \code{"iNEXTBeta.link"}
+#' @param outcome the outcome from \code{"iNEXTbeta.link"}
 #' @param type selection of plot type : \code{type = 'B'} for plotting the gamma, alpha, and beta diversity ;
 #' \code{type = 'D'} for plotting 4 turnover dissimilarities.
 #' @param scale Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.
 #'
-#' @return a figure for Beta diversity or dissimilarity diversity.
+#' @return a figure for beta diversity or dissimilarity diversity.
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
-#' output1 = iNEXTBeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
-#' ggiNEXTBeta.link(output1, type = 'B')
-#' ggiNEXTBeta.link(output1, type = 'D')
+#' output1 = iNEXTbeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
+#' ggiNEXTbeta.link(output1, type = 'B')
+#' ggiNEXTbeta.link(output1, type = 'D')
 #'
 #' ## Phylogenetic diversity
 #' data(beetles)
 #' data(beetles_col_tree)
-#' output2 = iNEXTBeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
-#' ggiNEXTBeta.link(output2, type = 'B')
-#' ggiNEXTBeta.link(output2, type = 'D')
+#' output2 = iNEXTbeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
+#' ggiNEXTbeta.link(output2, type = 'B')
+#' ggiNEXTbeta.link(output2, type = 'D')
 #'
 #'
 #' ## Functional diversity under single threshold
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output3 = iNEXTBeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
-#' ggiNEXTBeta.link(output3, type = 'B')
-#' ggiNEXTBeta.link(output3, type = 'D')
+#' output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
+#' ggiNEXTbeta.link(output3, type = 'B')
+#' ggiNEXTbeta.link(output3, type = 'D')
 #'
 #'
 #' ## Functional diversity with thresholds integrating from 0 to 1
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output4 = iNEXTBeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
-#' ggiNEXTBeta.link(output4, type = 'B')
-#' ggiNEXTBeta.link(output4, type = 'D')
+#' output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+#' ggiNEXTbeta.link(output4, type = 'B')
+#' ggiNEXTbeta.link(output4, type = 'D')
 #' @export
 
-ggiNEXTBeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
+ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 
   if (type == 'B'){
 
