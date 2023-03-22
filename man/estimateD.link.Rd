@@ -8,14 +8,13 @@ estimateD.link(
   data,
   diversity = "TD",
   q = c(0, 1, 2),
-  datatype = "abundance",
   base = "coverage",
   level = NULL,
   nboot = 50,
   conf = 0.95,
-  PDtype = "meanPD",
   row.tree = NULL,
   col.tree = NULL,
+  PDtype = "meanPD",
   row.distM = NULL,
   col.distM = NULL,
   FDtype = "AUC",
@@ -30,8 +29,6 @@ integrates several threshold functional diversity to get diversity.}
 
 \item{q}{a numerical vector of the order of Hill number.}
 
-\item{datatype}{data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).}
-
 \item{base}{comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).}
 
 \item{level}{a sequence specifying the particular sample sizes or sample coverages(between 0 and 1).
@@ -43,12 +40,12 @@ sampling uncertainty and constructing confidence intervals. Enter 0 to skip the 
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval, default is 0.95.}
 
-\item{PDtype}{(required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
-\code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.}
-
 \item{row.tree}{phylogenetic tree of row assemblage in interaction matrix.}
 
 \item{col.tree}{phylogenetic tree of column assemblage in interaction matrix.}
+
+\item{PDtype}{(required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
+\code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.}
 
 \item{row.distM}{(required only when diversity = "FD"), a row species pairwise distance matrix for all row species of row assemblage in interaction matrix.}
 
@@ -68,12 +65,12 @@ a data.frame of species diversity table including the sample size, sample covera
 \dontrun{
 ## Taxonomic diversity
 data(beetles)
-output1 <- estimateD.link(beetles, diversity = 'TD', datatype = "abundance",
+output1 <- estimateD.link(beetles, diversity = 'TD', 
                           base = "coverage", level = 0.7, nboot = 30)
 output1
 
 ## Phylogenetic diversity
-output2 <- estimateD.link(beetles, diversity = 'PD', datatype = "abundance",
+output2 <- estimateD.link(beetles, diversity = 'PD', 
                           base = "size", level = NULL, nboot = 30, col.tree = beetles_col_tree)
 output2
 

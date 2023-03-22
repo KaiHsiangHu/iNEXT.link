@@ -15,7 +15,7 @@ ggiNEXT.link(
 \item{outcome}{a list object computed by \code{\link{iNEXT.link}}.}
 
 \item{type}{three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1});
-sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).}
+sample coverage curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).}
 
 \item{facet.var}{create a separate plot for each value of a specified variable:
 no separation \cr (\code{facet.var="None"});

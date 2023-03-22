@@ -4,13 +4,7 @@
 \alias{Completeness.link}
 \title{Sample Completeness main function}
 \usage{
-Completeness.link(
-  data,
-  q = seq(0, 2, 0.2),
-  datatype = "abundance",
-  nboot = 30,
-  conf = 0.95
-)
+Completeness.link(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95)
 }
 \arguments{
 \item{data}{a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.}

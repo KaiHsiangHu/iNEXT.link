@@ -9,13 +9,12 @@ iNEXTbeta.link(
   data,
   diversity = "TD",
   level = seq(0.5, 1, 0.05),
-  datatype = "abundance",
   q = c(0, 1, 2),
   nboot = 20,
   conf = 0.95,
-  PDtype = "meanPD",
   row.tree = NULL,
   col.tree = NULL,
+  PDtype = "meanPD",
   row.distM = NULL,
   col.distM = NULL,
   FDtype = "AUC",
@@ -37,12 +36,12 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
 
-\item{PDtype}{(required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
-\code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.}
-
 \item{row.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.}
 
 \item{col.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.}
+
+\item{PDtype}{(required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
+\code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.}
 
 \item{row.distM}{(required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.}
 
@@ -51,6 +50,8 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 \item{FDtype}{(required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
 
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
+
+\item{FDcut_number}{(required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is 30.}
 }
 \value{
 A list of seven lists with three-diversity and four-dissimilarity.

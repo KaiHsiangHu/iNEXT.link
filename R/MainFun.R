@@ -5,6 +5,10 @@
 #'
 #' @param data  a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param diversity selection of diversity type: \code{'TD'} = 'Taxonomic diversity', \code{'PD'} = 'Phylogenetic diversity', and \code{'FD'} = 'Functional diversity'.
+#' @param row.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.
+#' @param col.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.
+#' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
+#' @param col.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.
 #' @return
 #' a data.frame of basic data information incliuding sample size, observed species richness, sample coverage estimate, and the first ten abundance frequency counts.
 #' @examples
@@ -24,8 +28,10 @@
 #' data(beetles_col_distM)
 #' DataInfo.link(data = beetles, diversity = 'FD', col.distM = beetles_col_distM)
 #' @export
-DataInfo.link <- function(data, diversity = 'TD', datatype = "abundance", row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL){
+DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL){
 
+  datatype = "abundance"
+  
   if(diversity == 'PD'){
 
     if(!is.null(row.tree)){row.tree$tip.label = gsub('\\.', '_',row.tree$tip.label)}
@@ -74,7 +80,10 @@ DataInfo.link <- function(data, diversity = 'TD', datatype = "abundance", row.tr
 #' Chao,A.,Y.Kubota,D.Zelen??,C.-H.Chiu.
 #' Quantifying sample completeness and comparing diversities among assemblages.
 #' @export
-Completeness.link <- function(data, q = seq(0, 2, 0.2), datatype = "abundance", nboot = 30, conf = 0.95){
+Completeness.link <- function(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95){
+  
+  datatype = "abundance"
+  
   data_long <- lapply(data, function(tab){
     as.matrix(tab)%>%c()}
   )
@@ -122,12 +131,12 @@ ggCompleteness.link <- function(outcome){
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
-#' @param col.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.
 #' @param row.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.
+#' @param col.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.
 #' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
 #' \code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.
-#' @param col.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
+#' @param col.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @import ape
@@ -197,11 +206,15 @@ ggCompleteness.link <- function(outcome){
 #' Hsieh, T. C. and Chao, A. (2017). Rarefaction and extrapolation: making fair comparison of abundance-sensitive phylogenetic diversity among multiple assemblages. \emph{Systematic Biology}, 66, 100-111.
 #' @export
 
-iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundance", size = NULL, nT = NULL,
+iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                        endpoint = NULL, knots = 40, conf = 0.95, nboot = 30,
                        row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', row.distM = NULL, col.distM = NULL,
                        FDtype = "AUC", FDtau = NULL
 ){
+  
+  datatype = "abundance"
+  nT = NULL
+  
   # User interface
   TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
   if(is.na(pmatch(datatype, TYPE)))
@@ -276,7 +289,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), datatype = "abundan
 #' \code{ggiNEXT.link}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT.link}} Object to plot sample-size-based and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
 #' @param outcome a list object computed by \code{\link{iNEXT.link}}.
 #' @param type three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1});
-#' sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).
+#' sample coverage curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).
 #' @param facet.var create a separate plot for each value of a specified variable:
 #'  no separation \cr (\code{facet.var="None"});
 #'  a separate plot for each diversity order (\code{facet.var="Order.q"});
@@ -378,12 +391,12 @@ ggiNEXT.link <- function(outcome, type = c(1,2,3), facet.var = "Assemblage", col
 #'
 #' @param data a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
-#' @param q a numerical vector specifying the diversity orders. Default is \code{c(0,1,2)}.
+#' @param q a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
 #' @param method asymptotic or Observed
-#' @param col.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.
 #' @param row.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.
+#' @param col.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.
 #' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or \code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.
 #' @param col.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
@@ -419,9 +432,11 @@ ggiNEXT.link <- function(outcome, type = c(1,2,3), facet.var = "Assemblage", col
 #'                   col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
 #' output4
 #' @export
-AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 30, conf = 0.95, method = c("Asymptotic", "Observed"),
+AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, conf = 0.95, method = c("Asymptotic", "Observed"),
                     row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
-
+  
+  datatype = "abundance"
+  
   if ( !(diversity %in% c('TD', 'PD', 'FD')) )
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
 
@@ -567,21 +582,20 @@ ggAO.link <- function(outcome){
 #' @param data a \code{matrix}, \code{data.frame} (species by assemblages), or \code{list} of species abundance/incidence raw data.\cr
 #' @param diversity a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which
 #' integrates several threshold functional diversity to get diversity.
-#' @param q a numerical vector of the order of Hill number.
-#' @param datatype data type of input data: individual-based abundance data (\code{datatype = "abundance"}) or species by sampling-units incidence matrix (\code{datatype = "incidence_raw"}).
+#' @param q a numerical vector of the order of Hill number. Default is \code{seq(0, 2, 0.2)}.
 #' @param base comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).
-#' @param nboot a positive integer specifying the number of bootstrap replications when assessing
-#' sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50
 #' @param level a sequence specifying the particular sample sizes or sample coverages(between 0 and 1).
 #' If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes.
 #' If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes.
+#' @param nboot a positive integer specifying the number of bootstrap replications when assessing
+#' sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50
 #' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
+#' @param row.tree phylogenetic tree of row assemblage in interaction matrix.
+#' @param col.tree phylogenetic tree of column assemblage in interaction matrix.
 #' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
 #' \code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.
-#' @param col.tree phylogenetic tree of column assemblage in interaction matrix.
-#' @param row.tree phylogenetic tree of row assemblage in interaction matrix.
-#' @param col.distM (required only when diversity = "FD"), a column species pairwise distance matrix for all column species of column assemblage in interaction matrix.
 #' @param row.distM (required only when diversity = "FD"), a row species pairwise distance matrix for all row species of row assemblage in interaction matrix.
+#' @param col.distM (required only when diversity = "FD"), a column species pairwise distance matrix for all column species of column assemblage in interaction matrix.
 #' @param FDtype (required only when diversity = "FD"), select FD type: FDtype = "tau_values" for FD under specified threshold values, or FDtype = "AUC" (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is "AUC".
 #' @param FDtau (required only when diversity = "FD" and FDtype = "tau_values"), a numerical vector between 0 and 1 specifying tau values (threshold levels). If NULL (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @return a data.frame of species diversity table including the sample size, sample coverage, method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
@@ -590,12 +604,12 @@ ggAO.link <- function(outcome){
 #' \dontrun{
 #' ## Taxonomic diversity
 #' data(beetles)
-#' output1 <- estimateD.link(beetles, diversity = 'TD', datatype = "abundance",
+#' output1 <- estimateD.link(beetles, diversity = 'TD', 
 #'                           base = "coverage", level = 0.7, nboot = 30)
 #' output1
 #' 
 #' ## Phylogenetic diversity
-#' output2 <- estimateD.link(beetles, diversity = 'PD', datatype = "abundance",
+#' output2 <- estimateD.link(beetles, diversity = 'PD', 
 #'                           base = "size", level = NULL, nboot = 30, col.tree = beetles_col_tree)
 #' output2
 #' 
@@ -615,9 +629,12 @@ ggAO.link <- function(outcome){
 #' 
 #' }
 #' @export
-estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "abundance", base = "coverage",
-                          level = NULL, nboot = 50, conf = 0.95, PDtype = 'meanPD',
-                          row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
+estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "coverage",
+                          level = NULL, nboot = 50, conf = 0.95, 
+                          row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
+  
+  datatype = "abundance"
+  
   if(diversity == 'TD'){
 
     div = lapply(1:length(data), function(i){
@@ -754,6 +771,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
+#' @param FDcut_number (required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is 30.
 #' @return A list of seven lists with three-diversity and four-dissimilarity.
 #' @examples
 #' ## Taxonomic diversity
@@ -785,11 +803,13 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), datatype = "ab
 #' Chiu, C.-H., Jost, L. and Chao*, A. (2014). Phylogenetic beta diversity, similarity, and differentiation measures based on Hill numbers. Ecological Monographs 84, 21-44.
 #' @export
 
-iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05), datatype = 'abundance',
-                          q = c(0, 1, 2), nboot = 20, conf = 0.95, PDtype = 'meanPD',
-                          row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL,
+iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
+                          q = c(0, 1, 2), nboot = 20, conf = 0.95, 
+                          row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', row.distM = NULL, col.distM = NULL,
                           FDtype = "AUC", FDtau = NULL, FDcut_number = 30){
-
+  
+  datatype = 'abundance'
+  
   if(inherits(data[[1]], "data.frame")){dat = list(data); }else{dat = data}
 
   combined_list = lapply(dat, function(y){
@@ -1063,12 +1083,14 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 
 Spec.link <- function(data, q = seq(0, 2, 0.2),
                       diversity = 'TD',
-                      datatype = "abundance",
                       method = "Estimated",
                       nboot = 30,
                       conf = 0.95,
                       E.class = c(1:5),
                       C = NULL){
+  
+  datatype = "abundance"
+  
   if (diversity == 'TD'){
     long = lapply(data, function(da){da%>%as.data.frame()%>%gather(key = "col_sp", value = "abundance")%>%.[,2]})
     

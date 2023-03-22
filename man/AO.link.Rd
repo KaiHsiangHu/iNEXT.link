@@ -8,7 +8,6 @@ AO.link(
   data,
   diversity = "TD",
   q = seq(0, 2, 0.2),
-  datatype = "abundance",
   nboot = 30,
   conf = 0.95,
   method = c("Asymptotic", "Observed"),
@@ -26,7 +25,7 @@ AO.link(
 
 \item{diversity}{selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.}
 
-\item{q}{a numerical vector specifying the diversity orders. Default is \code{c(0,1,2)}.}
+\item{q}{a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.}
 
 \item{nboot}{a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.}
 
