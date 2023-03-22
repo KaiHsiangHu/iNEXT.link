@@ -243,7 +243,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
   res = list()
   if(diversity == 'TD'){
     ## 1. datainfo
-    datainfo = DataInfo.link(data = data, diversity = diversity, datatype = datatype)
+    datainfo = DataInfo.link(data = data, diversity = diversity)
     ## 2. iNterpolation/ Extrapolation
     data_long <- lapply(data, function(tab){
       as.matrix(tab)%>%c()}
@@ -260,18 +260,18 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
 
     if(!is.null(row.tree)){row.tree$tip.label = gsub('\\.', '_',row.tree$tip.label)}
     if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
-    res = iNEXTPDlink(data, q = q, datatype = datatype, size = size,
+    res = iNEXTPDlink(data, q = q, size = size,
                       endpoint = endpoint, knots = knots, conf = conf,
                       nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
 
   }else if (diversity == "FD" & FDtype == "tau_values") {
 
-    res = iNEXTlinkFD(data, q = q, datatype = datatype, size = size,
+    res = iNEXTlinkFD(data, q = q, size = size,
                       endpoint = endpoint, knots = knots, conf = conf,
                       nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM, threshold = FDtau)
   }
   else if (diversity == "FD" & FDtype == "AUC") {
-    res = iNEXTlinkAUC(data, q = q, datatype = datatype, size = size,
+    res = iNEXTlinkAUC(data, q = q, size = size,
                        endpoint = endpoint, knots = knots, conf = conf,
                        nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
   }
@@ -443,12 +443,12 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, conf
   if (diversity == 'TD') {
 
     if (sum(method == 'Asymptotic') == length(method))
-      NetDiv <- AsylinkTD(data, diversity = 'TD', q = q, datatype = "abundance", nboot = nboot, conf = conf) else if (sum(method == 'Observed') == length(method))
+      NetDiv <- AsylinkTD(data, diversity = 'TD', q = q, datatype = datatype, nboot = nboot, conf = conf) else if (sum(method == 'Observed') == length(method))
 
-        NetDiv <- ObslinkTD(data, diversity = 'TD', q = q, datatype = "abundance", nboot = nboot, conf = conf) else if (sum(method == c('Asymptotic', 'Observed')) == length(method))
+        NetDiv <- ObslinkTD(data, diversity = 'TD', q = q, datatype = datatype, nboot = nboot, conf = conf) else if (sum(method == c('Asymptotic', 'Observed')) == length(method))
 
-          NetDiv = rbind(AsylinkTD(data, diversity = 'TD', q = q, datatype = "abundance", nboot = nboot, conf = conf),
-                         ObslinkTD(data, diversity = 'TD', q = q, datatype = "abundance", nboot = nboot, conf = conf))
+          NetDiv = rbind(AsylinkTD(data, diversity = 'TD', q = q, datatype = datatype, nboot = nboot, conf = conf),
+                         ObslinkTD(data, diversity = 'TD', q = q, datatype = datatype, nboot = nboot, conf = conf))
 
   }
 
