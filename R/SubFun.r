@@ -1619,7 +1619,7 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
     return()
   })
   index <- AO.link(data = data, diversity = "PD",row.tree = row.tree, col.tree  = col.tree,
-                   q = c(0, 1, 2), datatype = datatype, PDtype = type, nboot = nboot, conf = 0.95)
+                   q = c(0, 1, 2), PDtype = type, nboot = nboot, conf = 0.95)
   index = index[order(index$Network), ]
   LCL <- index$qPD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qPD.UCL[index$Method == "Asymptotic"]
@@ -1635,7 +1635,7 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   colnames(index) <- c("Assemblage", "Phylogenetic Diversity",
                        "Phylogenetic Observed", "Phylogenetic Estimator", "s.e.",
                        "LCL", "UCL")
-  info <- DataInfo.link(data = data, diversity = "PD", datatype = datatype,
+  info <- DataInfo.link(data = data, diversity = "PD", 
                         row.tree = row.tree, col.tree = col.tree)
 
   return(list(PDInfo = info, PDiNextEst = out, PDAsyEst = index))
