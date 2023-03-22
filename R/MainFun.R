@@ -428,12 +428,12 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abun
   if (diversity == 'TD') {
 
     if (sum(method == 'Asymptotic') == length(method))
-      NetDiv <- AsylinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = nboot, conf = conf) else if (sum(method == 'Observed') == length(method))
+      NetDiv <- AsylinkTD(data, diversity = 'TD', q = q, datatype = "abundance", nboot = nboot, conf = conf) else if (sum(method == 'Observed') == length(method))
 
-        NetDiv <- ObslinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = nboot, conf = conf) else if (sum(method == c('Asymptotic', 'Observed')) == length(method))
+        NetDiv <- ObslinkTD(data, diversity = 'TD', q = q, datatype = "abundance", nboot = nboot, conf = conf) else if (sum(method == c('Asymptotic', 'Observed')) == length(method))
 
-          NetDiv = rbind(AsylinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = nboot, conf = conf),
-                         ObslinkTD(data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = nboot, conf = conf))
+          NetDiv = rbind(AsylinkTD(data, diversity = 'TD', q = q, datatype = "abundance", nboot = nboot, conf = conf),
+                         ObslinkTD(data, diversity = 'TD', q = q, datatype = "abundance", nboot = nboot, conf = conf))
 
   }
 
