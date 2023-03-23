@@ -437,8 +437,13 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
   tmp <- rowSums(as.matrix(as.vector(t(as.matrix(data)))))
   tmp = matrix(tmp/sum(tmp), ncol = 1)
   dmean <- sum( (tmp %*% t(tmp) ) * distM)
-
-  aivi = iNEXT.3D:::data_transform(data,distM,tau = dmean,datatype = datatype,integer = T)
+  
+  ##
+  data1 = unlist(data)
+  names(data1) = sapply(colnames(data), function(y) paste(y, rownames(data), sep = "."))
+  
+  ##
+  aivi = iNEXT.3D:::data_transform(data1,as.matrix(distM)[rownames(distM) %in% names(data1), colnames(distM) %in% names(data1)],tau = dmean,datatype = datatype,integer = T)
   res[8,1] <- sum(aivi$ai==1)
   res[9,1] <- sum(aivi$ai==2)
   res[10,1] <- dmean
