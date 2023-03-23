@@ -1082,7 +1082,6 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 #' @export
 
 Spec.link <- function(data, q = seq(0, 2, 0.2),
-                      diversity = 'TD',
                       method = "Estimated",
                       nboot = 30,
                       conf = 0.95,
@@ -1090,6 +1089,7 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
                       C = NULL){
   
   datatype = "abundance"
+  diversity = 'TD'
   
   if (diversity == 'TD'){
     long = lapply(data, function(da){da%>%as.data.frame()%>%gather(key = "col_sp", value = "abundance")%>%.[,2]})
