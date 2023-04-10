@@ -218,11 +218,11 @@ ggiNEXT.link(outcome, type = 1:3,facet.var = "Assemblage", color.var = "Order.q"
 
 Here `outcome` is the object of `iNEXT.link()`'s output. Three types of curves are allowed for different diversity classes:  
 
-(1) Sample-size-based R/E curve (`type=1`): see Figs. 1a and 2a in the main text. This curve plots diversity estimates with confidence intervals (if `se=TRUE`) as a function of sample size up to double the reference sample size, by default, or a user-specified `endpoint`.  
+(1) Sample-size-based R/E curve (`type=1`): see Figs. 1a and 2a in the main text. This curve plots diversity estimates with confidence intervals as a function of sample size up to double the reference sample size, by default, or a user-specified `endpoint`.  
 
-(2) Sample completeness curve (`type=2`) with confidence intervals (if `se=TRUE`): see Figs. 1b and 2b in the main text. This curve plots the sample coverage with respect to sample size for the same range described in (1).  
+(2) Sample completeness curve (`type=2`) with confidence intervals: see Figs. 1b and 2b in the main text. This curve plots the sample coverage with respect to sample size for the same range described in (1).  
 
-(3) Coverage-based R/E curve (`type=3`): see Figs. 1c and 2c in the main text. This curve plots the diversity estimates with confidence intervals (if `se=TRUE`) as a 
+(3) Coverage-based R/E curve (`type=3`): see Figs. 1c and 2c in the main text. This curve plots the diversity estimates with confidence intervals as a 
 function of sample coverage up to the maximum coverage obtained from the maximum size described in (1). 
 
 The argument `facet.var=("Order.q", "Assemblage")` is used to create a separate plot for each value of the specified variable. For example, the following code displays a separate plot (in Figs 1a and 1c) for each value of the diversity order q. The `ggiNEXT.link()` function is a wrapper around 
@@ -274,7 +274,13 @@ to compute three type diversity('TD','PD','FD') data information, which includin
 
 ```{r}
 DataInfo.link(beetles, diversity = 'TD')
+```
+
+```{r}
 DataInfo.link(beetles, diversity = 'PD', col.tree = beetles_col_tree)
+```
+
+```{r}
 DataInfo.link(beetles, diversity = 'FD', col.distM = beetles_col_distM)
 ```
 
