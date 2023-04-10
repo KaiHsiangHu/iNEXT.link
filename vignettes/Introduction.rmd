@@ -1,0 +1,731 @@
+---
+title: "A Quick Introduction to iNEXT.link"
+author: "Anne Chao, K.S. Hu, K.W. Chen, C.G. Lo, S.Y. Wang"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    vignette: >
+      %\VignetteIndexEntry{A Quick Introduction to iNEXT.link via Examples}
+      %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r , include = FALSE}
+knitr::opts_chunk$set(
+	fig.align = "center",
+	fig.height = 5,
+	fig.retina = 2,
+	fig.width = 7,
+	message = FALSE,
+	warning = FALSE,
+	collapse = TRUE,
+	comment = "#>",
+	include = TRUE
+)
+options("width"=200)
+library(iNEXT.link)
+```
+`iNEXT.link` is an R package that extends the concepts of iNEXT.3D, iNEXT.4step and iNEXT.beta3D to ecological networks. In this document, we provide a brief overview of `iNEXT.link` and its functionalities. Detailed information about the `iNEXT.link` functions can be found in the `iNEXT.link` manual, which is also available on [Github](https://github.com/AnneChao). For users without an R background, an online version("https://chao.shinyapps.io/iNEXT_link/") of `iNEXT.link` is also available.
+
+`iNEXT.link` is primarily designed to calculate and analyze various measures of diversity in ecological networks. Specifically, the package calculates three Hill numbers of order q (species richness, Shannon diversity, and Simpson diversity), as well as phylogenetic and functional diversity levels.
+
+For single ecological networks, `iNEXT.link` provides tools for analyzing diversity. The package provides two types of rarefaction and extrapolation (R/E) sampling curves to estimate diversity and confidence intervals for single ecological networks. These include sample-size-based (or size-based) R/E curves and coverage-based R/E curves.
+
+Moreover, `iNEXT.link` offers dissimilarity-turnover curves for the coverage-based R/E curves for gamma, alpha, and beta diversity measures, which can be used to compare diversity patterns across different ecological networks.
+
+
+## HOW TO CITE iNEXT.link
+If you publish your work based on the results from the `iNEXT.link` package, you should make references to the following methodology paper:
+
+- Chiu, C-H., Chao, A., Vogel, S., Kriegel, P. and Thorn, S. (2023). Network-diversity quantification and related statistical estimation: drawing on sampling models and methodologies from biodiversity research. To appear in Philosophical Transactions of the Royal Society B.
+
+## SOFTWARE NEEDED TO RUN iNEXT.link IN R
+- Required: [R](https://cran.r-project.org/)
+- Suggested: [RStudio IDE](https://www.rstudio.com/products/RStudio/#Desktop)
+
+## HOW TO RUN iNEXT.link:
+The `iNEXT.link` package can be downloaded from Anne Chao's [iNEXT.link_github](https://github.com/AnneChao/iNEXT.link) using the following commands. For a first-time installation, an additional visualization extension package (`ggplot2`) must be installed and loaded. 
+
+
+```{r eval=FALSE}
+## install the latest version from github
+install.packages('devtools')
+library(devtools)
+
+# install_github('AnneChao/iNEXT.3D')
+# install_github('AnneChao/iNEXT.4steps')
+# install_github('AnneChao/iNEXT.beta3D')
+
+install_github('AnneChao/iNEXT.link')
+
+## import packages
+library(iNEXT.link)
+```
+
+
+## For Single community:
+
+- **iNEXT.link** : Computes taxonomic, phylogenetic, and functional diversity estimates and sample coverage estimates.
+
+- **DataInfo.link** : exhibits basic data information
+    
+- **estimateD.link** : computes species diversity with a particular user-specified level of sample size or sample coverage.
+    
+- **AO.link**:compute asymptotic (or observed) diversity of order q.
+
+- **Completeness.link** : Calculates estimated sample completeness with order q. 
+
+- **Spec.link** : Computes specialization estimation (observed) with order q.
+
+## For Multi-community:
+
+- **iNEXTbeta.link** : Computing standardized gamma, alpha, beta diversity, and four dissimilarity-turnover indices for three dimensions: taxonomic, phylogenetic and functional diversity at specified sample coverage or sample size.
+
+
+## Visualizing Results:
+
+- **ggCompleteness.link** : Visualizing the output from the function `Completeness.link`
+
+- **ggSpec.link** : Visualizing the output from the function `Spec.link`
+
+- **ggAO.link** : Visualizing the output from the function `AO.link`
+
+- **ggiNEXT.link** : Visualizing the output from the function `iNEXT.link`
+    
+- **ggiNEXTbeta.link** : Visualizing the output from the function `iNEXTbeta.link`
+
+
+```{r include=FALSE}
+beetles=iNEXT.link::beetles_plotA
+beetles=list(Closed=beetles$Closed,Open=beetles$Open)
+beetles=lapply(beetles,as.data.frame)
+beetles_col_tree=iNEXT.link::beetles_col_tree
+beetles_col_distM=iNEXT.link::beetles_col_distM
+```
+
+## SINGLE COMMUNITY FUNCTION: iNEXT.link()
+
+We first describe the main function `iNEXT.link()` with default arguments: 
+
+```{r eval=FALSE}
+iNEXT.link(data,diversity = "TD", q = c(0, 1, 2), size = NULL, nT = NULL,
+           endpoint = NULL, knots = 40, conf = 0.95, nboot = 30, 
+           row.tree = NULL, col.tree = NULL, PDtype = "meanPD", 
+           row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL)
+```
+
+
+The arguments of this function are briefly described below, and will be explained in more details by illustrative examples in later text.This main function computes diversity estimates of order q, the sample coverage estimates and related statistics for K (if `knots = K`) evenly-spaced knots (sample sizes) between size 1 and the `endpoint`, where the endpoint is described below. Each knot represents a particular sample size for which diversity estimates will be calculated. By default, endpoint = double the reference sample size (total sample size for abundance data). For example, if `endpoint = 10`, `knot = 4`, diversity estimates will be computed for a sequence of samples with sizes (1, 4, 7, 10).  
+
+  
+<table style="width:100%;">
+<colgroup>
+<col width="20%">
+<col width="80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Argument</th>
+<th align="left">Description</th>
+
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>data</code></td>
+<td align="left">
+a list of <code>data.frames</code>, each <code>data.frames</code> represents col.species-by-row.species abundance matrix.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>diversity</code></td>
+<td align="left">selection of diversity type: <code>TD</code> = Taxonomic diversity, <code>PD</code> = Phylogenetic diversity, and <code>FD</code> = Functional diversity.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>q</code></td>
+<td align="left">a numerical vector specifying the diversity orders. Default is <code>c(0, 1, 2)</code>.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>size</code></td>
+<td align="left">an integer vector of sample sizes (number of individuals or sampling units) for which diversity estimates will be computed.
+If NULL, then diversity estimates will be computed for those sample sizes determined by the specified/default </code>endpoint</code> and </code>knots</code>.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>endpoint</code></td>
+<td align="left">an integer specifying the sample size that is the </code>endpoint</code> for rarefaction/extrapolation.
+If NULL, then </code>endpoint</code> </code>=</code> double reference sample size.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>knots</code></td>
+<td align="left">an integer specifying the number of equally-spaced </code>knots</code> between size 1 and the </code>endpoint</code>.Default is 40.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>conf</code></td>
+<td align="left">a positive number < 1 specifying the level of confidence interval. Default is 0.95.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>nboot</code></td>
+<td align="left">a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 30.</td>
+
+
+</tr>
+<tr class="odd">
+<td align="center"><code>row.tree</code></td>
+<td align="left">(required only when </code>diversity = "PD"</code> a phylogenetic tree of row assemblage in the pooled network row assemblage. </td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>col.tree</code></td>
+<td align="left">(required only when </code>diversity = "PD"</code>) a phylogenetic tree of column assemblage in the pooled network column assemblage. </td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>PDtype</code></td>
+<td align="left">(required only when </code>diversity = "PD"</code>) select PD type: </code>PDtype = "PD"</code> (effective total branch length) or </code>PDtype = "meanPD"</code> (effective number of equally divergent lineages). Default is </code>"meanPD"</code>, where </code>meanPD = PD/tree depth</code>.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>row.distM</code></td>
+<td align="left">(required only when </code>diversity = "FD"</code>) a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage. </td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>col.distM</code></td>
+<td align="left">(required only when </code>diversity = "FD"</code>) a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage. </td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>FDtype</code></td>
+<td align="left">(required only when </code>diversity = "FD"</code>), select FD type: </code>FDtype = "tau_values"</code> for FD under specified threshold values, or </code>FDtype = "AUC"</code> (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is </code>"AUC"</code>.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>FDtau</code></td>
+<td align="left">(required only when </code>diversity = "FD"</code> and </code>FDtype = "tau_values"</code>), a numerical vector between 0 and 1 specifying tau values (threshold levels). If </code>NULL</code> (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
+</tr>
+
+
+</tbody>
+</table>
+
+## DATA FORMAT/INFORMATION
+Supported Data Types:
+
+Individual-based abundance data : Input data for each assemblage/site include samples species abundances in an empirical sample of n individuals ("reference sample"). When dealing with N assemblages, the input data consists of N lists of species abundances  
+
+
+## RAREFACTION/EXTRAPOLATION VIA EXAMPLES
+
+The data sets (tree-beetles interaction data ) are included in iNEXT.link package. The experiment took place in the Steigerwald forest in Germany, where deadwood objects from six tree species were exposed in open and closed habitats. Saproxilic beetles were sampled using stem emergence traps and classified according to their functional traits. Data from four years were pooled for each plot and habitat, and pairwise distances were computed from the Gower distance. Here, the demonstration only uses data from plot A.  For these data, the following commands display the sample species abundances and run the `iNEXT.link()` function for three types of diversty  (`"TD"`, `"PD"`, `"FD"` with threshold dmean, `"AUC"` which integate FD from threshold 0-1) in `q = 0`. 
+
+If one diversity class required, then `iNEXT.link()` function returns including: `$Info` for summarizing data information; `$iNextEst` for showing diversity estimates along with related statistics for a series of rarefied and extrapolated samples; and `$AsyEst` for showing asymptotic diversity estimates along with related statistics, otherwise, returns lists which length equal to the number of diversity class required and also named by diversity class. Among each list include three data frames:`$Info`, `$iNextEst` and `$AsyEst`. 
+  
+`$Info`, as shown below, returns basic data information.  It can also be presented using function `DataInfo()` (for "TD"), `PDInfo()` (for "PD") and `AUCInfo()` (for "FD").
+
+Because the three kinds of diversity output are similar therefore the demo shows only TD.
+
+```{r echo=TRUE}
+linkoutTD=iNEXT.link(data = beetles,diversity = 'TD', q = c(0,1,2),nboot = 30)
+linkoutTD$DataInfo
+```
+
+Diversity estimates and related statistics are computed for these 40 knots, which locates the reference sample at the midpoint of the selected knots. If the argument se=TRUE, then the bootstrap method is applied to obtain the 95% confidence intervals for each diversity and sample coverage estimates. 
+
+For the sample size corresponding to each knot, the first data frame of list `$iNextEst` (as shown below for "size_based") under each diversity class includes the sample size (`m`, i.e., each of the 40 knots), the method (`interpolated`, `observed`, or `extrapolated`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order, the diversity estimate of order q (`qD`, `qPD`, `qFD` and `qAUC`), the 95% lower and upper confidence limits of diversity (`qD.LCL` with`qD.UCL`, `qPD.LCL` with `qPD.UCL`, `qFD.LCL` with `qFD.UCL` and `qAUC.LCL` with `qAUC.UCL`), and the sample coverage estimate (`SC`) along with the 95% lower and upper confidence limits of sample coverage (`SC.LCL`, `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve.
+
+
+```{r}
+head(linkoutTD$iNextEst$size_based)
+```
+
+The second data frame of list `$iNextEst` (as shown below for "coverage_based") under each class includes real sample coverage ("SC"), sample size (`m`, i.e., each of the 40 knots), the method (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size),the diversity estimate of order q (qD, qPD, qFD and qAUC) conditioning on "SC", the 95% lower and upper confidence limits of diversity (`qD.LCL` with `qD.UCL`, `qPD.LCL` with `qPD.UCL`, `qFD.LCL` with `qFD.UCL` and `qAUC.LCL` with `qAUC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the coverage-based R/E curves.
+
+
+```{r}
+head(linkoutTD$iNextEst$coverage_based)
+```
+
+`$AsyEst` lists the observed diversity, asymptotic estimates, estimated bootstrap s.e. and 95% confidence intervals for Hill numbers with q = 0(`Species richness`), 1(`Shannon diversity`), and 2(`Simpson diversity`). The estimated asymptotes and the observed diversity are calculated via the functions `AO.link()` . The output for the dunes data is shown below. All row and column variables are self-explanatory. 
+
+
+```{r}
+head(linkoutTD$AsyEst)
+```
+
+
+## GRAPHIC DISPLAYS: FUNCTION ggiNEXT.link()
+
+The function `ggiNEXT.link()`, which extends `ggplot2` with default arguments, is described as follows: 
+
+```{r eval=FALSE}
+ggiNEXT.link(outcome, type = 1:3,facet.var = "Assemblage", color.var = "Order.q")  
+```
+
+Here `outcome` is the object of `iNEXT.link()`'s output. Three types of curves are allowed for different diversity classes:  
+
+(1) Sample-size-based R/E curve (`type=1`): see Figs. 1a and 2a in the main text. This curve plots diversity estimates with confidence intervals (if `se=TRUE`) as a function of sample size up to double the reference sample size, by default, or a user-specified `endpoint`.  
+
+(2) Sample completeness curve (`type=2`) with confidence intervals (if `se=TRUE`): see Figs. 1b and 2b in the main text. This curve plots the sample coverage with respect to sample size for the same range described in (1).  
+
+(3) Coverage-based R/E curve (`type=3`): see Figs. 1c and 2c in the main text. This curve plots the diversity estimates with confidence intervals (if `se=TRUE`) as a 
+function of sample coverage up to the maximum coverage obtained from the maximum size described in (1). 
+
+The argument `facet.var=("Order.q", "Assemblage")` is used to create a separate plot for each value of the specified variable. For example, the following code displays a separate plot (in Figs 1a and 1c) for each value of the diversity order q. The `ggiNEXT.link()` function is a wrapper around 
+`ggplot2` package to create a R/E curve using a single line of code. The resulting object is of class `"ggplot"`, so can be manipulated using the `ggplot2` tools. 
+
+
+The argument `facet.var="Assemblage"` in `ggiNEXT.link` function creates a separate plot for each assembalge, therefore the different Order.q will seperated by different colours as shown below: 
+
+```{r }
+# Sample-size-based R/E curves, separating by "assemblage""
+ggiNEXT.link(linkoutTD, type = 1, facet.var = "Assemblage")
+```
+
+The argument `facet.var="Order.q"` in `ggiNEXT.link` function creates a separate plot for each order, therefore six assemblages will be seperated by different colours as shown below: 
+```{r }
+# Sample-size-based R/E curves, separating by "Order.q"
+ggiNEXT.link(linkoutTD, type = 1, facet.var = "Order.q")
+```
+
+
+The following commands return the sample completeness curve in which different colors are used for the six assemblages. Since the sample completeness curve are same for differnet class of diversity, `ggiNEXT.link` returns only one plot: 
+
+```{r}
+ggiNEXT.link(linkoutTD, type = 2, facet.var = "Order.q", color.var="Assemblage")
+```
+
+
+The following commands return the coverage-based R/E sampling curves in which different colors are used for the six assemblages (`facet.var="Assemblage"`) and for three orders(`facet.var="Order.q"`)
+
+```{r}
+ggiNEXT.link(linkoutTD, type = 3, facet.var="Assemblage")
+```
+
+```{r}
+ggiNEXT.link(linkoutTD, type = 3, facet.var="Order.q")
+```
+
+## DATA INFORMATION FUNCTION: DataInfo.link()
+
+We can supply the function
+```{r eval=FALSE}
+DataInfo.link(data, diversity = "TD", row.tree = NULL, 
+              col.tree = NULL, row.distM = NULL, col.distM = NULL) 
+```
+to compute three type diversity('TD','PD','FD') data information, which including sample size, observed species richness, sample coverage estimate, and the first ten abundance frequency counts, and so on.
+
+```{r}
+DataInfo.link(beetles, diversity = 'TD')
+DataInfo.link(beetles, diversity = 'PD',col.tree=beetles_col_tree)
+DataInfo.link(beetles, diversity = 'FD',col.distM=beetles_col_distM)
+```
+
+## POINT ESTIMATION FUNCTION: estimateD.link()
+We also supply the function 
+```{r eval=FALSE}
+estimateD.link(data, diversity = "TD", q = c(0, 1, 2),  
+               base = "coverage", level = NULL, nboot = 50, conf = 0.95, 
+               PDtype = "meanPD", row.tree = NULL, col.tree = NULL, row.distM = NULL, 
+               col.distM = NULL, FDtype = "AUC", FDtau = NULL) 
+```
+
+to compute three type diversity('TD','PD','FD') estimates with q = 0, 1, 2 for any particular level of sample size (`base="size"`) or any specified level of sample coverage (`base="coverage"`) for abundance data . If `level=NULL`, this function computes the diversity estimates for the minimum sample size/coverage among all assemblages. 
+
+For example, the following command returns the taxonomic diversity ('TD') with a specified level of sample coverage of 70% for the tree-beetles interaction data. For some assemblages, this coverage value corresponds to the rarefaction part whereas the others correspond to extrapolation, as indicated in the method of the output. 
+
+```{r}
+estimateD.link(beetles, diversity = 'TD', q = c(0,1,2), base = "coverage",level = 0.7)
+```
+
+## ASYMPTOTIC AND OBSERVED DIVERSITY FUNCTION: AO.link
+
+```{r,eval=FALSE}
+AO.link(data, diversity = "TD", q = seq(0, 2, 0.2),  nboot = 30, 
+        conf = 0.95, method = c("Asymptotic", "Observed"), 
+        row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, 
+        col.distM = NULL, FDtype = "AUC", FDtau = NULL)
+```
+
+The function `AO.link()` can compute three type diversity('TD','PD','FD'),which including empirical diversity and asymptotic diversity. For any specified level of q can be compute.
+
+For example, the following command returns an empirical taxonomic diversity('TD') and asymptotic taxonomic diversity('TD') for dunes data, along with its confidence interval, for a specified q level from 0 to 2.
+
+```{r}
+out1 <- AO.link(beetles, diversity = 'TD', q = seq(0, 2, 0.2), method = c("Asymptotic", "Observed"),
+                nboot = 5,conf = 0.95)
+
+out1
+```
+
+## GRAPHIC DISPLAYS FUNCTION: ggAO.link()
+
+Plots q-profile, time-profile, and tau-profile based on the outcome of AO.link using the ggplot2 package.
+
+The function `ggAO.link()`, which extends `ggplot2` with default arguments, is described as follows: 
+
+```{r,eval=FALSE}
+ggAO.link(outcome)
+```
+
+Here `outcome` is the object of `AO.link`'s output .
+
+```{r }
+# q profile curve""
+ggAO.link(out1)
+```
+
+
+## SINGLE COMMUNITY FUNCTION: Completeness.link()
+
+Function `Completeness.link()` provides a easy way to compute estimated sample completeness with order q. It has default arguments: 
+```{r eval=FALSE}
+Completeness.link(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95) 
+```
+
+<table style="width:100%;">
+<colgroup>
+<col width="20%">
+<col width="80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Argument</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>data</code></td>
+<td align="left">
+data should be input as a matrix/data.frame of species abundances (for a single assemblage), or a list of species abundance matrix/data(for multi-assemblage). </td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>q</code></td>
+<td align="left">a numerical vector specifying the diversity orders. Default is (0,0.2,0.4,...,2).</td>
+</tr>
+<tr class="odd">
+<td align="center"><code>nboot</code></td>
+<td align="left">a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 30.</td>
+</tr>
+<tr class="even">
+<td align="center"><code>conf</code></td>
+<td align="left">a positive number < 1 specifying the level of confidence interval. Default is 0.95.</td>
+</tr>
+
+</tbody>
+</table>
+
+## GRAPHIC DISPLAYS FUNCTION:  ggCompleteness.link()
+
+We also provides a realized function `ggCompleteness.link` to plot the output from `Completeness.link()`:
+
+```{r eval=FALSE}
+ggCompleteness.link(output)
+```
+
+<table style="width:100%;">
+<colgroup>
+<col width="20%">
+<col width="80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Argument</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>output</code></td>
+<td align="left">a table generated from function `Completeness.link`.
+</td>
+
+</tbody>
+</table>
+
+
+We use data beetles to calculate sample completeness and plot it.
+
+```{r fig.height=8, out.width="70%"}
+out1 <- Completeness.link(data = beetles)
+ggCompleteness.link(out1)
+```
+
+
+
+## SINGLE COMMUNITY FUNCTION: Spec.link()
+
+We describe the main function `Spec.link()` with default arguments: 
+
+```{r eval=FALSE}
+Spec.link(data, q = seq(0, 2, 0.2), method = "Estimated",
+         nboot = 30, conf = 0.95, E.class = c(1:5), C = NULL) 
+```
+
+<table style="width:100%;">
+<colgroup>
+<col width="20%">
+<col width="80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Argument</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>data</code></td>
+<td align="left">
+data should be input as a matrix/data.frame of species abundances (for a single assemblage), or a list of species abundance matrix/data(for multi-assemblage). </td>
+</td>
+</tr>
+<tr class="even">
+<td align="center"><code>q</code></td>
+<td align="left">a numerical vector specifying the diversity orders. Default is (0,0.2,0.4,...,2).</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>method</code></td>
+<td align="left">a binary calculation method with 'Estimated' or 'Empirical'.</td>
+</tr>
+<tr class="even">
+<td align="center"><code>nboot</code></td>
+<td align="left">a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.</td>
+</tr>
+<tr class="odd">
+<td align="center"><code>conf</code></td>
+<td align="left">a positive number < 1 specifying the level of confidence interval. Default is 0.95.</td>
+</tr>
+<tr class="even">
+<td align="center"><code>E.class</code></td>
+<td align="left">an integer vector between 1 to 5. There are five transformation for evenness in Chao, A. and Ricotta, C. (2019). Default is 1:5.</td>
+</tr>
+<tr class="odd">
+<td align="center"><code>C</code></td>
+<td align="left">a standardized coverage for calculating evenness index. It is used when `method = 'Estimated'`. If `NULL`, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (`C = Cmax`).</td>
+</tr>
+
+</tbody>
+</table>
+
+## GRAPHIC DISPLAYS FUNCTION: ggSpec.link()
+
+We provide a function `ggSpec.link()` to plot the output from `Spec.link()`.
+
+```{r eval=FALSE}
+ggSpec.link(output)
+```
+
+<table style="width:100%;">
+<colgroup>
+<col width="20%">
+<col width="80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Argument</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>output</code></td>
+<td align="left">a table generated from function `Spec.link`.
+</td>
+
+</tbody>
+</table>
+
+There are an example for funciton `Spec.link` and function `ggSpec.link`. 
+
+```{r}
+out1 <- Spec.link(data = beetles)
+ggSpec.link(out1)
+```
+
+## Multi-community
+
+## MULTI-COMMUNITY FUNCTION: iNEXTbeta.link()
+
+```{r eval=FALSE}
+iNEXTbeta.link(data, diversity = "TD", level = seq(0.5, 1, 0.05), 
+               q = c(0, 1, 2), nboot = 20, conf = 0.95, 
+               PDtype = "meanPD", row.tree = NULL, col.tree = NULL, row.distM = NULL, 
+               col.distM = NULL, FDtype = "AUC", FDtau = NULL, FDcut_number = 30) 
+```
+
+The arguments of this function are briefly described below, and will be explained in more details by illustrative examples in later text. This main function computes the gamma, alpha, beta diversity, and four dissimilarity-turnover indices estimates base on sample coverage.
+
+<table style="width:100%;">
+<colgroup>
+<col width="20%">
+<col width="80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Argument</th>
+<th align="left">Description</th>
+
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>data</code></td>
+<td align="left">
+data can be input as a <code>matrix<code>/<code>data.frame<code> (species by assemblages), or a <code>list<code> of <code>matrices<code>/<code>data.frames<code>, each <code>matrix<code> represents species-by-assemblages abundance <code>matrix<code></td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>diversity</code></td>
+<td align="left">selection of diversity type: <code>TD</code> = Taxonomic diversity, <code>PD</code> = Phylogenetic diversity, and <code>FD</code> = Functional diversity.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>level</code></td>
+<td align="left">a sequence specifying the particular sample coverages (between 0 and 1). Default is <code>seq(0.5, 1, 0.05)<code>.</td>
+
+
+
+</tr>
+<tr class="even">
+<td align="center"><code>q</code></td>
+<td align="left">a numerical vector specifying the diversity orders. Default is <code>c(0, 1, 2)</code>.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>nboot</code></td>
+<td align="left">a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter <code>0</code> to skip the bootstrap procedures. Default is <code>30</code>.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>conf</code></td>
+<td align="left">a positive number < 1 specifying the level of confidence interval. Default is <code>0.95</code>.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>PDtype</code></td>
+<td align="left">(required only when <code>diversity = "PD"</code>), select PD type: <code>PDtype = "PD"</code> (effective total branch length) or <code>PDtype = "meanPD"</code> (effective number of equally divergent lineages). Default is <code>"meanPD"</code>.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>row.tree</code></td>
+<td align="left">(required only when <code>diversity = "PD"</code>), a phylogenetic tree  of row assemblage in the pooled network row assemblage.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>col.tree</code></td>
+<td align="left">(required only when <code>diversity = "PD"</code>), a phylogenetic tree  of column assemblage in the pooled network column assemblage.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>row.disM</code></td>
+<td align="left">(required only when <code>diversity = "FD"</code>), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>col.disM</code></td>
+<td align="left">(required only when <code>diversity = "PD"</code>), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>FDtype</code></td>
+<td align="left">(required only when <code>diversity = "FD"</code>), select FD type: <code>FDtype = "tau_value"</code> for FD under a specified threshold value, or <code>FDtype = "AUC"</code> (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is <code>"AUC"</code>.</td>
+
+
+</tr>
+<tr class="even">
+<td align="center"><code>FDtau</code></td>
+<td align="left">(required only when <code>diversity = "FD"</code> and <code>FDtype = "tau_value"</code>), a numerical value between 0 and 1 specifying the tau value (threshold level). If <code>NULL</code> (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).</td>
+
+</tbody>
+</table>
+
+
+the `iNEXTbeta.link()` function returns the `"iNEXTbeta.link"` object including seven data frames for each regions: 
+
+- gamma 
+- alpha 
+- beta
+- C ( Sorensen-type non-overlap )
+- U ( Jaccard-type  non-overlap )
+- V ( Sorensen-type turnover )
+- S ( Jaccard-type  turnover ) 
+
+
+```{r eval=FALSE}
+# Taxonomic diversity
+Abundance_TD = iNEXTbeta.link(data = beetles, diversity = 'TD', q = c(0, 1, 2))
+Abundance_TD
+```
+
+
+```{r echo=FALSE}
+Abundance_TD = iNEXTbeta.link(data = beetles, diversity = 'TD', level = seq(0.5,1,0.1), q = c(0, 1, 2))
+lapply(Abundance_TD$Region_1, function(x) {
+    tmp = x[1:6,]
+    tmp[,c('Estimate', 'SC','Size', 's.e.', 'LCL', 'UCL')] = round(tmp[,c('Estimate', 'SC','Size', 's.e.', 'LCL', 'UCL')], 3)
+    tmp
+})
+```
+
+The output contains seven data frames: `gamma`, `alpha`, `beta`, `C`, `U`, `V`, `S`. For each data frame, it includes the diversity estimate (`Estimate`), the diversity order (`Order.q`), `Method` (Rarefaction, Observed, or Extrapolation, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the sample coverage estimate (`SC`), the sample size (`Size`), the standard error from bootstrap replications (`s.e.`), the 95% lower and upper confidence limits of diversity (`LCL`, `UCL`), and the name of region (`Region`). These diversity estimates with confidence intervals are used for plotting the diversity curve.
+
+## GRAPHIC DISPLAYS FUNCTION: ggiNEXTbeta.link()
+
+The function `ggiNEXTbeta.link()`, which extends `ggplot2` to the `"iNEXT.link"` object with default arguments, is described as follows: 
+
+<table style="width:100%;">
+<colgroup>
+<col width="20%">
+<col width="80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Argument</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>output</code></td>
+<td align="left">the output of <code>iNEXTbeta.link</code>.</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>type</code></td>
+<td align="left">selection of plot type : type = 'B' for plotting the gamma, alpha, and beta diversity; type = 'D' for plotting 4 turnover dissimilarities.</td>
+
+</tr>
+<tr class="odd">
+<td align="center"><code>scale</code></td>
+<td align="left">Are scales shared across all facets (the default, <code>"fixed"</code>), or do they vary across rows (<code>"free_x"</code>), columns (<code>"free_y"</code>), or both rows and columns (<code>"free"</code>)? Default is <code>"free"</code>.</td>
+
+
+</tbody>
+</table>
+
+
+The `ggiNEXTbeta.link()` function is a wrapper around the `ggplot2` package to create a R/E curve using a single line of code. The resulting object is of class `"ggplot"`, so it can be manipulated using the `ggplot2` tools. Users can visualize the output of beta diversity or four dissimilarities by setting the parameter <code>**type**</code>:
+
+```{r, fig.align='center', fig.height=6, fig.width=6}
+ggiNEXTbeta.link(Abundance_TD, type = 'B')
+```
+
+```{r, fig.align='center', fig.height=8, fig.width=6}
+ggiNEXTbeta.link(Abundance_TD, type = 'D')
+```
+
+
+
+## License
+
+## References
+- Chiu, C-H., Chao, A., Vogel, S., Kriegel, P. and Thorn, S. (2023). Network-diversity quantification and related statistical estimation: drawing on sampling models and methodologies from biodiversity research. To appear in Philosophical Transactions of the Royal Society B.
+
