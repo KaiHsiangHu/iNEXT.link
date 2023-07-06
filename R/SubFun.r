@@ -403,7 +403,7 @@ expanddata <- function(data){
 }
 
 datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
-  if (!inherits(data, "data.frame")) data <- as.data.frame(data)
+  #if (!inherits(data, "data.frame")) data <- as.data.frame(data)
 
   if(is.null(row.distM)){
     rdd = matrix(1,ncol = nrow(data),nrow = nrow(data))
@@ -423,8 +423,14 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
   rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1", "f2", "a1'", "a2'", "threshold")
 
   res[1,1] <- as.integer(sum(data))
-  res[2,1] <-  nrow(data[rowSums(data)>0])%>%as.integer()
-  res[3,1] <-  ncol(data[colSums(data)>0])%>%as.integer()
+  if("matrix" %in% class(data)){
+    res[2,1] <-  sum(rowSums(data)>0)%>%as.integer()
+    res[3,1] <-  sum(colSums(data)>0)%>%as.integer() 
+  }
+  else{
+    res[2,1] <-  nrow(data[rowSums(data)>0])%>%as.integer()
+    res[3,1] <-  ncol(data[colSums(data)>0])%>%as.integer() 
+  }
   res[4,1] <-  sum(data>0)%>%as.integer()
 
   res[5,1] <-  round(sum(data>0)/ncol(data)/nrow(data),4)
@@ -453,7 +459,8 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
 }
 
 datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
-  if (!inherits(data, "data.frame")) data <- as.data.frame(data)
+  if (!inherits(data, "data.frame")) 
+  #data <- as.data.frame(data)
 
   rownames(data) = gsub('\\.', '_',rownames(data))
   colnames(data) = gsub('\\.', '_',colnames(data))
@@ -471,8 +478,14 @@ datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1*", "f2*", "g1", "g2", "PD.obs", "mean_T")
 
   res[1,1] <- as.integer(sum(data))
-  res[2,1] <-  nrow(data[rowSums(data)>0])%>%as.integer()
-  res[3,1] <-  ncol(data[colSums(data)>0])%>%as.integer()
+  if("matrix" %in% class(data)){
+    res[2,1] <-  sum(rowSums(data)>0)%>%as.integer()
+    res[3,1] <-  sum(colSums(data)>0)%>%as.integer() 
+  }
+  else{
+    res[2,1] <-  nrow(data[rowSums(data)>0])%>%as.integer()
+    res[3,1] <-  ncol(data[colSums(data)>0])%>%as.integer() 
+  }
   res[4,1] <-  sum(data>0)%>%as.integer()
 
   res[5,1] <-  round(sum(data>0)/ncol(data)/nrow(data),4)
@@ -488,7 +501,7 @@ datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   return(res)
 }
 datainf <- function(data, datatype){
-  if (!inherits(data, "data.frame")) data <- as.data.frame(data)
+  #if (!inherits(data, "data.frame")) data <- as.data.frame(data)
   res <- matrix(0,16,1,dimnames=list(1:16, "value"))
 
   if(datatype == "abundance"){
@@ -502,8 +515,14 @@ datainf <- function(data, datatype){
 
   res[1,1] <- as.integer(sum(data))
   # res[2,1] <-  sum(ncol(data),nrow(data))
-  res[2,1] <-  nrow(data[rowSums(data)>0])%>%as.integer()
-  res[3,1] <-  ncol(data[colSums(data)>0])%>%as.integer()
+  if("matrix" %in% class(data)){
+    res[2,1] <-  sum(rowSums(data)>0)%>%as.integer()
+    res[3,1] <-  sum(colSums(data)>0)%>%as.integer() 
+  }
+  else{
+    res[2,1] <-  nrow(data[rowSums(data)>0])%>%as.integer()
+    res[3,1] <-  ncol(data[colSums(data)>0])%>%as.integer() 
+  }
   res[4,1] <-  sum(data>0)%>%as.integer()
   res[5,1] <-  round(sum(data>0)/ncol(data)/nrow(data),4)
   res[7:16,1] <- c(sum(data==1),sum(data==2),sum(data==3),sum(data==4),sum(data==5),
@@ -1337,12 +1356,12 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
           ## 1. gamma
           gamma <- iNEXT.3D:::PhD.m.est(ai = aL_table_gamma$branch.abun,
                                         Lis = aL_table_gamma$branch.length%>%as.matrix(),m = m_gamma,
-                                        reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
-                                        q = q,nt = n,cal = 'PD')%>%t%>% as.vector()
+                                        reft = sum(aL_table_gamma$branch.abun * aL_table_gamma$branch.length/sum(aL_table_gamma$branch.abun)),
+                                        q = q,nt = n,cal = PDtype)%>%t%>% as.vector()
           ## 2. alpha
           alpha =(iNEXT.3D:::PhD.m.est(ai = aL_table_alpha$branch.abun, Lis = aL_table_alpha$branch.length%>%as.matrix(),
-                                       reft = sum(aL_table$branch.abun * aL_table$branch.length/sum(aL_table[aL_table$tgroup == "Tip",]$branch.abun)),
-                                       m = m_alpha,q = q,nt = n,cal = 'PD')/N)%>%t%>% as.vector()
+                                       reft = sum(aL_table_alpha$branch.abun * aL_table_alpha$branch.length/sum(aL_table_alpha$branch.abun)),
+                                       m = m_alpha,q = q,nt = n,cal = PDtype)/N)%>%t%>% as.vector()
           ## 3. beta
           beta_obs = (iNEXT.3D:::PD.Tprofile(ai=aL_table_gamma$branch.abun,
                                              Lis=as.matrix(aL_table_gamma$branch.length),

@@ -27,7 +27,7 @@ estimateD.link(
 \item{diversity}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which
 integrates several threshold functional diversity to get diversity.}
 
-\item{q}{a numerical vector of the order of Hill number.}
+\item{q}{a numerical vector of the order of Hill number. Default is \code{seq(0, 2, 0.2)}.}
 
 \item{base}{comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).}
 
