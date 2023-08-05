@@ -1,5 +1,5 @@
 ---
-title: "A Quick Introduction to iNEXT.link"
+title: "A Quick Introduction to iNEXT.link via Examples"
 author: "Anne Chao, K.S. Hu, K.W. Chen, C.G. Lo, S.Y. Wang"
 date: "`r Sys.Date()`"
 output:
@@ -25,7 +25,7 @@ options("width"=200)
 library(iNEXT.link)
 ```
 
-`iNEXT.link` is an R package that extends the concepts of `iNEXT.3D` (Chao et al., 2021), `iNEXT.4step` (Chao et al., 2020) and `iNEXT.beta3D` (Chao et al., 2023) to ecological networks (Chiu et al., 2023). In this document, we provide a brief overview of `iNEXT.link` and its functionalities. Detailed information about the `iNEXT.link` functions can be found in the `iNEXT.link` manual, which is also available on [Github](https://github.com/AnneChao). For users without an R background, an online version ("https://chao.shinyapps.io/iNEXT_link/") of `iNEXT.link` is also available.
+`iNEXT.link` is an R package that extends the concepts of `iNEXT.3D` (Chao et al., 2021), `iNEXT.4step` (Chao et al., 2020) and `iNEXT.beta3D` (Chao et al., 2023) to ecological networks (Chiu et al., 2023). In this document, we provide a brief overview of `iNEXT.link` and its functionalities. Detailed information about the `iNEXT.link` functions can be found in the `iNEXT.link` manual, which is also available on [Github](https://github.com/AnneChao). For users without an R background, an online version (https://chao.shinyapps.io/iNEXT_link/) of `iNEXT.link` is also available.
 
 `iNEXT.link` is primarily designed to calculate and analyze various measures of diversity in ecological networks. Specifically, the package calculates three Hill numbers of order q (species richness, Shannon diversity, and Simpson diversity) in taxonomic diversity level, as well as phylogenetic and functional diversity levels.
 
@@ -45,7 +45,7 @@ If you publish your work based on the results from the `iNEXT.link` package, you
 - Suggested: [RStudio IDE](https://www.rstudio.com/products/RStudio/#Desktop)
 
 ## HOW TO RUN iNEXT.link:
-The `iNEXT.link` package can be downloaded from Anne Chao's [iNEXT.link_github](https://github.com/AnneChao/iNEXT.link) using the following commands. For a first-time installation, an additional visualization extension package (`ggplot2`) must be installed and loaded. 
+The `iNEXT.link` package can be downloaded from Anne Chao's [iNEXT.link_github](https://github.com/AnneChao/iNEXT.link) using the following commands. For a first-time installation, an additional visualization extension package (`ggplot2`) from CRAN and (`iNEXT.3D`), (`iNEXT.4steps`), and (`iNEXT.beta3D`) from Anne Chao's github must be installed and loaded. 
 
 
 ```{r eval=FALSE}
@@ -99,6 +99,8 @@ library(iNEXT.link)
 - **ggiNEXTbeta.link** : Visualizing the output from the function `iNEXTbeta.link`
 
 
+First, we load data from `iNEXT.link`:
+
 ```{r include=FALSE}
 beetles = iNEXT.link::beetles_plotA
 beetles = list(Closed = beetles$Closed, Open = beetles$Open)
@@ -119,7 +121,7 @@ iNEXT.link(data,diversity = "TD", q = c(0, 1, 2), size = NULL, nT = NULL,
 ```
 
 
-The arguments of this function are briefly described below, and will be explained in more details by illustrative examples in later text.This main function computes diversity estimates of order q, the sample coverage estimates and related statistics for K (if `knots = K`) evenly-spaced knots (sample sizes) between size 1 and the `endpoint`, where the endpoint is described below. Each knot represents a particular sample size for which diversity estimates will be calculated. By default, endpoint = double the reference sample size (total sample size for abundance data). For example, if `endpoint = 10`, `knot = 4`, diversity estimates will be computed for a sequence of samples with sizes (1, 4, 7, 10).  
+The arguments of this function are briefly described below, and will be explained in more details by illustrative examples in later text.This main function computes diversity estimates of order q, the sample coverage estimates and related statistics for K (if `knots = K`) evenly-spaced knots (sample sizes) between size 1 and the `endpoint`, where the endpoint is described below. Each knot represents a particular sample size for which diversity estimates will be calculated. By default, endpoint = double the reference sample size (total sample size for interaction data (so calles abundance data in iNEXT.3D)). For example, if `endpoint = 10`, `knot = 4`, diversity estimates will be computed for a sequence of samples with sizes (1, 4, 7, 10).  
 
   
 <table style="width:100%;">
@@ -222,12 +224,12 @@ If NULL, then </code>endpoint</code> </code>=</code> double reference sample siz
 
 Supported Data Types:
 
-Individual-based abundance data : Input data matrix for each assemblage/site include samples species interactions in an empirical sample of n total interactions ("reference sample"). When dealing with N assemblages, the input data consists of N lists of species interaction matrix.
+Individual-based interaction data : Input data matrix for each assemblage/site include samples species interactions in an empirical sample of n total interactions ("reference sample"). When dealing with N networks, the input data consists of N lists of species interaction matrix.
 
 
 ## RAREFACTION/EXTRAPOLATION VIA EXAMPLES
 
-The data set (tree-beetles interaction data) is included in iNEXT.link package. The experiment took place in the Steigerwald forest in Germany, where deadwood objects from six tree species were exposed in open, net, and closed habitats. In each habitat, there are six plots (A, B, C, D, E, F). Saproxilic beetles were sampled using stem emergence traps and classified according to their functional traits. Data from four years were pooled for each plot and habitat, and pairwise distances were computed from the Gower distance. Here, the demonstration only uses data from plot A in each habitat. For these data, the following commands display the sample species abundances and run the `iNEXT.link()` function for three types of diversty  (`"TD"`, `"PD"`, `"FD"` with specified threshold (default is dmean (quadratic entropy)), `"AUC"` which integrates FD from threshold 0 to 1). 
+The data set (tree-beetles interaction data) is included in iNEXT.link package. The experiment took place in the Steigerwald forest in Germany, where deadwood objects from six tree species were exposed in open, net, and closed habitats. In each habitat, there are six plots (A, B, C, D, E, F). Saproxilic beetles were sampled using stem emergence traps and classified according to their functional traits. Data from four years were pooled for each plot and habitat, and pairwise distances were computed from the Gower distance. Here, the demonstration only uses data from plot A in each habitat. For these data, the following commands display the sample species interactions and run the `iNEXT.link()` function for three types of diversty  (`"TD"`, `"PD"`, `"FD"` with specified threshold (default is dmean (quadratic entropy)), `"AUC"` which integrates FD from threshold 0 to 1). 
 
 Under taxonomic diversity dimension, `iNEXT.link()` function returns including: `$DataInfo` for summarizing data information; `$iNextEst` for showing diversity estimates along with related statistics for a series of rarefied and extrapolated samples; and `$AsyEst` for showing asymptotic diversity estimates along with related statistics. Result under phylogenetic diversity or functional diversity includes these three parts, too. 
   
@@ -240,7 +242,7 @@ linkoutTD = iNEXT.link(data = beetles, diversity = 'TD', q = c(0,1,2), nboot = 3
 linkoutTD$DataInfo
 ```
 
-Second part of output from function `iNEXT3D` is diversity estimates and related statistics computed for these 40 knots by default, which locates the reference sample size at the mid-point of the selected knots. The diversity can be based on sample-size-based and sample coverage-based. The first data frame of list `$iNextEst` (as shown below for 'size_based') includes the sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order (`Order.q`), the diversity estimate of order q (`qD` in TD, `qPD` in PD, `qFD` in FD (under specified thresholds), `qAUC` in FD (area under curve)), the lower and upper confidence limits of diversity (`qD.LCL` and `qD.UCL` in TD, `qPD.LCL` and `qPD.UCL` in PD, `qFD.LCL` and `qFD.UCL` in FD (under specified thresholds), `qAUC.LCL` and `qAUC.UCL` in FD (area under curve)) conditioning on sample size, and the sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL`, `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. It is time consuming for `diversity = FD` and `FDtype = "AUC"`. If the argument `nboot` is greater than zero, then the bootstrap method is applied to obtain the confidence intervals for each diversity and sample coverage estimates. 
+Second part of output from function `iNEXT.link` is diversity estimates and related statistics computed for these 40 knots by default, which locates the reference sample size at the mid-point of the selected knots. The diversity can be based on sample-size-based and sample coverage-based. The first data frame of list `$iNextEst` (as shown below for 'size_based') includes the sample size (`m`), the `Method` (`Rarefaction`, `Observed`, or `Extrapolation`, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the diversity order (`Order.q`), the diversity estimate of order q (`qD` in TD, `qPD` in PD, `qFD` in FD (under specified thresholds), `qAUC` in FD (area under curve)), the lower and upper confidence limits of diversity (`qD.LCL` and `qD.UCL` in TD, `qPD.LCL` and `qPD.UCL` in PD, `qFD.LCL` and `qFD.UCL` in FD (under specified thresholds), `qAUC.LCL` and `qAUC.UCL` in FD (area under curve)) conditioning on sample size, and the sample coverage estimate (`SC`) along with the lower and upper confidence limits of sample coverage (`SC.LCL`, `SC.UCL`). These sample coverage estimates with confidence intervals are used for plotting the sample completeness curve. It is time consuming for `diversity = FD` and `FDtype = "AUC"`. If the argument `nboot` is greater than zero, then the bootstrap method is applied to obtain the confidence intervals for each diversity and sample coverage estimates. 
 
 Here only show first six rows:
 
@@ -281,16 +283,16 @@ Here `outcome` is the object of `iNEXT.link()`'s output. Three types of curves a
 
 (3) Coverage-based R/E curve (`type = 3`): This curve plots the diversity estimates with confidence intervals as a function of sample coverage. 
 
-The argument `facet.var = "Order.q"` or `facet.var = "Assemblage"` is used to create a separate plot for each value of the specified variable. For example, the following code displays a separate plot of the diversity order q. The `ggiNEXT3D()` function is a wrapper with package `ggplot2` to create a R/E curve in a single line of code. The figure object is of class `"ggplot"`, so can be manipulated by using the `ggplot2` tools. 
+The argument `facet.var = "Order.q"` or `facet.var = "Assemblage"` is used to create a separate plot for each value of the specified variable. For example, the following code displays a separate plot of the diversity order q. The `ggiNEXT.link()` function is a wrapper with package `ggplot2` to create a R/E curve in a single line of code. The figure object is of class `"ggplot"`, so can be manipulated by using the `ggplot2` tools. 
 
-When `facet.var = "Assemblage"` in `ggiNEXT3D` function, it creates a separate plot for each assemblage and the different color lines represent each diversity order. Sample-size-based R/E curve (`type = 1`) as below:
+When `facet.var = "Assemblage"` in `ggiNEXT.link` function, it creates a separate plot for each network and the different color lines represent each diversity order. Sample-size-based R/E curve (`type = 1`) as below:
 
 ```{r }
 # Sample-size-based R/E curves, separating by "assemblage""
 ggiNEXT.link(linkoutTD, type = 1, facet.var = "Assemblage")
 ```
 
-When `facet.var = "Order.q"` in `ggiNEXT3D` function, it creates a separate plot for each diversity order and the different color lines represent each assemblage. Sample-size-based R/E curve (`type = 1`) as below:
+When `facet.var = "Order.q"` in `ggiNEXT.link` function, it creates a separate plot for each diversity order and the different color lines represent each network. Sample-size-based R/E curve (`type = 1`) as below:
 
 ```{r }
 # Sample-size-based R/E curves, separating by "Order.q"
@@ -298,21 +300,21 @@ ggiNEXT.link(linkoutTD, type = 1, facet.var = "Order.q")
 ```
 
 
-The following command return the sample completeness (sample coverage) curve (`type = 2`) in which different colors are used for the three assemblages. 
+The following command return the sample completeness (sample coverage) curve (`type = 2`) in which different colors are used for the three networks. 
 
 ```{r}
-ggiNEXT.link(linkoutTD, type = 2, facet.var = "Order.q", color.var="Assemblage")
+ggiNEXT.link(linkoutTD, type = 2, facet.var = "Order.q", color.var = "Assemblage")
 ```
 
 
 The following commands return the coverage-based R/E sampling curves in which different colors are used for the three assemblages (`facet.var = "Assemblage"`) and for three diversity orders (`facet.var = "Order.q"`).
 
 ```{r}
-ggiNEXT.link(linkoutTD, type = 3, facet.var="Assemblage")
+ggiNEXT.link(linkoutTD, type = 3, facet.var = "Assemblage")
 ```
 
 ```{r}
-ggiNEXT.link(linkoutTD, type = 3, facet.var="Order.q")
+ggiNEXT.link(linkoutTD, type = 3, facet.var = "Order.q")
 ```
 
 
@@ -323,7 +325,7 @@ DataInfo.link(data, diversity = "TD", row.tree = NULL,
               col.tree = NULL, row.distM = NULL, col.distM = NULL) 
 ```
 
-Here provide the function `DataInfo.link` to compute three diversity dimensions ('TD', 'PD', 'FD') data information, which including sample size, observed species richness, sample coverage estimate, and the first ten abundance/incidence frequency counts when `diversity = TD`. And so on for PD, FD.
+Here provide the function `DataInfo.link` to compute three diversity dimensions ('TD', 'PD', 'FD') data information, which including sample size, observed species richness, sample coverage estimate, and the first ten interaction frequency counts when `diversity = TD`. And so on for PD, FD.
 
 ```{r}
 DataInfo.link(beetles, diversity = 'TD')
@@ -342,7 +344,7 @@ estimateD.link(data, diversity = "TD", q = c(0, 1, 2),
 
 `estimateD.link` is used to compute three diversity dimensions (TD, PD, FD) estimates with q = 0, 1, 2 under any specified level of sample size (when `base = "size"`) or sample coverage (when `base = "coverage"`). If `level = NULL`, this function computes the diversity estimates for the minimum sample size among all samples extrapolated to double reference sizes (when `base = "size"`) or the minimum sample coverage among all samples extrapolated to double reference sizes (when `base = "coverage"`). 
 
-For example, the following command returns the taxonomic diversity ('TD') with a specified level of sample coverage of 95% for the tree-beetles interaction data. For some assemblages, this coverage value corresponds to the rarefaction part whereas the others correspond to extrapolation, as indicated in the method of the output. 
+For example, the following command returns the taxonomic diversity ('TD') with a specified level of sample coverage of 95% for the tree-beetles interaction data. For some networks, this coverage value corresponds to the rarefaction part whereas the others correspond to extrapolation, as indicated in the method of the output. 
 
 ```{r}
 estimateD.link(beetles, diversity = 'TD', q = c(0, 1, 2), base = "coverage", level = 0.95)
@@ -551,7 +553,7 @@ ggSpec.link(out1)
 ```
 
 
-## MULTI-COMMUNITY FUNCTION: iNEXTbeta.link()
+## MULTI-COMMUNITIES FUNCTION: iNEXTbeta.link()
 
 ```{r eval=FALSE}
 iNEXTbeta.link(data, diversity = "TD", level = seq(0.5, 1, 0.05), 
@@ -674,6 +676,7 @@ lapply(Abundance_TD$Region_1, function(x) {
 ```
 
 The output contains seven data frames: `gamma`, `alpha`, `beta`, `C`, `U`, `V`, `S`. For each data frame, it includes the diversity estimate (`Estimate`), the diversity order (`Order.q`), `Method` (Rarefaction, Observed, or Extrapolation, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the sample coverage estimate (`SC`), the sample size (`Size`), the standard error from bootstrap replications (`s.e.`), the lower and upper confidence limits of diversity (`LCL`, `UCL`), and the name of region (`Region`). These diversity estimates with confidence intervals are used for plotting the diversity curve.
+
 
 ## GRAPHIC DISPLAYS FUNCTION: ggiNEXTbeta.link()
 
