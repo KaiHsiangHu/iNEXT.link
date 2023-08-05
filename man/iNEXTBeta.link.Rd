@@ -23,7 +23,7 @@ iNEXTbeta.link(
 )
 }
 \arguments{
-\item{data}{data can be input as a \code{lisst} of \code{data.frame}, each \code{data.frame} represents col.species-by-row.species abundance matrix; see Note 1 for an example.}
+\item{data}{data can be input as a \code{list} of \code{data.frame}, each \code{data.frame} represents col.species-by-row.species abundance matrix; see example 1 for an example.}
 
 \item{diversity}{selection of diversity type: \code{'TD'} = 'Taxonomic diversity', \code{'PD'} = 'Phylogenetic diversity', and \code{'FD'} = 'Functional diversity'.}
 

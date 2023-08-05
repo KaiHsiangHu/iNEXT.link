@@ -631,7 +631,8 @@ ggAO.link <- function(outcome){
 #' @export
 estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "coverage",
                           level = NULL, nboot = 50, conf = 0.95, 
-                          row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
+                          row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', 
+                          row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
   
   datatype = "abundance"
   
@@ -756,10 +757,10 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 
 #' Function \code{iNEXTbeta.link} Interpolation and extrapolation of beta diversity with order q
 #'
-#' @param data data can be input as a \code{lisst} of \code{data.frame}, each \code{data.frame} represents col.species-by-row.species abundance matrix; see Note 1 for an example.
+#' @param data data can be input as a \code{list} of \code{data.frame}, each \code{data.frame} represents col.species-by-row.species abundance matrix; see example 1 for an example.
 #' @param diversity selection of diversity type: \code{'TD'} = 'Taxonomic diversity', \code{'PD'} = 'Phylogenetic diversity', and \code{'FD'} = 'Functional diversity'.
-#' @param q a numerical vector specifying the diversity orders. Default is \code{c(0,1,2)}.
 #' @param level a sequence specifying the particular sample coverages (between 0 and 1). Default is \code{seq(0.5, 1, 0.05)}.
+#' @param q a numerical vector specifying the diversity orders. Default is \code{c(0,1,2)}.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
@@ -1062,15 +1063,15 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 
 
 # Spec.link -------------------------------------------------------------------
-#' Estimation (Observed) of Specialization with order q
-#' @param data  a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
+#' Standardized estimation (or observed) of Specialization with order q
+#' @param data a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param q a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.
-#' @param method abinary calculation method with 'Estimated' or 'Observed'.
+#' @param method a binary calculation method with 'Estimated' or 'Observed'.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
 #' @param E.class an integer vector between 1 to 5.
-#' @param C a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, \code{C = Cmax}.
+#' @param C a standardized coverage for calculating evenness index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).
 #' @return A list of estimated(Observed) specialization with order q.\cr
 #' Different lists represents different classes of Specialization.\cr
 #' Each list is combined with order.q and sites.\cr
