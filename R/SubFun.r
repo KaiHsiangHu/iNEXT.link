@@ -1015,10 +1015,10 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
 
   if(datatype=='abundance'){
 
-    if(inherits(data, c("data.frame", "matrix"))) data = list(Region_1 = data)
+    if(inherits(data, c("data.frame", "matrix"))) data = list(Dataset_1 = data)
 
     if(inherits(data, "list")){
-      if(is.null(names(data))) region_names = paste0("Region_", 1:length(data)) else region_names = names(data)
+      if(is.null(names(data))) dataset_names = paste0("Dataset_", 1:length(data)) else dataset_names = names(data)
       Ns = sapply(data, ncol)
       data_list = data
     }
@@ -1028,7 +1028,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
   if(is.null(conf)) conf = 0.95
   tmp = qnorm(1 - (1 - conf)/2)
 
-  for_each_region = function(data, region_name, N){
+  for_each_dataset = function(data, dataset_name, N){
 
     #data
     if (datatype=='abundance') {
@@ -1166,10 +1166,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
 
     beta = alpha
     beta$Estimate = gamma$Estimate/alpha$Estimate
-    beta[beta == "Observed"] = "Observed_alpha"
-    beta = beta %>% rbind(., cbind(gamma %>% filter(Method == "Observed") %>% select(Estimate) / alpha %>% filter(Method == "Observed") %>% select(Estimate),
-                                   Order.q = q, Method = "Observed", SC = NA, Size = beta[beta$Method == "Observed_alpha", 'Size']))
-
+    
     C = beta %>% mutate(Estimate = ifelse(Order.q==1, log(Estimate)/log(N), (Estimate^(1-Order.q) - 1)/(N^(1-Order.q)-1)))
     U = beta %>% mutate(Estimate = ifelse(Order.q==1, log(Estimate)/log(N), (Estimate^(Order.q-1) - 1)/(N^(Order.q-1)-1)))
     V = beta %>% mutate(Estimate = (Estimate-1)/(N-1))
@@ -1383,19 +1380,14 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
                                                                       n = sum(bootstrap_data_gamma), m_gamma_bt, m_alpha_bt)
         gamma = PD_bootstrap_results$gamma
         alpha = PD_bootstrap_results$alpha
-        beta_obs = PD_bootstrap_results$beta_obs
-
+        
         ##
         gamma = gamma[under_max_alpha]
         alpha = alpha[under_max_alpha]
         beta = gamma/alpha
-
-        gamma = c(gamma, rep(0, length(q)))
-        alpha = c(alpha, rep(0, length(q)))
-        beta = c(beta, beta_obs)
-
-        Order.q = rep(q, each=length(level) + 1)[under_max_alpha]
-
+        
+        Order.q = rep(q, each = length(level))[under_max_alpha]
+        
         beta = data.frame(Estimate=beta, Order.q)
 
         C = (beta %>% mutate(Estimate = ifelse(Order.q==1,log(Estimate)/log(N),(Estimate^(1-Order.q) - 1)/(N^(1-Order.q)-1))))$Estimate
@@ -1416,62 +1408,91 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
 
     } else {
 
-      se = matrix(0, ncol = 7, nrow = nrow(gamma))
+      se = matrix(NA, ncol = 7, nrow = nrow(gamma))
       colnames(se) = c("gamma", "alpha", "beta", "C", "U", 'V', 'S')
       se = as.data.frame(se)
 
     }
     se = as.data.frame(se)
 
-    gamma = gamma %>% mutate(s.e. = se$gamma[1:(nrow(se)-length(q))],
-                             LCL = Estimate - tmp * se$gamma[1:(nrow(se)-length(q))],
-                             UCL = Estimate + tmp * se$gamma[1:(nrow(se)-length(q))],
-                             Region = region_name,
-                             diversity = 'PD')
+    gamma = gamma %>% mutate(s.e. = se$gamma,
+                             LCL = Estimate - tmp * se$gamma,
+                             UCL = Estimate + tmp * se$gamma,
+                             Dataset = dataset_name,
+                             Diversity = 'PD') %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
 
-    alpha = alpha %>% mutate(s.e. = se$alpha[1:(nrow(se)-length(q))],
-                             LCL = Estimate - tmp * se$alpha[1:(nrow(se)-length(q))],
-                             UCL = Estimate + tmp * se$alpha[1:(nrow(se)-length(q))],
-                             Region = region_name,
-                             diversity = 'PD')
+    alpha = alpha %>% mutate(s.e. = se$alpha,
+                             LCL = Estimate - tmp * se$alpha,
+                             UCL = Estimate + tmp * se$alpha,
+                             Dataset = dataset_name,
+                             Diversity = 'PD') %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
 
     beta = beta %>% mutate(  s.e. = se$beta,
                              LCL = Estimate - tmp * se$beta,
                              UCL = Estimate + tmp * se$beta,
-                             Region = region_name,
-                             diversity = 'PD')
+                             Dataset = dataset_name,
+                             Diversity = 'PD') %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
 
     C = C %>% mutate(        s.e. = se$C,
                              LCL = Estimate - tmp * se$C,
                              UCL = Estimate + tmp * se$C,
-                             Region = region_name,
-                             diversity = 'PD')
+                             Dataset = dataset_name,
+                             Diversity = 'PD') %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
 
 
     U = U %>% mutate(        s.e. = se$U,
                              LCL = Estimate - tmp * se$U,
                              UCL = Estimate + tmp * se$U,
-                             Region = region_name,
-                             diversity = 'PD')
+                             Dataset = dataset_name,
+                             Diversity = 'PD') %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
 
     V = V %>% mutate(        s.e. = se$V,
                              LCL = Estimate - tmp * se$V,
                              UCL = Estimate + tmp * se$V,
-                             Region = region_name,
-                             diversity = 'PD')
+                             Dataset = dataset_name,
+                             Diversity = 'PD') %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
 
     S = S %>% mutate(        s.e. = se$S,
                              LCL = Estimate - tmp * se$S,
                              UCL = Estimate + tmp * se$S,
-                             Region = region_name,
-                             diversity = 'PD')
+                             Dataset = dataset_name,
+                             Diversity = 'PD') %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
 
-    list(gamma = gamma, alpha = alpha, beta = beta, C = C, U = U, V = V, S = S)
+    
+    beta$Method[beta$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    
+    C$Method[C$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    
+    U$Method[U$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    
+    V$Method[V$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    
+    S$Method[S$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    
+    beta$Method[beta$SC == ref_alpha] = "Observed_C(n, alpha)"
+    
+    C$Method[C$SC == ref_alpha] = "Observed_C(n, alpha)"
+    
+    U$Method[U$SC == ref_alpha] = "Observed_C(n, alpha)"
+    
+    V$Method[V$SC == ref_alpha] = "Observed_C(n, alpha)"
+    
+    S$Method[S$SC == ref_alpha] = "Observed_C(n, alpha)"
+    
+    
+    list(gamma = gamma, alpha = alpha, beta = beta, `1-C` = C, `1-U` = U, `1-V` = V, `1-S` = S)
   }
 
-  output = lapply(1:length(data), function(i) for_each_region(data = data_list[[i]],
-                                                              region_name = region_names[i], N = Ns[i]))
-  names(output) = region_names
+  output = lapply(1:length(data), function(i) for_each_dataset(data = data_list[[i]],
+                                                               dataset_name = dataset_names[i], N = Ns[i]))
+  names(output) = dataset_names
   return(output)
 }
 

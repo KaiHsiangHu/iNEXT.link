@@ -49,7 +49,7 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 
 \item{FDtype}{(required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
 
-\item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
+\item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 
 \item{FDcut_number}{(required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is 30.}
 }
@@ -76,14 +76,14 @@ output2
 ## Functional diversity under single threshold
 data(beetles)
 data(beetles_col_distM)
-output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
+output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_value")
 output3
 
 
 ## Functional diversity with thresholds integrating from 0 to 1
 data(beetles)
 data(beetles_col_distM)
-output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
 output4
 }
 \references{

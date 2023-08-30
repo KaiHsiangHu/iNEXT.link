@@ -38,7 +38,7 @@ ggiNEXTbeta.link(output2, type = 'D')
 ## Functional diversity under single threshold
 data(beetles)
 data(beetles_col_distM)
-output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
+output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_value")
 ggiNEXTbeta.link(output3, type = 'B')
 ggiNEXTbeta.link(output3, type = 'D')
 
@@ -46,7 +46,7 @@ ggiNEXTbeta.link(output3, type = 'D')
 ## Functional diversity with thresholds integrating from 0 to 1
 data(beetles)
 data(beetles_col_distM)
-output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
 ggiNEXTbeta.link(output4, type = 'B')
 ggiNEXTbeta.link(output4, type = 'D')
 }

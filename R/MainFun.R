@@ -771,7 +771,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @param col.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
-#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
+#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @param FDcut_number (required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is 30.
 #' @return A list of seven lists with three-diversity and four-dissimilarity.
 #' @examples
@@ -790,14 +790,14 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' ## Functional diversity under single threshold
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
+#' output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_value")
 #' output3
 #'
 #'
 #' ## Functional diversity with thresholds integrating from 0 to 1
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+#' output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
 #' output4
 #' @references
 #' Chao, A., Chazdon, R. L., Colwell, R. K. and Shen, T.-J.(2005). A new statistical approach for assessing similarity of species composition with incidence and abundance data. Ecology Letters 8, 148-159. (pdf file) Spanish translation in pp. 85-96 of Halffter, G. Soberon, J., Koleff, P. and Melic, A. (eds) 2005 Sobre Diversidad Biologica: el Sognificado de las Diversidades Alfa, Beta y Gamma. m3m-Monografias 3ercer Milenio, vol. 4, SEA, CONABIO, Grupo DIVERSITAS & CONACYT, Zaragoza. IV +242 pp.
@@ -822,20 +822,19 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
   })
 
   if(diversity == 'TD'){
+    
     dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'TD',level = level, datatype = datatype,
                                  q = q ,nboot = nboot, conf = conf)
-
-
-
-  }
-  else if(diversity == 'PD'){
+    
+  }else if(diversity == 'PD'){
 
     if(!is.null(row.tree)){row.tree$tip.label = gsub('\\.', '_',row.tree$tip.label)}
     if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
 
     dissimilarity = iNEXTbeta.PDlink(data = combined_list, level = level, datatype = datatype,
-                                     q =q ,row.tree = row.tree,col.tree = col.tree, nboot = nboot, PDtype = PDtype)
-  }else if(diversity == 'FD' & FDtype == 'tau_values'){
+                                     q = q ,row.tree = row.tree,col.tree = col.tree, nboot = nboot, PDtype = PDtype)
+    
+  }else if(diversity == 'FD' & FDtype == 'tau_value'){
     row_sp = c()
     col_sp = c()
     for(i in 1:length(dat)){
@@ -870,10 +869,10 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
     rownames(distM) = distM_name
 
     dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'FD',level = level, datatype = datatype,
-                                 q =q ,nboot = nboot, conf = conf, FDdistM = distM, FDtype = "tau_value", FDtau = FDtau)
+                                 q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDtype = "tau_value", FDtau = FDtau)
+    
   }else if(diversity == 'FD' & FDtype == 'AUC'){
-
-
+    
     row_sp = c()
     col_sp = c()
     for(i in 1:length(dat)){
@@ -947,7 +946,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
 #' ## Functional diversity under single threshold
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_values")
+#' output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_value")
 #' ggiNEXTbeta.link(output3, type = 'B')
 #' ggiNEXTbeta.link(output3, type = 'D')
 #'
@@ -955,7 +954,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
 #' ## Functional diversity with thresholds integrating from 0 to 1
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+#' output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
 #' ggiNEXTbeta.link(output4, type = 'B')
 #' ggiNEXTbeta.link(output4, type = 'D')
 #' @export
@@ -967,72 +966,76 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
     gamma = lapply(outcome, function(y) y[["gamma"]]) %>% do.call(rbind,.) %>% mutate(div_type = "Gamma") %>% as_tibble()
     alpha = lapply(outcome, function(y) y[["alpha"]]) %>% do.call(rbind,.) %>% mutate(div_type = "Alpha") %>% as_tibble()
     beta =  lapply(outcome, function(y) y[["beta"]])  %>% do.call(rbind,.) %>% mutate(div_type = "Beta")  %>% as_tibble()
-    beta = beta %>% filter(Method != 'Observed')
-    beta[beta == 'Observed_alpha'] = 'Observed'
-
+    # beta = beta %>% filter(Method != 'Observed')
+    beta[beta == 'Observed_C(n, alpha)'] = 'Observed'
+    beta[beta == 'Extrap_C(2n, alpha)'] = 'Extrapolation'
+    
     df = rbind(gamma, alpha, beta)
-    for (i in unique(gamma$Order.q)) df$Order.q[df$Order.q==i] = paste0('q = ', i)
+    for (i in unique(gamma$Order.q)) df$Order.q[df$Order.q == i] = paste0('q = ', i)
     df$div_type <- factor(df$div_type, levels = c("Gamma","Alpha","Beta"))
-
+    
     id_obs = which(df$Method == 'Observed')
-
+    
     for (i in 1:length(id_obs)) {
-
+      
       new = df[id_obs[i],]
       new$SC = new$SC - 0.0001
       new$Method = 'Rarefaction'
-
+      
       newe = df[id_obs[i],]
       newe$SC = newe$SC + 0.0001
       newe$Method = 'Extrapolation'
-
+      
       df = rbind(df, new, newe)
-
+      
     }
-
-    if (unique(outcome[[1]]$gamma$diversity) == 'TD') { ylab = "Taxonomic diversity" }
-    if (unique(outcome[[1]]$gamma$diversity) %in% c('PD','meanPD')) { ylab = "Phylogenetic diversity" }
-    if (unique(outcome[[1]]$gamma$diversity) == 'FD_tau') { ylab = "Functional diversity" }
-    if (unique(outcome[[1]]$gamma$diversity) == 'FD_AUC') { ylab = "Functional diversity (AUC)" }
+    
+    if (unique(outcome[[1]]$gamma$Diversity) == 'TD') { ylab = "Taxonomic diversity" }
+    if (unique(outcome[[1]]$gamma$Diversity) %in% c('PD','meanPD')) { ylab = "Phylogenetic diversity" }
+    if (unique(outcome[[1]]$gamma$Diversity) == 'FD_tau') { ylab = "Functional diversity" }
+    if (unique(outcome[[1]]$gamma$Diversity) == 'FD_AUC') { ylab = "Functional diversity (AUC)" }
 
   }
-  if (type=='D'){
+  if (type == 'D'){
 
-    C = lapply(outcome, function(y) y[["C"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-CqN") %>% as_tibble()
-    U = lapply(outcome, function(y) y[["U"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-UqN") %>% as_tibble()
-    V = lapply(outcome, function(y) y[["V"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-VqN") %>% as_tibble()
-    S = lapply(outcome, function(y) y[["S"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-SqN") %>% as_tibble()
-    C = C %>% filter(Method != 'Observed')
-    U = U %>% filter(Method != 'Observed')
-    V = V %>% filter(Method != 'Observed')
-    S = S %>% filter(Method != 'Observed')
-    C[C == 'Observed_alpha'] = U[U == 'Observed_alpha'] = V[V == 'Observed_alpha'] = S[S == 'Observed_alpha'] = 'Observed'
-
+    C = lapply(outcome, function(y) y[["1-C"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-CqN") %>% as_tibble()
+    U = lapply(outcome, function(y) y[["1-U"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-UqN") %>% as_tibble()
+    V = lapply(outcome, function(y) y[["1-V"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-VqN") %>% as_tibble()
+    S = lapply(outcome, function(y) y[["1-S"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-SqN") %>% as_tibble()
+    # C = C %>% filter(Method != 'Observed')
+    # U = U %>% filter(Method != 'Observed')
+    # V = V %>% filter(Method != 'Observed')
+    # S = S %>% filter(Method != 'Observed')
+    C[C == 'Observed_C(n, alpha)'] = U[U == 'Observed_C(n, alpha)'] = V[V == 'Observed_C(n, alpha)'] = S[S == 'Observed_C(n, alpha)'] = 'Observed'
+    C[C == 'Extrap_C(2n, alpha)'] = U[U == 'Extrap_C(2n, alpha)'] = V[V == 'Extrap_C(2n, alpha)'] = S[S == 'Extrap_C(2n, alpha)'] = 'Extrapolation'
+    
     df = rbind(C, U, V, S)
-    for (i in unique(C$Order.q)) df$Order.q[df$Order.q==i] = paste0('q = ', i)
-    df$div_type <- factor(df$div_type, levels = c("1-CqN","1-UqN","1-VqN","1-SqN"))
-
+    for (i in unique(C$Order.q)) df$Order.q[df$Order.q == i] = paste0('q = ', i)
+    df$div_type <- factor(df$div_type, levels = c("1-CqN", "1-UqN", "1-VqN", "1-SqN"))
+    
     id_obs = which(df$Method == 'Observed')
-
+    
     for (i in 1:length(id_obs)) {
-
+      
       new = df[id_obs[i],]
       new$SC = new$SC - 0.0001
       new$Method = 'Rarefaction'
-
+      
       newe = df[id_obs[i],]
       newe$SC = newe$SC + 0.0001
       newe$Method = 'Extrapolation'
-
+      
       df = rbind(df, new, newe)
-
+      
     }
-    if (unique(outcome[[1]]$gamma$diversity) == 'TD') { ylab = "Taxonomic dissimilarity" }
-    if (unique(outcome[[1]]$gamma$diversity) %in% c('PD','meanPD')) { ylab = "Phylogenetic dissimilarity" }
-    if (unique(outcome[[1]]$gamma$diversity) == 'FD_tau') { ylab = "Functional dissimilarity" }
-    if (unique(outcome[[1]]$gamma$diversity) == 'FD_AUC') { ylab = "Functional dissimilarity (AUC)" }
+    
+    if (unique(outcome[[1]]$gamma$Diversity) == 'TD') { ylab = "Taxonomic dissimilarity" }
+    if (unique(outcome[[1]]$gamma$Diversity) %in% c('PD','meanPD')) { ylab = "Phylogenetic dissimilarity" }
+    if (unique(outcome[[1]]$gamma$Diversity) == 'FD_tau') { ylab = "Functional dissimilarity" }
+    if (unique(outcome[[1]]$gamma$Diversity) == 'FD_AUC') { ylab = "Functional dissimilarity (AUC)" }
 
   }
+  
   lty = c(Rarefaction = "solid", Extrapolation = "dashed")
   # lty = c(Rarefaction = "solid", Extrapolation = "twodash")
 
@@ -1044,8 +1047,8 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
   point_size = 2
 
-  ggplot(data = df, aes(x = SC, y = Estimate, col = Region)) +
-    geom_ribbon(aes(ymin = LCL, ymax = UCL, fill = Region, col = NULL), alpha=0.4) +
+  ggplot(data = df, aes(x = SC, y = Estimate, col = Dataset)) +
+    geom_ribbon(aes(ymin = LCL, ymax = UCL, fill = Dataset, col = NULL), alpha=0.4) +
     geom_line(data = subset(df, Method!='Observed'), aes(linetype=Method), size=1.1) +
     scale_linetype_manual(values = lty) +
     scale_fill_manual(values = cbPalette) + scale_colour_manual(values = cbPalette)+
@@ -1056,9 +1059,20 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
     geom_point(data = subset(double_extrapolation, div_type!="Gamma"),shape=2, size=point_size,stroke=1.5) +
     facet_grid(div_type~Order.q, scales = scale) +
     # facet_wrap(div_type~Order.q, scales = scale, switch="both") +
-    theme_bw() +
-    theme(legend.position = "bottom", legend.title = element_blank()) +
-    labs(x='Sample coverage', y=ylab)
+    theme_bw() + 
+    theme(legend.position = "bottom", 
+          legend.title = element_blank(),
+          strip.text = element_text(size = 15, face = 'bold'),
+          axis.title = element_text(hjust = 0.5, size = 15, face = 'bold'),
+          axis.text.x = element_text(size = 12),
+          axis.text.y = element_text(size = 12),
+          legend.box = "vertical",
+          legend.margin = margin(0, 0, 0, 0),
+          legend.box.margin = margin(-10, -10, -5, -10),
+          legend.text = element_text(size = 13),
+          plot.margin = unit(c(5.5, 5.5, 5.5, 5.5), "pt")) +
+    labs(x='Sample coverage', y=ylab) +
+    guides(linetype = guide_legend(keywidth = 2.5))
 }
 
 
