@@ -646,7 +646,7 @@ The arguments of this function are briefly described below, and will be explaine
 </table>
 
 
-the `iNEXTbeta.link()` function returns the `"iNEXTbeta.link"` object including seven data frames for each regions: 
+the `iNEXTbeta.link()` function returns the `"iNEXTbeta.link"` object including seven data frames for each datasets: 
 
 - gamma 
 - alpha 
@@ -668,14 +668,14 @@ Abundance_TD
 ```{r echo=FALSE}
 Abundance_TD = iNEXTbeta.link(data = beetles, diversity = 'TD', level = NULL, q = c(0, 1, 2))
 
-lapply(Abundance_TD$Region_1, function(x) {
+lapply(Abundance_TD$Dataset_1, function(x) {
     tmp = x[1:6,]
     tmp[,c('Estimate', 'SC','Size', 's.e.', 'LCL', 'UCL')] = round(tmp[,c('Estimate', 'SC','Size', 's.e.', 'LCL', 'UCL')], 3)
     tmp
 })
 ```
 
-The output contains seven data frames: `gamma`, `alpha`, `beta`, `C`, `U`, `V`, `S`. For each data frame, it includes the diversity estimate (`Estimate`), the diversity order (`Order.q`), `Method` (Rarefaction, Observed, or Extrapolation, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the sample coverage estimate (`SC`), the sample size (`Size`), the standard error from bootstrap replications (`s.e.`), the lower and upper confidence limits of diversity (`LCL`, `UCL`), and the name of region (`Region`). These diversity estimates with confidence intervals are used for plotting the diversity curve.
+The output contains seven data frames: `gamma`, `alpha`, `beta`, `C`, `U`, `V`, `S`. For each data frame, it includes the diversity estimate (`Estimate`), the diversity order (`Order.q`), `Method` (Rarefaction, Observed, or Extrapolation, depending on whether the size `m` is less than, equal to, or greater than the reference sample size), the sample coverage estimate (`SC`), the sample size (`Size`), the standard error from bootstrap replications (`s.e.`), the lower and upper confidence limits of diversity (`LCL`, `UCL`), and the name of dataset (`Dataset`). These diversity estimates with confidence intervals are used for plotting the diversity curve.
 
 
 ## GRAPHIC DISPLAYS FUNCTION: ggiNEXTbeta.link()
