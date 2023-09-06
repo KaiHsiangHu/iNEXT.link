@@ -10,7 +10,10 @@
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
 #' @param col.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.
 #' @return
-#' a data.frame of basic data information incliuding sample size, observed species richness, sample coverage estimate, and the first ten abundance frequency counts.
+#' @return a data.frame of basic data information including network name (Networks), sample size (n), observed species richness in row assemblage (S.obs(row)), observed species richness in column assemblage (S.obs(col)), the number of interactions (Link.obs), link percentage(Connectance), sample coverage estimate (Coverage).\cr\cr
+#' Besides, show the first ten species abundance (or incidence) frequency counts in the reference sample in TD. (f1-f10)\cr\cr
+#' In PD, show the the observed total branch length in the phylogenetic tree (PD.obs), the number of singletons and doubletons in the node/branch set (f1*-f2*), the total branch length of those singletons/doubletons in the node/branch set (g1-g2), mean reference time (mean_T).\cr\cr
+#' In FD (FDtype = "tau_values"), show the number of singletons and doubletons in the data (f1-f2), the number of singletons and doubletons in the functional group (a1*-a2*), the threshold of functional distinctiveness between any two species (threshold).\cr\cr
 #' @examples
 #' #' ## Taxonomic diversity
 #' data(beetles)
@@ -70,6 +73,11 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
 #' @return a matrix of estimated sample completeness with order q: \cr\cr
+#'         'Order.q' = the diversity order of q.\cr\cr
+#'         'Estimate.SC' = the estimated (or observed) sample completeness of order q.\cr\cr
+#'         's.e.' = standard error of sample completeness.\cr\cr
+#'         'SC.LCL', 'SC.UCL' = the bootstrap lower and upper confidence limits for the sample completeness of order q at the specified level (with a default value of 0.95).\cr\cr
+#'         'Assemblage' = the assemblage name.\cr\cr
 #'
 #' @examples
 #' data(beetles)
@@ -77,8 +85,7 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
 #' output
 #'
 #' @references
-#' Chao,A.,Y.Kubota,D.Zelen??,C.-H.Chiu.
-#' Quantifying sample completeness and comparing diversities among assemblages.
+#' Chao, A., Y. Kubota, D. Zelen??, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
 #' @export
 Completeness.link <- function(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95){
   
@@ -103,7 +110,10 @@ Completeness.link <- function(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95)
 #' data(beetles)
 #' output = Completeness.link(beetles)
 #' ggCompleteness.link(output)
-#' @export
+#' 
+#' @references
+#' Chao, A., Y. Kubota, D. Zelen??, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
+##' @export
 ggCompleteness.link <- function(outcome){
   cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
@@ -169,6 +179,11 @@ ggCompleteness.link <- function(outcome){
 #' showing asymptotic diversity estimates along with related statistics.}
 #' }
 #'
+#' @return a list of three objects: \code{$DataInfo} (or \code{$PDInfo}, \code{$FDInfo}, \code{$AUCInfo}) for summarizing data information; 
+#' \code{$iNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}, \code{$AUCiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
+#' and \code{$AsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}, \code{$AUCAsyEst}) for showing asymptotic diversity estimates along with related statistics.  
+#' 
+#' 
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
@@ -301,7 +316,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
 #'  use different colors for sites (\code{color.var="Assemblage"});
 #'  use different colors for combinations of order x assemblage (\code{color.var="Both"}).
 #' @param ... other arguments passed on to methods. Not currently used.
-#' @return a ggplot2 object
+#' @return a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
@@ -402,7 +417,16 @@ ggiNEXT.link <- function(outcome, type = c(1,2,3), facet.var = "Assemblage", col
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
-#' @return a table of Asymptotic network diversity q profile.
+#' @return a table of diversity table including the following arguments.
+#' 'Order.q' = the diversity order of q.\cr\cr
+#' 'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated asymptotic diversity or empirical (observed) diversity of order q. \cr\cr
+#' 's.e.' = standard error of diversity. \cr\cr
+#' 'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
+#' 'Assemblage' (or 'Network') = the network name.\cr\cr
+#' 'Method' = "Asymptotic" or "Empirical".\cr\cr
+#' 'Reftime' = reference times for PD.\cr\cr
+#' 'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
+#' 'Tau' = the threshold of functional distinctiveness between any two species.\cr
 #'
 #' @examples
 #' ## Taxonomic diversity
@@ -511,7 +535,7 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, conf
 #' \code{ggAO.link} Plots q-profile based on the outcome of \code{AO.link} using the ggplot2 package.\cr
 #'
 #' @param outcome the outcome of the functions \code{AO.link} .\cr
-#' @return a figure of asymptotic (or observed) diversity with order q\cr\cr
+#' @return a figure of asymptotic or empirical (observed) diversity in q-profile.\cr\cr
 #'
 #' @examples
 #' ## Taxonomic diversity
@@ -598,7 +622,18 @@ ggAO.link <- function(outcome){
 #' @param col.distM (required only when diversity = "FD"), a column species pairwise distance matrix for all column species of column assemblage in interaction matrix.
 #' @param FDtype (required only when diversity = "FD"), select FD type: FDtype = "tau_values" for FD under specified threshold values, or FDtype = "AUC" (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is "AUC".
 #' @param FDtau (required only when diversity = "FD" and FDtype = "tau_values"), a numerical vector between 0 and 1 specifying tau values (threshold levels). If NULL (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
-#' @return a data.frame of species diversity table including the sample size, sample coverage, method (rarefaction or extrapolation), and diversity estimates with q = 0, 1, and 2 for the user-specified sample size or sample coverage.
+#' @return a \code{data.frame} of diversity table including the following arguments:
+#' 'Assemblage' = the assemblage name.\cr\cr
+#' 'm' = the corresponding sample size for the standardized coverage value. \cr\cr
+#' 'Method' = Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.\cr\cr
+#' 'Order.q' = the diversity order of q.\cr\cr
+#' 'SC' = the target standardized coverage value. \cr\cr
+#' 'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity. \cr\cr
+#' 's.e.' = standard error of diversity estimate.\cr\cr
+#' 'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
+#' 'Reftime' = reference times for PD.\cr\cr
+#' 'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
+#' 'Tau' = the threshold of functional distinctiveness between any two species.\cr
 #'
 #' @examples
 #' \dontrun{
@@ -649,7 +684,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 
     return(div)
   }else if(diversity == 'PD'){
-
+    
     if(datatype=='abundance'){
 
       if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Region_1 = data)
@@ -663,7 +698,21 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
     }
     if(is.null(conf)) conf = 0.95
     tmp = qnorm(1 - (1 - conf)/2)
-
+    
+    if (is.null(level) & base == "size") {
+      
+      level <- sapply(data, function(x) 2 * sum(x)) %>% min
+    }
+    else if (is.null(level) & base == "coverage") {
+      
+      level <- sapply(data, function(x) {
+        ni <- sum(x)
+        iNEXT.3D:::Coverage(data = x, datatype = datatype, m = 2 * ni)
+      })
+      
+      level <- min(level)
+    }
+    
     for_each_region = function(data_2d, region_name, N){
       if (datatype=='abundance') {
         
@@ -716,14 +765,14 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
         ##
         len = length(q)
         res = data.frame(Assemblage = rep(region_name,len),
-                         SC = rep(level, rep(len,length(size_m))),
                          m = rep(size_m,rep(len,length(size_m))),
                          Method = ifelse(level > ref, 'Extrapolation', 'Rarefaction'),
                          Order.q = q,
+                         SC = rep(level, rep(len,length(size_m))),
                          qPD = qPDm,
+                         s.e. = PD.sd,
                          qPD.LCL = qPDm-tmp*PD.sd,
                          qPD.UCL = qPDm+tmp*PD.sd,
-                         s.e. = PD.sd,
                          Reftime = tbar, 
                          Type = PDtype
         )
@@ -773,7 +822,19 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @param FDcut_number (required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is 30.
-#' @return A list of seven lists with three-diversity and four-dissimilarity.
+#' @return A list of seven matrices with three diversity dimensions and four dissimilarity measures.
+#' 'Dataset' = the datasets name.\cr\cr
+#' 'Order.q' = the diversity order of q.\cr\cr
+#' 'SC' = the target standardized coverage value. The observed coverage and extrapolation limit for beta diversity are defined the same as those for alpha diversity. For q = 0, the extrapolation can be extended to a maximum coverage value C(2n, alpha) = coverage value of twice the alpha reference sample size; for q = 1 and 2, target coverage can be extended to 1 (complete coverage) if data are not sparse. \cr\cr
+#' 'Size' = the corresponding sample size for the standardized coverage value. \cr\cr
+#' 'Alpha/Beta/Gamma/Dissimilarity' = the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity. \cr\cr
+#' 'Method' = Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample. (For beta diversity, observed coverage is defined as the coverage of the alpha reference sample).\cr\cr
+#' 's.e.' = standard error of diversity estimate.\cr\cr
+#' 'LCL', 'UCL' = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
+#' 'Diversity' = "TD" (taxonomic diversity), "PD" (phylogenetic diversity of effective total branch length), "meanPD" (phylogenetic diversity of effective number of equally divergent lineages), "FD_tau" (functional diversity under a single tau), "FD_AUC" (functional diversity by integrating all threshold values between zero and one.\cr\cr
+#' 'Tau' = the threshold of functional distinctiveness between any two species.\cr
+#' 
+#' 
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
@@ -802,6 +863,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @references
 #' Chao, A., Chazdon, R. L., Colwell, R. K. and Shen, T.-J.(2005). A new statistical approach for assessing similarity of species composition with incidence and abundance data. Ecology Letters 8, 148-159. (pdf file) Spanish translation in pp. 85-96 of Halffter, G. Soberon, J., Koleff, P. and Melic, A. (eds) 2005 Sobre Diversidad Biologica: el Sognificado de las Diversidades Alfa, Beta y Gamma. m3m-Monografias 3ercer Milenio, vol. 4, SEA, CONABIO, Grupo DIVERSITAS & CONACYT, Zaragoza. IV +242 pp.
 #' Chiu, C.-H., Jost, L. and Chao*, A. (2014). Phylogenetic beta diversity, similarity, and differentiation measures based on Hill numbers. Ecological Monographs 84, 21-44.
+#' Chao, A., Thorn, S., Chiu, C.-H., Moyes, F., Hu, K.-H., Chazdon, R. L., Wu, J., Dornelas, M., Zelen??, D., Colwell, R. K., and Magurran, A. E. (2023). Rarefaction and extrapolation with beta diversity under a framework of Hill numbers: the iNEXT.beta3D standardization. To appear in Ecological Monographs.
 #' @export
 
 iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
@@ -833,6 +895,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
 
     dissimilarity = iNEXTbeta.PDlink(data = combined_list, level = level, datatype = datatype,
                                      q = q ,row.tree = row.tree,col.tree = col.tree, nboot = nboot, PDtype = PDtype)
+    class(dissimilarity) = 'iNEXTbeta3D'
     
   }else if(diversity == 'FD' & FDtype == 'tau_value'){
     row_sp = c()
@@ -927,7 +990,8 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
 #' \code{type = 'D'} for plotting 4 turnover dissimilarities.
 #' @param scale Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.
 #'
-#' @return a figure for beta diversity or dissimilarity diversity.
+#' @return a figure for gamma, alpha, and beta diversity or four dissimilarity measures.
+#' 
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
@@ -963,9 +1027,9 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 
   if (type == 'B'){
 
-    gamma = lapply(outcome, function(y) y[["gamma"]]) %>% do.call(rbind,.) %>% mutate(div_type = "Gamma") %>% as_tibble()
-    alpha = lapply(outcome, function(y) y[["alpha"]]) %>% do.call(rbind,.) %>% mutate(div_type = "Alpha") %>% as_tibble()
-    beta =  lapply(outcome, function(y) y[["beta"]])  %>% do.call(rbind,.) %>% mutate(div_type = "Beta")  %>% as_tibble()
+    gamma = lapply(outcome, function(y) y[["gamma"]]) %>% do.call(rbind,.) %>% rename("Estimate" = "Gamma") %>% mutate(div_type = "Gamma") %>% as_tibble()
+    alpha = lapply(outcome, function(y) y[["alpha"]]) %>% do.call(rbind,.) %>% rename("Estimate" = "Alpha") %>% mutate(div_type = "Alpha") %>% as_tibble()
+    beta =  lapply(outcome, function(y) y[["beta"]])  %>% do.call(rbind,.) %>% rename("Estimate" = "Beta")  %>% mutate(div_type = "Beta")  %>% as_tibble()
     # beta = beta %>% filter(Method != 'Observed')
     beta[beta == 'Observed_C(n, alpha)'] = 'Observed'
     beta[beta == 'Extrap_C(2n, alpha)'] = 'Extrapolation'
@@ -998,10 +1062,10 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
   }
   if (type == 'D'){
 
-    C = lapply(outcome, function(y) y[["1-C"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-CqN") %>% as_tibble()
-    U = lapply(outcome, function(y) y[["1-U"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-UqN") %>% as_tibble()
-    V = lapply(outcome, function(y) y[["1-V"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-VqN") %>% as_tibble()
-    S = lapply(outcome, function(y) y[["1-S"]]) %>% do.call(rbind,.) %>% mutate(div_type = "1-SqN") %>% as_tibble()
+    C = lapply(outcome, function(y) y[["1-C"]]) %>% do.call(rbind,.) %>% rename("Estimate" = "Dissimilarity") %>% mutate(div_type = "1-CqN") %>% as_tibble()
+    U = lapply(outcome, function(y) y[["1-U"]]) %>% do.call(rbind,.) %>% rename("Estimate" = "Dissimilarity") %>% mutate(div_type = "1-UqN") %>% as_tibble()
+    V = lapply(outcome, function(y) y[["1-V"]]) %>% do.call(rbind,.) %>% rename("Estimate" = "Dissimilarity") %>% mutate(div_type = "1-VqN") %>% as_tibble()
+    S = lapply(outcome, function(y) y[["1-S"]]) %>% do.call(rbind,.) %>% rename("Estimate" = "Dissimilarity") %>% mutate(div_type = "1-SqN") %>% as_tibble()
     # C = C %>% filter(Method != 'Observed')
     # U = U %>% filter(Method != 'Observed')
     # V = V %>% filter(Method != 'Observed')
@@ -1077,7 +1141,7 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 
 
 # Spec.link -------------------------------------------------------------------
-#' Standardized estimation (or observed) of Specialization with order q
+#' Standardized estimation (or observed) of specialization with order q
 #' @param data a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param q a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.
 #' @param method a binary calculation method with 'Estimated' or 'Observed'.
@@ -1085,10 +1149,18 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
 #' @param E.class an integer vector between 1 to 5.
-#' @param C a standardized coverage for calculating evenness index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).
-#' @return A list of estimated(Observed) specialization with order q.\cr
-#' Different lists represents different classes of Specialization.\cr
-#' Each list is combined with order.q and sites.\cr
+#' @param C a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).
+#' @return A list of several tables containing estimated (or observed) evenness with order q.\cr
+#'         Each tables represents a class of specialization.\cr
+#'         'Order.q' = the diversity order of q.\cr\cr
+#'         'Specialization' = the specialization of order q.\cr\cr
+#'         's.e.' = standard error of evenness.\cr\cr
+#'         'Spec.LCL', 'Spec.UCL' = the bootstrap lower and upper confidence limits for the evenness of order q at the specified level (with a default value of 0.95).\cr\cr
+#'         'Method' = "Estimated" or "Observed".\cr\cr
+#'         'SC' = the target standardized coverage value. (only when method = 'Estimated') \cr\cr
+#'         'Network' = the network name.\cr\cr
+#'         'class' = specialization class.\cr\cr
+#'         
 #'
 #' @examples
 #' data(beetles)
@@ -1118,7 +1190,8 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
         res['Coverage'] = NULL
         res = lapply(res, function(each_class){
           each_class%>%
-            mutate(Evenness = 1-Evenness, Even.LCL = 1-Even.LCL, Even.UCL = 1-Even.UCL)%>%
+            mutate(Evenness = 1-Evenness, Even.LCL = 1-Even.LCL, Even.UCL = 1-Even.UCL) %>% 
+            select(-Assemblage)%>%
             rename('Specialization'='Evenness', 'Spec.LCL' ='Even.LCL', 'Spec.UCL' ='Even.UCL')%>%
             mutate(Network = names(long)[[i]])
         })
@@ -1126,14 +1199,14 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
         # if(method == "Estimated") index = 2
         # return(res[[index]]%>%mutate(Assemblage = names(long)[[i]]))
         return(res[[1]])
-      })%>%do.call("rbind",.)
+      }) %>% do.call("rbind",.)
 
-      each_class%>%mutate(class = paste0("1 - E",e))
+      each_class %>% mutate(class = paste0("1 - E",e))
     })
     names(Spec) = paste0("1 - E",E.class)
     
     if (method == "Estimated") {
-      Spec <- append(list('Coverage' = C), Spec)
+      Spec <- lapply(Spec, function(x) x %>% mutate('SC' = C))
     }
     
     return(Spec)
@@ -1238,16 +1311,13 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
     #   each_class = lapply(seq_along(long), function(i){
     #     res = iNEXT.4steps::Evenness(long[[i]], q = q,datatype = datatype,
     #                                 method = method, nboot=nboot, E.class = e, C = C)
-    #     res['Coverage'] = NULL
     #     res = lapply(res, function(each_class){
     #       each_class%>%
     #         mutate(Evenness = 1-Evenness, Even.LCL = 1-Even.LCL, Even.UCL = 1-Even.UCL)%>%
     #         rename('Specialization'='Evenness', 'Spec.LCL' ='Even.LCL', 'Spec.UCL' ='Even.UCL')%>%
     #         mutate(Assemblage = names(long)[[i]])
     #     })
-    #     # if(method == "Observed") index = 1
-    #     # if(method == "Estimated") index = 2
-    #     # return(res[[index]]%>%mutate(Assemblage = names(long)[[i]]))
+    #     # return(res[[1]]%>%mutate(Assemblage = names(long)[[i]]))
     #     return(res[[1]])
     #   })%>%do.call("rbind",.)
     #
@@ -1272,8 +1342,6 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
 ggSpec.link = function (output)
 {
 
-  if (names(output[1]) == "Coverage")
-    output = output[-1]
   cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
   classdata = cbind(do.call(rbind, output))

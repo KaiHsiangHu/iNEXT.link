@@ -489,9 +489,9 @@ datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   res[4,1] <-  sum(data>0)%>%as.integer()
 
   res[5,1] <-  round(sum(data>0)/ncol(data)/nrow(data),4)
-  res[6,1] <-  sum(data == 1)%>%as.integer()
-  res[7,1] <-  sum(data == 2)%>%as.integer()
   phy <- create.aili(data,row.tree = row.tree,col.tree = col.tree)
+  res[6,1] <-  sum(phy$branch.abun==1)%>%as.integer()
+  res[7,1] <-  sum(phy$branch.abun==2)%>%as.integer()
   res[8,1] <- sum(phy$branch.length[phy$branch.abun==1])
   res[9,1] <- sum(phy$branch.length[phy$branch.abun==2])
   res[10,1] <- nrow(phy)%>%as.integer()
@@ -1419,51 +1419,51 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
                              LCL = Estimate - tmp * se$gamma,
                              UCL = Estimate + tmp * se$gamma,
                              Dataset = dataset_name,
-                             Diversity = 'PD') %>% 
-      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
+                             Diversity = PDtype) %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Gamma" = "Estimate")
 
     alpha = alpha %>% mutate(s.e. = se$alpha,
                              LCL = Estimate - tmp * se$alpha,
                              UCL = Estimate + tmp * se$alpha,
                              Dataset = dataset_name,
-                             Diversity = 'PD') %>% 
-      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
+                             Diversity = PDtype) %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Alpha" = "Estimate")
 
     beta = beta %>% mutate(  s.e. = se$beta,
                              LCL = Estimate - tmp * se$beta,
                              UCL = Estimate + tmp * se$beta,
                              Dataset = dataset_name,
-                             Diversity = 'PD') %>% 
-      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
+                             Diversity = PDtype) %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Beta" = "Estimate")
 
     C = C %>% mutate(        s.e. = se$C,
                              LCL = Estimate - tmp * se$C,
                              UCL = Estimate + tmp * se$C,
                              Dataset = dataset_name,
-                             Diversity = 'PD') %>% 
-      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
+                             Diversity = PDtype) %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Dissimilarity" = "Estimate")
 
 
     U = U %>% mutate(        s.e. = se$U,
                              LCL = Estimate - tmp * se$U,
                              UCL = Estimate + tmp * se$U,
                              Dataset = dataset_name,
-                             Diversity = 'PD') %>% 
-      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
+                             Diversity = PDtype) %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Dissimilarity" = "Estimate")
 
     V = V %>% mutate(        s.e. = se$V,
                              LCL = Estimate - tmp * se$V,
                              UCL = Estimate + tmp * se$V,
                              Dataset = dataset_name,
-                             Diversity = 'PD') %>% 
-      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
+                             Diversity = PDtype) %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Dissimilarity" = "Estimate")
 
     S = S %>% mutate(        s.e. = se$S,
                              LCL = Estimate - tmp * se$S,
                              UCL = Estimate + tmp * se$S,
                              Dataset = dataset_name,
-                             Diversity = 'PD') %>% 
-      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)]
+                             Diversity = PDtype) %>% 
+      arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Dissimilarity" = "Estimate")
 
     
     beta$Method[beta$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
@@ -3305,6 +3305,7 @@ estimatelinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = 
     out$qFD.LCL[out$qFD.LCL < 0] <- 0
     if (datatype == "incidence_freq")
       colnames(out)[colnames(out) == "m"] = "nt"
+    out = out %>% .[,c(1:4,9,5,6,7,8,10)]
   }
   else if (base == "coverage") {
     out <- iNEXT.3D:::invChatFD(datalist = dat, dij = distM, q = q,
@@ -3467,6 +3468,7 @@ estimatelinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype =
                                       conf = conf, m = level) %>% select(-c("SC.s.e.",
                                                                             "SC.LCL", "SC.UCL"))
     out$qAUC.LCL[out$qAUC.LCL < 0] <- 0
+    out = out %>% .[,c(1:4,9,5,6,7,8)]
   }
   else if (base == "coverage") {
 
