@@ -4,15 +4,13 @@
 \alias{ggiNEXTbeta.link}
 \title{ggplot2 extension for outcome from \code{iNEXTbeta.link}}
 \usage{
-ggiNEXTbeta.link(outcome, type = c("B", "D"), scale = "free")
+ggiNEXTbeta.link(outcome, type = c("B", "D"))
 }
 \arguments{
 \item{outcome}{the outcome from \code{"iNEXTbeta.link"}}
 
 \item{type}{selection of plot type : \code{type = 'B'} for plotting the gamma, alpha, and beta diversity ;
 \code{type = 'D'} for plotting 4 turnover dissimilarities.}
-
-\item{scale}{Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.}
 }
 \value{
 a figure for gamma, alpha, and beta diversity or four dissimilarity measures.

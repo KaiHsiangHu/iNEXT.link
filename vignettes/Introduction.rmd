@@ -703,12 +703,6 @@ The function `ggiNEXTbeta.link()`, which extends `ggplot2` to the `"iNEXT.link"`
 <td align="center"><code>type</code></td>
 <td align="left">selection of plot type : type = 'B' for plotting the gamma, alpha, and beta diversity; type = 'D' for plotting 4 turnover dissimilarities.</td>
 
-</tr>
-<tr class="odd">
-<td align="center"><code>scale</code></td>
-<td align="left">Are scales shared across all facets (the default, <code>"fixed"</code>), or do they vary across rows (<code>"free_x"</code>), columns (<code>"free_y"</code>), or both rows and columns (<code>"free"</code>)? Default is <code>"free"</code>.</td>
-
-
 </tbody>
 </table>
 

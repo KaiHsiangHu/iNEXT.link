@@ -988,7 +988,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
 #' @param outcome the outcome from \code{"iNEXTbeta.link"}
 #' @param type selection of plot type : \code{type = 'B'} for plotting the gamma, alpha, and beta diversity ;
 #' \code{type = 'D'} for plotting 4 turnover dissimilarities.
-#' @param scale Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.
+# @param scale Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.
 #'
 #' @return a figure for gamma, alpha, and beta diversity or four dissimilarity measures.
 #' 
@@ -1023,7 +1023,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
 #' ggiNEXTbeta.link(output4, type = 'D')
 #' @export
 
-ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
+ggiNEXTbeta.link <- function(outcome, type = c('B', 'D')){
 
   if (type == 'B'){
 
@@ -1121,7 +1121,7 @@ ggiNEXTbeta.link <- function(outcome, type = c('B', 'D'), scale = 'free'){
     geom_point(data = subset(df, Method=='Observed' & div_type!="Gamma"),shape=1, size=point_size,stroke=1.5)+
     geom_point(data = subset(double_extrapolation, div_type == "Gamma"),shape=17, size=point_size) +
     geom_point(data = subset(double_extrapolation, div_type!="Gamma"),shape=2, size=point_size,stroke=1.5) +
-    facet_grid(div_type~Order.q, scales = scale) +
+    facet_grid(div_type~Order.q, scales = 'free') +
     # facet_wrap(div_type~Order.q, scales = scale, switch="both") +
     theme_bw() + 
     theme(legend.position = "bottom", 
