@@ -9,7 +9,7 @@
 #' @param col.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
 #' @param col.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.
-#' @return
+#' 
 #' @return a data.frame of basic data information including network name (Networks), sample size (n), observed species richness in row assemblage (S.obs(row)), observed species richness in column assemblage (S.obs(col)), the number of interactions (Link.obs), link percentage(Connectance), sample coverage estimate (Coverage).\cr\cr
 #' Besides, show the first ten species abundance (or incidence) frequency counts in the reference sample in TD. (f1-f10)\cr\cr
 #' In PD, show the the observed total branch length in the phylogenetic tree (PD.obs), the number of singletons and doubletons in the node/branch set (f1*-f2*), the total branch length of those singletons/doubletons in the node/branch set (g1-g2), mean reference time (mean_T).\cr\cr
