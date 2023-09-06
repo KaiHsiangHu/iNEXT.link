@@ -2,7 +2,7 @@
 % Please edit documentation in R/MainFun.R
 \name{Spec.link}
 \alias{Spec.link}
-\title{Standardized estimation (or observed) of Specialization with order q}
+\title{Standardized estimation (or observed) of specialization with order q}
 \usage{
 Spec.link(
   data,
@@ -28,15 +28,22 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 
 \item{E.class}{an integer vector between 1 to 5.}
 
-\item{C}{a standardized coverage for calculating evenness index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).}
+\item{C}{a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).}
 }
 \value{
-A list of estimated(Observed) specialization with order q.\cr
-Different lists represents different classes of Specialization.\cr
-Each list is combined with order.q and sites.\cr
+A list of several tables containing estimated (or observed) evenness with order q.\cr
+        Each tables represents a class of specialization.\cr
+        'Order.q' = the diversity order of q.\cr\cr
+        'Specialization' = the specialization of order q.\cr\cr
+        's.e.' = standard error of evenness.\cr\cr
+        'Spec.LCL', 'Spec.UCL' = the bootstrap lower and upper confidence limits for the evenness of order q at the specified level (with a default value of 0.95).\cr\cr
+        'Method' = "Estimated" or "Observed".\cr\cr
+        'SC' = the target standardized coverage value. (only when method = 'Estimated') \cr\cr
+        'Network' = the network name.\cr\cr
+        'class' = specialization class.\cr\cr
 }
 \description{
-Standardized estimation (or observed) of Specialization with order q
+Standardized estimation (or observed) of specialization with order q
 }
 \examples{
 data(beetles)

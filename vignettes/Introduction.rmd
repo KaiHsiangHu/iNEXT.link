@@ -670,7 +670,7 @@ Abundance_TD = iNEXTbeta.link(data = beetles, diversity = 'TD', level = NULL, q 
 
 lapply(Abundance_TD$Dataset_1, function(x) {
     tmp = x[1:6,]
-    tmp[,c('Estimate', 'SC','Size', 's.e.', 'LCL', 'UCL')] = round(tmp[,c('Estimate', 'SC','Size', 's.e.', 'LCL', 'UCL')], 3)
+    tmp[,c(3:5,7:9)] = round(tmp[,c(3:5,7:9)], 3)
     tmp
 })
 ```

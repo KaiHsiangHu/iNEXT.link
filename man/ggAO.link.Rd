@@ -10,7 +10,7 @@ ggAO.link(outcome)
 \item{outcome}{the outcome of the functions \code{AO.link} .\cr}
 }
 \value{
-a figure of asymptotic (or observed) diversity with order q\cr\cr
+a figure of asymptotic or empirical (observed) diversity in q-profile.\cr\cr
 }
 \description{
 \code{ggAO.link} Plots q-profile based on the outcome of \code{AO.link} using the ggplot2 package.\cr

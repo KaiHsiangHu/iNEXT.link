@@ -18,6 +18,11 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 }
 \value{
 a matrix of estimated sample completeness with order q: \cr\cr
+        'Order.q' = the diversity order of q.\cr\cr
+        'Estimate.SC' = the estimated (or observed) sample completeness of order q.\cr\cr
+        's.e.' = standard error of sample completeness.\cr\cr
+        'SC.LCL', 'SC.UCL' = the bootstrap lower and upper confidence limits for the sample completeness of order q at the specified level (with a default value of 0.95).\cr\cr
+        'Assemblage' = the assemblage name.\cr\cr
 }
 \description{
 \code{Completeness.link} Estimation of Sample Completeness with order q
@@ -29,6 +34,5 @@ output
 
 }
 \references{
-Chao,A.,Y.Kubota,D.Zelen??,C.-H.Chiu.
-Quantifying sample completeness and comparing diversities among assemblages.
+Chao, A., Y. Kubota, D. Zelen??, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
 }

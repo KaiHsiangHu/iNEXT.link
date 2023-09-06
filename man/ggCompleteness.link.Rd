@@ -19,4 +19,8 @@ a figure of estimated sample completeness with order q
 data(beetles)
 output = Completeness.link(beetles)
 ggCompleteness.link(output)
+
+}
+\references{
+Chao, A., Y. Kubota, D. Zelen??, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
 }

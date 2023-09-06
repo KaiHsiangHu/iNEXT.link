@@ -66,6 +66,10 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
  \item{\code{$AsyEst}: for
 showing asymptotic diversity estimates along with related statistics.}
 }
+
+a list of three objects: \code{$DataInfo} (or \code{$PDInfo}, \code{$FDInfo}, \code{$AUCInfo}) for summarizing data information; 
+\code{$iNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}, \code{$AUCiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
+and \code{$AsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}, \code{$AUCAsyEst}) for showing asymptotic diversity estimates along with related statistics.
 }
 \description{
 Interpolation (rarefaction) and extrapolation of network diversity

@@ -15,7 +15,7 @@ ggiNEXTbeta.link(outcome, type = c("B", "D"), scale = "free")
 \item{scale}{Are scales shared across all facets (\code{"fixed"}), or do they vary across rows (\code{"free_x"}), columns (\code{"free_y"}), or both rows and columns (\code{"free"})? Default is \code{"free"}.}
 }
 \value{
-a figure for beta diversity or dissimilarity diversity.
+a figure for gamma, alpha, and beta diversity or four dissimilarity measures.
 }
 \description{
 \code{ggiNEXTbeta.link}: ggplot for Interpolation and extrapolation of beta diversity with order q

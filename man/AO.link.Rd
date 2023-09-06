@@ -48,7 +48,16 @@ AO.link(
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
-a table of Asymptotic network diversity q profile.
+a table of diversity table including the following arguments.
+'Order.q' = the diversity order of q.\cr\cr
+'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated asymptotic diversity or empirical (observed) diversity of order q. \cr\cr
+'s.e.' = standard error of diversity. \cr\cr
+'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
+'Assemblage' (or 'Network') = the network name.\cr\cr
+'Method' = "Asymptotic" or "Empirical".\cr\cr
+'Reftime' = reference times for PD.\cr\cr
+'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
+'Tau' = the threshold of functional distinctiveness between any two species.\cr
 }
 \description{
 \code{AO.link}: The asymptotic (or observed) diversity of order q

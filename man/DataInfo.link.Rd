@@ -27,7 +27,10 @@ DataInfo.link(
 \item{col.distM}{(required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.}
 }
 \value{
-a data.frame of basic data information incliuding sample size, observed species richness, sample coverage estimate, and the first ten abundance frequency counts.
+a data.frame of basic data information including network name (Networks), sample size (n), observed species richness in row assemblage (S.obs(row)), observed species richness in column assemblage (S.obs(col)), the number of interactions (Link.obs), link percentage(Connectance), sample coverage estimate (Coverage).\cr\cr
+Besides, show the first ten species abundance (or incidence) frequency counts in the reference sample in TD. (f1-f10)\cr\cr
+In PD, show the the observed total branch length in the phylogenetic tree (PD.obs), the number of singletons and doubletons in the node/branch set (f1*-f2*), the total branch length of those singletons/doubletons in the node/branch set (g1-g2), mean reference time (mean_T).\cr\cr
+In FD (FDtype = "tau_values"), show the number of singletons and doubletons in the data (f1-f2), the number of singletons and doubletons in the functional group (a1*-a2*), the threshold of functional distinctiveness between any two species (threshold).\cr\cr
 }
 \description{
 \code{DataInfo.link}: exhibits basic data information
