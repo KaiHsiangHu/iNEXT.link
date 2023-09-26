@@ -3457,7 +3457,7 @@ estimatelinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype =
                                       q = q, datatype = datatype, tau = tau, nboot = nboot,
                                       conf = conf, m = level) %>% select(-c("SC.s.e.",
                                                                             "SC.LCL", "SC.UCL"))
-    out$qAUC.LCL[out$qAUC.LCL < 0] <- 0
+    out$qFD.LCL[out$qFD.LCL < 0] <- 0
     out = out %>% .[,c(1:4,9,5,6,7,8)]
   }
   else if (base == "coverage") {
