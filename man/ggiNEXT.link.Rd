@@ -2,17 +2,17 @@
 % Please edit documentation in R/MainFun.R
 \name{ggiNEXT.link}
 \alias{ggiNEXT.link}
-\title{ggplot2 extension for outcome from \code{iNEXT.link}}
+\title{ggplot2 extension for output from \code{iNEXT.link}}
 \usage{
 ggiNEXT.link(
-  outcome,
+  output,
   type = c(1, 2, 3),
   facet.var = "Assemblage",
   color.var = "Order.q"
 )
 }
 \arguments{
-\item{outcome}{a list object computed by \code{\link{iNEXT.link}}.}
+\item{output}{a list object computed by \code{\link{iNEXT.link}}.}
 
 \item{type}{three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1});
 sample coverage curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).}

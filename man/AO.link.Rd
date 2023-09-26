@@ -49,15 +49,15 @@ AO.link(
 }
 \value{
 a table of diversity table including the following arguments.
-'Order.q' = the diversity order of q.\cr\cr
-'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated asymptotic diversity or empirical (observed) diversity of order q. \cr\cr
-'s.e.' = standard error of diversity. \cr\cr
-'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
-'Assemblage' (or 'Network') = the network name.\cr\cr
-'Method' = "Asymptotic" or "Empirical".\cr\cr
-'Reftime' = reference times for PD.\cr\cr
-'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
-'Tau' = the threshold of functional distinctiveness between any two species.\cr
+\item{Order.q}{the diversity order of q.}
+\item{qTD, qPD, qFD}{the estimated asymptotic diversity or observed diversity of order q.}
+\item{s.e.}{standard error of diversity.}
+\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
+\item{Assemblage (or Network)}{the network name.}
+\item{Method}{"Asymptotic" means asymptotic diversity and "Observed" means observed diversity.}
+\item{Reftime}{the reference times for PD.}
+\item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
+\item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
 }
 \description{
 \code{AO.link}: The asymptotic (or observed) diversity of order q

@@ -57,17 +57,17 @@ sampling uncertainty and constructing confidence intervals. Enter 0 to skip the 
 }
 \value{
 a \code{data.frame} of diversity table including the following arguments:
-'Assemblage' = the assemblage name.\cr\cr
-'m' = the corresponding sample size for the standardized coverage value. \cr\cr
-'Method' = Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.\cr\cr
-'Order.q' = the diversity order of q.\cr\cr
-'SC' = the target standardized coverage value. \cr\cr
-'qD' (or 'qPD', 'qFD', 'qAUC') = the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity. \cr\cr
-'s.e.' = standard error of diversity estimate.\cr\cr
-'qD.LCL' (or 'qPD.LCL', 'qFD.LCL', 'qAUC.LCL'), 'qD.UCL' (or 'qPD.UCL', 'qFD.UCL', 'qAUC.UCL') = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
-'Reftime' = reference times for PD.\cr\cr
-'Type' = "PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).\cr\cr
-'Tau' = the threshold of functional distinctiveness between any two species.\cr
+\item{Assemblage}{the assemblage name.}
+\item{m}{the corresponding sample size for the standardized coverage value.}
+\item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
+\item{Order.q}{the diversity order of q.}
+\item{SC}{the target standardized coverage value.}
+\item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity.} 
+\item{s.e.}{standard error of diversity estimate.}
+\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
+\item{Reftime}{reference times for PD.}
+\item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).}
+\item{Tau}{the threshold of functional distinctiveness between any two species.}
 }
 \description{
 \code{estimateD.link} computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.

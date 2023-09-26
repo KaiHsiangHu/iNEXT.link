@@ -2,12 +2,12 @@
 % Please edit documentation in R/MainFun.R
 \name{ggiNEXTbeta.link}
 \alias{ggiNEXTbeta.link}
-\title{ggplot2 extension for outcome from \code{iNEXTbeta.link}}
+\title{ggplot2 extension for output from \code{iNEXTbeta.link}}
 \usage{
-ggiNEXTbeta.link(outcome, type = c("B", "D"))
+ggiNEXTbeta.link(output, type = c("B", "D"))
 }
 \arguments{
-\item{outcome}{the outcome from \code{"iNEXTbeta.link"}}
+\item{output}{the output from \code{"iNEXTbeta.link"}}
 
 \item{type}{selection of plot type : \code{type = 'B'} for plotting the gamma, alpha, and beta diversity ;
 \code{type = 'D'} for plotting 4 turnover dissimilarities.}

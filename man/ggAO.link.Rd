@@ -4,16 +4,16 @@
 \alias{ggAO.link}
 \title{ggplot for Asymptotic Network diversity}
 \usage{
-ggAO.link(outcome)
+ggAO.link(output)
 }
 \arguments{
-\item{outcome}{the outcome of the functions \code{AO.link} .\cr}
+\item{output}{the output of the functions \code{AO.link} .\cr}
 }
 \value{
 a figure of asymptotic or empirical (observed) diversity in q-profile.\cr\cr
 }
 \description{
-\code{ggAO.link} Plots q-profile based on the outcome of \code{AO.link} using the ggplot2 package.\cr
+\code{ggAO.link} Plots q-profile based on the output of \code{AO.link} using the ggplot2 package.\cr
 }
 \examples{
 ## Taxonomic diversity

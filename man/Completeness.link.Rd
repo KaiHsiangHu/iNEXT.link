@@ -17,12 +17,12 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
 }
 \value{
-a matrix of estimated sample completeness with order q: \cr\cr
-        'Order.q' = the diversity order of q.\cr\cr
-        'Estimate.SC' = the estimated (or observed) sample completeness of order q.\cr\cr
-        's.e.' = standard error of sample completeness.\cr\cr
-        'SC.LCL', 'SC.UCL' = the bootstrap lower and upper confidence limits for the sample completeness of order q at the specified level (with a default value of 0.95).\cr\cr
-        'Assemblage' = the assemblage name.\cr\cr
+a matrix of estimated sample completeness with order q: 
+        \item{Order.q}{the diversity order of q.}
+        \item{Estimate.SC}{the estimated (or observed) sample completeness of order q.}
+        \item{s.e.}{standard error of sample completeness.}
+        \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the sample completeness of order q at the specified level (with a default value of 0.95).}
+        \item{Assemblage}{the assemblage name.}
 }
 \description{
 \code{Completeness.link} Estimation of Sample Completeness with order q

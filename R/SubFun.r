@@ -1045,7 +1045,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
       ref_gamma_max = iNEXT.3D:::Coverage(data_alpha, n*2, datatype = 'abundance')
 
       level = level[level<1]
-      level = c(level, ref_gamma, ref_alpha, ref_alpha_max, ref_gamma_max) %>% sort %>% unique
+      # level = c(level, ref_gamma, ref_alpha, ref_alpha_max, ref_gamma_max) %>% sort %>% unique
 
       m_gamma = sapply(level, function(i) coverage_to_size(x = data_gamma, C = i, datatype='abundance'))
       m_alpha = sapply(level, function(i) coverage_to_size(data_alpha, i, datatype='abundance'))
@@ -1701,7 +1701,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
 
       aL <- create.aili(data = datalist[[i]],row.tree = row.tree,col.tree = col.tree)
 
-      x <- as.vector(datalist[[i]]) %>% .[. > 0]
+      x <- as.vector(datalist[[i]]) %>% unlist %>% .[. > 0]
       n <- sum(x)
       aL = filter(aL,branch.abun >0)
       reft = sum(aL$branch.abun*aL$branch.length/n)
@@ -1773,11 +1773,9 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
       SC.UCL_ <- rep(covm + qtile * ses_cov, each = length(q) *
                        length(reft))
       reft_ <- rep(rep(reft, each = length(q)), length(m[[i]]))
-      out_m <- tibble(Assemblage = nms[i], m = m_, Method = method,
-                      Order.q = orderq, qPD = qPDm, 
-                      qPD.LCL = qPDm - qtile * ses_pd, qPD.UCL = qPDm +
-                        qtile * ses_pd, SC = SC_, 
-                      SC.LCL = SC.LCL_, SC.UCL = SC.UCL_, Reftime = reft_,
+      out_m <- tibble(Assemblage = nms[i], Order.q = orderq, m = m_, Method = method,
+                      qPD = qPDm, qPD.LCL = qPDm - qtile * ses_pd, qPD.UCL = qPDm + qtile * ses_pd, 
+                      SC = SC_, SC.LCL = SC.LCL_, SC.UCL = SC.UCL_, Reftime = reft_,
                       Type = cal) %>% arrange(Reftime, Order.q, m)
       out_m$qPD.LCL[out_m$qPD.LCL < 0] <- 0
       out_m$SC.LCL[out_m$SC.LCL < 0] <- 0
@@ -1791,8 +1789,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
         id_C <- match(c("Assemblage", "goalSC", "SC", "m", "Method", "Order.q", 
                         "qPD", "qPD.LCL", "qPD.UCL", "Reftime", "Type"), names(out_C),
                       nomatch = 0)
-        out_C <- out_C[, id_C] %>% arrange(Reftime,
-                                           Order.q, m)
+        out_C <- out_C[, id_C] %>% arrange(Reftime, Order.q, m)
         out_C$qPD.LCL[out_C$qPD.LCL < 0] <- 0
       }
       else {
@@ -2172,15 +2169,6 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
                                 FDdistM = distM, FDtype = "tau_values", FDtau = threshold,
                                 nT = nT)
   info$n = lapply(dat, function(x) sum(x))
-  info$SC = lapply(dat, function(x) {
-    n = sum(x)
-    f1 = sum(x == 1)
-    f2 = sum(x == 2)
-    f0.hat <- ifelse(f2 == 0, (n - 1)/n * f1 * (f1 - 1)/2,
-                     (n - 1)/n * f1^2/2/f2)
-    A <- ifelse(f1 > 0, n * f0.hat/(n * f0.hat + f1), 1)
-    Chat <- round(1 - f1/n * A, 4)
-  })
 
   return(list(FDInfo = info, FDiNextEst = out, FDAsyEst = index))
 }
@@ -2387,7 +2375,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
                                           conf = conf, m = size)
 
 
-      temp1$qAUC.LCL[temp1$qAUC.LCL < 0] <- 0
+      temp1$qFD.LCL[temp1$qFD.LCL < 0] <- 0
       temp1$SC.LCL[temp1$SC.LCL < 0] <- 0
       temp1$SC.UCL[temp1$SC.UCL > 1] <- 1
       if (datatype == "incidence_freq")
@@ -2397,9 +2385,9 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
                                                                                                                                                 datatype = datatype, m = size[[i]]), nboot = nboot,
                                                                            conf = conf, tau =tau)) %>% do.call(rbind,
                                                                                                                .)
-      temp2$qAUC.LCL[temp2$qAUC.LCL < 0] <- 0
-      if (datatype == "incidence_freq")
-        colnames(temp2)[colnames(temp2) == "m"] = "nt"
+      temp2$qFD.LCL[temp2$qFD.LCL < 0] <- 0
+      # if (datatype == "incidence_freq")
+      #   colnames(temp2)[colnames(temp2) == "m"] = "nt"
       temp1 = temp1 %>% select(-c("s.e.", "SC.s.e."))
       temp2 = temp2 %>% select(-"s.e.")
       ans <- list(size_based = temp1, coverage_based = temp2)
@@ -2414,10 +2402,10 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
   })
   index <- iNEXT.3D:::AO3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), datatype = datatype, nboot = nboot, conf = 0.95)
   index = index[order(index$Assemblage), ]
-  LCL <- index$qAUC.LCL[index$Method == "Asymptotic"]
-  UCL <- index$qAUC.UCL[index$Method == "Asymptotic"]
+  LCL <- index$qFD.LCL[index$Method == "Asymptotic"]
+  UCL <- index$qFD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Assemblage + Order.q ~ Method,
-                 value.var = "qAUC")
+                 value.var = "qFD")
   index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 -
                                                               (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
@@ -2435,7 +2423,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
 
 
 
-  return(list(AUCInfo = info, AUCiNextEst = out, AUCAsyEst = index))
+  return(list(FDInfo = info, FDiNextEst = out, FDAsyEst = index))
 }
 
 AsylinkTD = function (data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95)
@@ -2445,9 +2433,10 @@ AsylinkTD = function (data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "ab
     assemblage = names(data)[[i]]
     # please note that nboot has to larger than 0
     res = MakeTable_Proposeprofile(data = x, B = nboot, q, conf = conf)%>%
-      mutate(Network = assemblage, method = "Asymptotic")%>%
+      mutate(Network = assemblage, Method = "Asymptotic")%>%
       filter(Target == "Diversity")%>%select(-Target)%>%
-      rename("qD"="Estimate", "qD.LCL"="LCL", "qD.UCL"="UCL", 'Method' = 'method')
+      rename("qTD"="Estimate", "qTD.LCL"="LCL", "qTD.UCL"="UCL") %>%
+      select(c("Network", "Order.q", "qTD", "s.e.", "qTD.LCL", "qTD.UCL", "Method"))
 
     return(res)
   })%>%do.call("rbind",.)
@@ -2463,9 +2452,10 @@ ObslinkTD = function (data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "ab
     tmp <- c(as.matrix(x))
     ## nboot has to larger than 0
     res = MakeTable_Empericalprofile(data = x, B = nboot, q, conf = conf)%>%
-      mutate(Network = assemblage, method = "Empirical")%>%
+      mutate(Network = assemblage, Method = "Observed")%>%
       filter(Target == "Diversity")%>%select(-Target)%>%
-      rename("qD"="Emperical", "qD.LCL"="LCL", "qD.UCL"="UCL", 'Method' = 'method')
+      rename("qTD"="Emperical", "qTD.LCL"="LCL", "qTD.UCL"="UCL") %>%
+      select(c("Network", "Order.q", "qTD", "s.e.", "qTD.LCL", "qTD.UCL", "Method"))
     return(res)
   })%>%do.call("rbind",.)
 
@@ -2525,12 +2515,12 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   ci <- qnorm(conf/2+0.5)
   out <- c()
   for (i in 1:length(data)) {
-    tmp <- data.frame(Order.q = q,
+    tmp <- data.frame(Network = region_names[[i]],
+                      Order.q = q,
                       qPD = est[[i]],
                       s.e. = est.sd[[i]],
                       qPD.LCL = est[[i]] - est.sd[[i]]*ci,
                       qPD.UCL = est[[i]] + est.sd[[i]]*ci,
-                      Network = region_names[[i]],
                       Method = "Asymptotic",
                       Reftime = rt[i],
                       Type = PDtype)
@@ -2597,13 +2587,13 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   ci <- qnorm(conf/2+0.5)
   out <- c()
   for (i in 1:length(data)) {
-    tmp <- data.frame(Order.q = q,
+    tmp <- data.frame(Network = region_names[[i]],
+                      Order.q = q,
                       qPD = mle[[i]][1,],
                       s.e. = mle.sd[[i]],
                       qPD.LCL = mle[[i]][1,] - mle.sd[[i]]*ci,
                       qPD.UCL = mle[[i]][1,] + mle.sd[[i]]*ci,
-                      Network = region_names[[i]],
-                      Method = "Empirical",
+                      Method = "Observed",
                       Reftime = rt[i],
                       Type = PDtype)
     

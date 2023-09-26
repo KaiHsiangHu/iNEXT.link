@@ -4,10 +4,10 @@
 \alias{ggCompleteness.link}
 \title{ggplot for Sample Completeness}
 \usage{
-ggCompleteness.link(outcome)
+ggCompleteness.link(output)
 }
 \arguments{
-\item{outcome}{a table generated from Completeness.link function}
+\item{output}{a table generated from Completeness.link function}
 }
 \value{
 a figure of estimated sample completeness with order q

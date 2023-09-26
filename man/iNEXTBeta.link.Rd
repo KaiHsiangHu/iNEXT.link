@@ -55,16 +55,16 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 }
 \value{
 A list of seven matrices with three diversity dimensions and four dissimilarity measures.
-'Dataset' = the datasets name.\cr\cr
-'Order.q' = the diversity order of q.\cr\cr
-'SC' = the target standardized coverage value. The observed coverage and extrapolation limit for beta diversity are defined the same as those for alpha diversity. For q = 0, the extrapolation can be extended to a maximum coverage value C(2n, alpha) = coverage value of twice the alpha reference sample size; for q = 1 and 2, target coverage can be extended to 1 (complete coverage) if data are not sparse. \cr\cr
-'Size' = the corresponding sample size for the standardized coverage value. \cr\cr
-'Alpha/Beta/Gamma/Dissimilarity' = the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity. \cr\cr
-'Method' = Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample. (For beta diversity, observed coverage is defined as the coverage of the alpha reference sample).\cr\cr
-'s.e.' = standard error of diversity estimate.\cr\cr
-'LCL', 'UCL' = the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).\cr\cr
-'Diversity' = "TD" (taxonomic diversity), "PD" (phylogenetic diversity of effective total branch length), "meanPD" (phylogenetic diversity of effective number of equally divergent lineages), "FD_tau" (functional diversity under a single tau), "FD_AUC" (functional diversity by integrating all threshold values between zero and one.\cr\cr
-'Tau' = the threshold of functional distinctiveness between any two species.\cr
+\item{Dataset}{the datasets name.}
+\item{Order.q}{the diversity order of q.}
+\item{SC}{the target standardized coverage value. The observed coverage and extrapolation limit for beta diversity are defined the same as those for alpha diversity. For q = 0, the extrapolation can be extended to a maximum coverage value C(2n, alpha) = coverage value of twice the alpha reference sample size; for q = 1 and 2, target coverage can be extended to 1 (complete coverage) if data are not sparse.}
+\item{Size}{the corresponding sample size for the standardized coverage value.}
+\item{Alpha/Beta/Gamma/Dissimilarity}{the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity.}
+\item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample. (For beta diversity, observed coverage is defined as the coverage of the alpha reference sample).}
+\item{s.e.}{standard error of diversity estimate.}
+\item{LCL, UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
+\item{Diversity}{"TD" (taxonomic diversity), "PD" (phylogenetic diversity of effective total branch length), "meanPD" (phylogenetic diversity of effective number of equally divergent lineages), "FD_tau" (functional diversity under a single tau), "FD_AUC" (functional diversity by integrating all threshold values between zero and one.}
+\item{Tau}{the threshold of functional distinctiveness between any two species.}
 }
 \description{
 Interpolation (rarefaction) and extrapolation of network beta diversity
