@@ -78,9 +78,9 @@ Interpolation (rarefaction) and extrapolation of network diversity
 ## Taxonomic diversity
 data(beetles)
 output1 = iNEXT.link(data = beetles, diversity = 'TD', q = c(0,1,2))
-output1$DataInfo # showing basic data information.
-output1$iNextEst # showing diversity estimates with rarefied and extrapolated.
-output1$AsyEst # showing asymptotic diversity estimates.
+output1$TDInfo   # showing basic data information.
+output1$TDiNextEst   # showing diversity estimates with rarefied and extrapolated.
+output1$TDAsyEst   # showing asymptotic diversity estimates.
 
 
 ## Phylogenetic diversity

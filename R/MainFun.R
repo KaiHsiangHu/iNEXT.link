@@ -188,9 +188,9 @@ ggCompleteness.link <- function(output){
 #' ## Taxonomic diversity
 #' data(beetles)
 #' output1 = iNEXT.link(data = beetles, diversity = 'TD', q = c(0,1,2))
-#' output1$DataInfo # showing basic data information.
-#' output1$iNextEst # showing diversity estimates with rarefied and extrapolated.
-#' output1$AsyEst # showing asymptotic diversity estimates.
+#' output1$TDInfo   # showing basic data information.
+#' output1$TDiNextEst   # showing diversity estimates with rarefied and extrapolated.
+#' output1$TDAsyEst   # showing asymptotic diversity estimates.
 #'
 #'
 #' ## Phylogenetic diversity
@@ -399,10 +399,10 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
 }
 
 
-# AO.link -------------------------------------------------------------------
+# ObsAsy.link -------------------------------------------------------------------
 #' Asymptotic and Observed diversity q profile
 #'
-#' \code{AO.link}: The asymptotic (or observed) diversity of order q
+#' \code{ObsAsy.link}: The asymptotic (or observed) diversity of order q
 #'
 #' @param data a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
@@ -431,33 +431,33 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
-#' output1 = AO.link(data = beetles, diversity = 'TD', q = seq(0, 2, 0.2))
+#' output1 = ObsAsy.link(data = beetles, diversity = 'TD', q = seq(0, 2, 0.2))
 #' output1
 #'
 #'
 #' ## Phylogenetic diversity
 #' data(beetles)
 #' data(beetles_col_tree)
-#' output2 = AO.link(data = beetles, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
+#' output2 = ObsAsy.link(data = beetles, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
 #' output2
 #'
 #'
 #' ## Functional diversity under single threshold
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output3 = AO.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.2), col.distM = beetles_col_distM, FDtype = "tau_values")
+#' output3 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.2), col.distM = beetles_col_distM, FDtype = "tau_values")
 #' output3
 #'
 #'
 #' ## Functional diversity with thresholds integrating from 0 to 1
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output4 = AO.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25),
-#'                   col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
+#' output4 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25),
+#'                       col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
 #' output4
 #' @export
-AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, conf = 0.95, method = c("Asymptotic", "Observed"),
-                    row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
+ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, conf = 0.95, method = c("Asymptotic", "Observed"),
+                        row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
   
   datatype = "abundance"
   
@@ -529,42 +529,42 @@ AO.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, conf
 }
 
 
-# ggAO.link -------------------------------------------------------------------
+# ggObsAsy.link -------------------------------------------------------------------
 #' ggplot for Asymptotic Network diversity
 #'
-#' \code{ggAO.link} Plots q-profile based on the output of \code{AO.link} using the ggplot2 package.\cr
+#' \code{ggObsAsy.link} Plots q-profile based on the output of \code{ObsAsy.link} using the ggplot2 package.\cr
 #'
-#' @param output the output of the functions \code{AO.link} .\cr
+#' @param output the output of the functions \code{ObsAsy.link} .\cr
 #' @return a figure of asymptotic or empirical (observed) diversity in q-profile.\cr\cr
 #'
 #' @examples
 #' ## Taxonomic diversity
 #' data(beetles)
-#' output1 = AO.link(data = beetles, diversity = 'TD', q = seq(0, 2, 0.2))
-#' ggAO.link(output1)
+#' output1 = ObsAsy.link(data = beetles, diversity = 'TD', q = seq(0, 2, 0.2))
+#' ggObsAsy.link(output1)
 #'
 #'
 #' ## Phylogenetic diversity
 #' data(beetles)
 #' data(beetles_col_tree)
-#' output2 = AO.link(data = beetles, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
-#' ggAO.link(output2)
+#' output2 = ObsAsy.link(data = beetles, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
+#' ggObsAsy.link(output2)
 #'
 #'
 #' ## Functional diversity under single threshold
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output3 = AO.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.2), col.distM = beetles_col_distM, FDtype = "tau_values")
-#' ggAO.link(output3)
+#' output3 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.2), col.distM = beetles_col_distM, FDtype = "tau_values")
+#' ggObsAsy.link(output3)
 #'
 #'
 #' ## Functional diversity with thresholds integrating from 0 to 1
 #' data(beetles)
 #' data(beetles_col_distM)
-#' output4 = AO.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-#' ggAO.link(output4)
+#' output4 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
+#' ggObsAsy.link(output4)
 #' @export
-ggAO.link <- function(output){
+ggObsAsy.link <- function(output){
   
   if (colnames(output)[3] == 'qTD') {
     diversity = 'TD'
@@ -578,19 +578,19 @@ ggAO.link <- function(output){
     
     names(output)[names(output) == 'Network'] = 'Assemblage'
     
-    iNEXT.3D::ggAO3D(output) + ylab('Taxonomic network diversity')
+    iNEXT.3D::ggObsAsy3D(output) + ylab('Taxonomic network diversity')
     
   }else if(diversity == 'PD') {
     
     names(output)[names(output) == 'Network'] = 'Assemblage'
     
-    iNEXT.3D::ggAO3D(output) + 
+    iNEXT.3D::ggObsAsy3D(output) + 
       facet_grid(. ~ .) + 
       ylab('Phylogenetic network diversity')
     
   }else if(diversity == 'FD'){
     
-    iNEXT.3D::ggAO3D(output) + ylab("Functional network diversity")
+    iNEXT.3D::ggObsAsy3D(output) + ylab("Functional network diversity")
     
   }
 
@@ -768,8 +768,8 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
                          Order.q = q,
                          SC = rep(level, rep(len,length(size_m))),
                          m = rep(size_m,rep(len,length(size_m))),
-                         qPD = qPDm,
                          Method = ifelse(level > ref, 'Extrapolation', 'Rarefaction'),
+                         qPD = qPDm,
                          s.e. = PD.sd,
                          qPD.LCL = qPDm-tmp*PD.sd,
                          qPD.UCL = qPDm+tmp*PD.sd,

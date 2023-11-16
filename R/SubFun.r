@@ -1663,8 +1663,8 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   out <- tryCatch(FUN(e), error = function(e) {
     return()
   })
-  index <- AO.link(data = data, diversity = "PD",row.tree = row.tree, col.tree  = col.tree,
-                   q = c(0, 1, 2), PDtype = type, nboot = nboot, conf = 0.95)
+  index <- ObsAsy.link(data = data, diversity = "PD",row.tree = row.tree, col.tree  = col.tree,
+                       q = c(0, 1, 2), PDtype = type, nboot = nboot, conf = 0.95)
   index = index[order(index$Network), ]
   LCL <- index$qPD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qPD.UCL[index$Method == "Asymptotic"]
@@ -1773,10 +1773,10 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
       SC.UCL_ <- rep(covm + qtile * ses_cov, each = length(q) *
                        length(reft))
       reft_ <- rep(rep(reft, each = length(q)), length(m[[i]]))
-      out_m <- tibble(Assemblage = nms[i], Order.q = orderq, m = m_, Method = method,
-                      qPD = qPDm, qPD.LCL = qPDm - qtile * ses_pd, qPD.UCL = qPDm + qtile * ses_pd, 
-                      SC = SC_, SC.LCL = SC.LCL_, SC.UCL = SC.UCL_, Reftime = reft_,
-                      Type = cal) %>% arrange(Reftime, Order.q, m)
+      out_m <- data.frame(Assemblage = nms[i], Order.q = orderq, m = m_, Method = method,
+                          qPD = qPDm, qPD.LCL = qPDm - qtile * ses_pd, qPD.UCL = qPDm + qtile * ses_pd, 
+                          SC = SC_, SC.LCL = SC.LCL_, SC.UCL = SC.UCL_, Reftime = reft_,
+                          Type = cal) %>% arrange(Reftime, Order.q, m)
       out_m$qPD.LCL[out_m$qPD.LCL < 0] <- 0
       out_m$SC.LCL[out_m$SC.LCL < 0] <- 0
       out_m$SC.UCL[out_m$SC.UCL > 1] <- 1
@@ -2146,8 +2146,8 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
   out <- tryCatch(FUN(e), error = function(e) {
     return()
   })
-  index <- iNEXT.3D:::AO3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), datatype = datatype, nboot = nboot, conf = 0.95,
-                           FDtype = 'tau_values', FDtau = NULL)
+  index <- iNEXT.3D:::ObsAsy3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), datatype = datatype, nboot = nboot, conf = 0.95,
+                               FDtype = 'tau_values', FDtau = NULL)
   index <- index %>% arrange(., Assemblage)
   LCL <- index$qFD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qFD.UCL[index$Method == "Asymptotic"]
@@ -2388,8 +2388,8 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
       temp2$qFD.LCL[temp2$qFD.LCL < 0] <- 0
       # if (datatype == "incidence_freq")
       #   colnames(temp2)[colnames(temp2) == "m"] = "nt"
-      temp1 = temp1 %>% select(-c("s.e.", "SC.s.e."))
-      temp2 = temp2 %>% select(-"s.e.")
+      temp1 = temp1 %>% data.frame %>% select(-c("s.e.", "SC.s.e."))
+      temp2 = temp2 %>% data.frame %>% select(-"s.e.")
       ans <- list(size_based = temp1, coverage_based = temp2)
       return(ans)
     }
@@ -2400,7 +2400,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
   out <- tryCatch(FUN(e), error = function(e) {
     return()
   })
-  index <- iNEXT.3D:::AO3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), datatype = datatype, nboot = nboot, conf = 0.95)
+  index <- iNEXT.3D:::ObsAsy3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), datatype = datatype, nboot = nboot, conf = 0.95)
   index = index[order(index$Assemblage), ]
   LCL <- index$qFD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qFD.UCL[index$Method == "Asymptotic"]
@@ -2602,8 +2602,7 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   return(as.data.frame(out))
 }
 
-AsylinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = "abundance", q = seq(0, 2,
-                                                                                                by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT = NULL)
+AsylinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT = NULL)
 {
   if (length(data) == 1) {
     dat = as.matrix(as.vector(t(data[[1]])))
@@ -2864,8 +2863,7 @@ AsylinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype = "abu
 }
 
 
-ObslinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = "abundance", q = seq(0, 2,
-                                                                                                by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT = NULL)
+ObslinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = "abundance", q = seq(0, 2, by = 0.25), nboot = 50, conf = 0.95, threshold = NULL, nT = NULL)
 {
   if (length(data) == 1) {
     dat = as.matrix(as.vector(t(data[[1]])))
@@ -2983,13 +2981,11 @@ ObslinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = "abun
   }
   if (is.null(threshold)) {
     if (datatype == "abundance") {
-      tmp = sapply(dat, function(x) x) %>% apply(., 1,
-                                                 sum)
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
       tmp <- matrix(tmp/sum(tmp), ncol = 1)
     }
     else if (datatype == "incidence_freq") {
-      tmp = sapply(dat, function(x) x) %>% apply(., 1,
-                                                 sum)
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
       tmp <- matrix(tmp[-1]/sum(tmp[-1]), ncol = 1)
     }
     dmean <- sum((tmp %*% t(tmp)) * distM)
@@ -3468,7 +3464,7 @@ estimatelinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype =
     if (datatype == "incidence_freq")
       colnames(out)[colnames(out) == "m"] = "nt"
   }
-  return(out)
+  return(data.frame(out))
 }
 ##
 Diversity_profile <- function(x,q){
