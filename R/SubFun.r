@@ -2852,8 +2852,9 @@ AsylinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype = "abu
   }else {
     names(dat) = colnames(data1)
   }
+  tau <- seq(0, 1, length.out = 100)
   out <- iNEXT.3D:::AUCtable_est(datalist = dat, dij = distM, q = q,
-                                 datatype = datatype, nboot = nboot, conf = conf, tau = NULL)
+                                 datatype = datatype, nboot = nboot, conf = conf, tau = tau)
   out
 }
 
@@ -3111,6 +3112,7 @@ ObslinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype = "abu
   }else {
     names(dat) = colnames(data1)
   }
+  tau <- seq(0, 1, length.out = 100)
   out <- iNEXT.3D:::AUCtable_mle(datalist = dat, dij = distM, q = q,
                                  datatype = datatype, nboot = nboot, conf = conf, tau = tau)
   out
@@ -3443,6 +3445,8 @@ estimatelinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype =
     }
     level <- min(level)
   }
+  
+  tau <- seq(0, 1, length.out = 100)
   if (base == "size") {
     out = iNEXT.3D:::AUCtable_iNextFD(datalist = dat, dij = distM,
                                       q = q, datatype = datatype, tau = tau, nboot = nboot,
