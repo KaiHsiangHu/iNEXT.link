@@ -831,8 +831,9 @@ sample.boot.phy <- function(data,B,row.tree = NULL,col.tree = NULL) {
 
   # transfrom pi from S1xS1 to B1xB2
   seen_interaction_aili = create.aili(pi_matrix,row.tree,col.tree)
-  unseen_interaction_aili = data.frame(branch.abun = rep(pi$unseen,f0), branch.length = g0 / f0,
-                                       tgroup = "Tip",interaction = "unseen")
+  
+  if (f0 > 0) unseen_interaction_aili = data.frame(branch.abun = rep(pi$unseen,f0), branch.length = g0 / f0,
+                                                   tgroup = "Tip",interaction = "unseen") else unseen_interaction_aili = data.frame()
   p <- rbind(seen_interaction_aili,unseen_interaction_aili)%>%
     mutate(branch.abun = ifelse(tgroup == 'Root', 1, branch.abun))
 
@@ -2127,10 +2128,11 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
       if (datatype == "incidence_freq")
         colnames(temp1)[colnames(temp1) == "m"] = "nt"
       temp2 <- lapply(1:length(dat), function(i) iNEXT.3D:::invChatFD(datalist = dat[i],
-                                                                      dij = distM, q = q, datatype = datatype, level = iNEXT.3D:::Coverage(data = dat[[i]],
-                                                                                                                                           datatype = datatype, m = size[[i]]), nboot = nboot,
-                                                                      conf = conf, tau = threshold)) %>% do.call(rbind,
-                                                                                                                 .)
+                                                                      dij = distM, q = q, datatype = datatype, 
+                                                                      level = unique(iNEXT.3D:::Coverage(data = dat[[i]], datatype = datatype, m = size[[i]])), 
+                                                                      nboot = nboot,
+                                                                      conf = conf, tau = threshold)) %>% 
+        do.call(rbind, .)
       temp2$qFD.LCL[temp2$qFD.LCL < 0] <- 0
       if (datatype == "incidence_freq")
         colnames(temp2)[colnames(temp2) == "m"] = "nt"
@@ -2146,19 +2148,17 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
   out <- tryCatch(FUN(e), error = function(e) {
     return()
   })
-  index <- iNEXT.3D:::ObsAsy3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), datatype = datatype, nboot = nboot, conf = 0.95,
+  index <- iNEXT.3D:::ObsAsy3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), 
+                               datatype = datatype, nboot = nboot, conf = 0.95,
                                FDtype = 'tau_values', FDtau = NULL)
   index <- index %>% arrange(., Assemblage)
   LCL <- index$qFD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qFD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Assemblage + Order.q ~ Method,
                  value.var = "qFD")
-  index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 -
-                                                              (1 - conf)/2), LCL, UCL)
+  index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
-    index$LCL[index$LCL < index$Empirical & index$Order.q ==
-                0] <- index$Empirical[index$LCL < index$Empirical &
-                                        index$Order.q == 0]
+    index$LCL[index$LCL < index$Empirical & index$Order.q == 0] <- index$Empirical[index$LCL < index$Empirical & index$Order.q == 0]
   index$Order.q <- c("Species richness", "Shannon diversity",
                      "Simpson diversity")
   index[, 3:4] = index[, 4:3]
@@ -2301,13 +2301,11 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
   }
   if (is.null(threshold)) {
     if (datatype == "abundance") {
-      tmp = sapply(dat, function(x) x) %>% apply(., 1,
-                                                 sum)
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
       tmp <- matrix(tmp/sum(tmp), ncol = 1)
     }
     else if (datatype == "incidence_freq") {
-      tmp = sapply(dat, function(x) x) %>% apply(., 1,
-                                                 sum)
+      tmp = sapply(dat, function(x) x) %>% apply(., 1, sum)
       tmp <- matrix(tmp[-1]/sum(tmp[-1]), ncol = 1)
     }
     dmean <- sum((tmp %*% t(tmp)) * distM)
@@ -2373,18 +2371,18 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
       temp1 = iNEXT.3D:::AUCtable_iNextFD(datalist = dat, dij = distM, q = q,
                                           datatype = datatype, tau = tau, nboot = nboot,
                                           conf = conf, m = size)
-
-
+      
       temp1$qFD.LCL[temp1$qFD.LCL < 0] <- 0
       temp1$SC.LCL[temp1$SC.LCL < 0] <- 0
       temp1$SC.UCL[temp1$SC.UCL > 1] <- 1
       if (datatype == "incidence_freq")
         colnames(temp1)[colnames(temp1) == "m"] = "nt"
       temp2 <- lapply(1:length(dat), function(i) iNEXT.3D:::AUCtable_invFD(datalist = dat[i],
-                                                                           dij = distM, q = q, datatype = datatype, level = iNEXT.3D:::Coverage(data = dat[[i]],
-                                                                                                                                                datatype = datatype, m = size[[i]]), nboot = nboot,
-                                                                           conf = conf, tau =tau)) %>% do.call(rbind,
-                                                                                                               .)
+                                                                           dij = distM, q = q, datatype = datatype, 
+                                                                           level = unique(iNEXT.3D:::Coverage(data = dat[[i]], datatype = datatype, m = size[[i]])), 
+                                                                           nboot = nboot,
+                                                                           conf = conf, tau =tau)) %>% 
+        do.call(rbind, .)
       temp2$qFD.LCL[temp2$qFD.LCL < 0] <- 0
       # if (datatype == "incidence_freq")
       #   colnames(temp2)[colnames(temp2) == "m"] = "nt"
@@ -2406,12 +2404,9 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
   UCL <- index$qFD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Assemblage + Order.q ~ Method,
                  value.var = "qFD")
-  index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 -
-                                                              (1 - conf)/2), LCL, UCL)
+  index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
-    index$LCL[index$LCL < index$Empirical & index$Order.q ==
-                0] <- index$Empirical[index$LCL < index$Empirical &
-                                        index$Order.q == 0]
+    index$LCL[index$LCL < index$Empirical & index$Order.q == 0] <- index$Empirical[index$LCL < index$Empirical & index$Order.q == 0]
   index$Order.q <- c("Species richness", "Shannon diversity",
                      "Simpson diversity")
   index[, 3:4] = index[, 4:3]
