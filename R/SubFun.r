@@ -2501,8 +2501,7 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   }
   
   est <- lapply(phydata,function(x){
-    iNEXT.3D:::Coverage(x %>% filter(tgroup == "Inode"))
-    PD = my_PhD.q.est(ai = x$branch.abun,Lis = x$branch.length,q,nt = sum(x[x$tgroup == "Tip","branch.abun"]), cal = PDtype) %>% c
+    PD = my_PhD.q.est(ai = x$branch.abun, Lis = x$branch.length, q, nt = sum(x[x$tgroup == "Tip","branch.abun"]), cal = PDtype) %>% c
     return(PD)
   })
   boot.sam <- lapply(data, function(x){
