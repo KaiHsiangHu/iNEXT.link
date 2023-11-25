@@ -559,7 +559,7 @@ plot.tree2 <- function(mat){
 ### ke-wei
 my_PhD.q.est <- function (ai, Lis, q, nt, cal)
 {
-  if ( !((sum(ai == 1) != 0) | (sum(ai == 2) == 0 & sum(ai == 1) == 1)) ) {
+  if ( !((sum(ai == 1) == 0) | (sum(ai == 2) == 0 & sum(ai == 1) == 1)) ) {
     
     t_bars <- as.numeric(t(ai) %*% Lis/nt)
     I1 <- which(ai == 1)
