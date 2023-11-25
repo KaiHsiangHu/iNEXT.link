@@ -731,7 +731,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
         }
 
 
-        ref= iNEXT.3D:::Coverage(data_2d,m= n, datatype = 'abundance')
+        ref= iNEXT.3D:::Coverage(data_2d, m = n, datatype = 'abundance')
         #
         aL_table = create.aili(data_2d, row.tree = row.tree, col.tree = col.tree) %>%
           select(branch.abun, branch.length, tgroup)%>%
@@ -769,7 +769,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
                          Order.q = q,
                          SC = rep(level, rep(len,length(size_m))),
                          m = rep(size_m,rep(len,length(size_m))),
-                         Method = ifelse(level > ref, 'Extrapolation', 'Rarefaction'),
+                         Method = ifelse(level > ref, 'Extrapolation', ifelse(level == ref, 'Observed', 'Rarefaction')),
                          qPD = qPDm,
                          s.e. = PD.sd,
                          qPD.LCL = qPDm-tmp*PD.sd,
