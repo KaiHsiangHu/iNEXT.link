@@ -62,6 +62,7 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
 
 }
 
+
 # Completeness.link ----
 #' Sample Completeness main function
 #'

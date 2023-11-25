@@ -530,7 +530,11 @@ datainf <- function(data, datatype){
   f1 = sum(data==1)%>%as.integer()
   f2 = sum(data==2)%>%as.integer()
   n = sum(data)%>%as.integer()
-  res[6,1] <- round(1 - (f1/n)*((n-1)*f1/((n-1)*f1+2*f2)),4) #C.hat
+  
+  f0.hat <- ifelse(f2 == 0, (n - 1)/n * f1 * (f1 - 1)/2, 
+                   (n - 1)/n * f1^2/2/f2)
+  A <- ifelse(f1 > 0, n * f0.hat/(n * f0.hat + f1), 1)
+  res[6,1] <- 1 - f1/n * A #C.hat
 
   res = res%>%t()%>%as.data.frame()
   return(res)
@@ -555,7 +559,7 @@ plot.tree2 <- function(mat){
 ### ke-wei
 my_PhD.q.est <- function (ai, Lis, q, nt, cal)
 {
-  if ((sum(ai == 1) != 0) | (sum(ai == 2) == 0 & sum(ai == 1) > 1)) {
+  if ((sum(ai == 1) != 0) & (sum(ai == 2) == 0 & sum(ai == 1) > 1)) {
     
     t_bars <- as.numeric(t(ai) %*% Lis/nt)
     I1 <- which(ai == 1)
@@ -635,9 +639,13 @@ my_PhD.q.est <- function (ai, Lis, q, nt, cal)
       }))
     }
     
-  } else est = iNEXT.3D:::PD.Tprofile(ai = ai, Lis = Lis, q = q,
-                                      reft = t_bars, 
-                                      cal = cal, nt = nt)
+  } else {
+    
+    t_bars <- as.numeric(t(ai) %*% Lis/nt)
+    est = iNEXT.3D:::PD.Tprofile(ai = ai, Lis = as.matrix(Lis), q = q,
+                                 reft = t_bars, 
+                                 cal = cal, nt = nt)
+  }
   
   return(est)
 }
@@ -2374,7 +2382,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
 
   FUN <- function(e) {
     if (inherits(dat, "list")) {
-      tau <- seq(0, 1, length.out = 30)
+      tau <- seq(1e-8, 1, length.out = 50)
       temp1 = iNEXT.3D:::AUCtable_iNextFD(datalist = dat, dij = distM, q = q,
                                           datatype = datatype, tau = tau, nboot = nboot,
                                           conf = conf, m = size)
@@ -2493,7 +2501,8 @@ AsylinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
   }
   
   est <- lapply(phydata,function(x){
-    PD = my_PhD.q.est(ai = x$branch.abun,Lis = x$branch.length,q,nt = sum(x[x$tgroup == "Tip","branch.abun"]), cal = PDtype)
+    iNEXT.3D:::Coverage(x %>% filter(tgroup == "Inode"))
+    PD = my_PhD.q.est(ai = x$branch.abun,Lis = x$branch.length,q,nt = sum(x[x$tgroup == "Tip","branch.abun"]), cal = PDtype) %>% c
     return(PD)
   })
   boot.sam <- lapply(data, function(x){
@@ -3453,7 +3462,7 @@ estimatelinkAUC = function (data, row.distM = NULL, col.distM = NULL, datatype =
     level <- min(level)
   }
   
-  tau <- seq(0, 1, length.out = 100)
+  tau <- seq(1e-8, 1, length.out = 50)
   if (base == "size") {
     out = iNEXT.3D:::AUCtable_iNextFD(datalist = dat, dij = distM,
                                       q = q, datatype = datatype, tau = tau, nboot = nboot,
