@@ -3,7 +3,7 @@
 # iNEXT.link (R package)
 
 <h5 align="right">
-Latest version: 2023-08-31
+Latest version: 2023-11-25
 </h5>
 <font color="394CAE">
 <h3 color="394CAE" style="font-weight: bold">
@@ -96,8 +96,8 @@ diversity). `iNEXT.link` has several main functions:
 -   **estimateD.link** : computes species diversity with a particular
     user-specified level of sample size or sample coverage.
 
--   **AO.link**: compute asymptotic or empirical(observed) diversity of
-    order q.
+-   **ObsAsy.link**: compute asymptotic or empirical(observed) diversity
+    of order q.
 
 -   **Completeness.link** : Calculates estimated sample completeness
     with order q.
@@ -120,7 +120,8 @@ diversity). `iNEXT.link` has several main functions:
 -   **ggSpec.link** : Visualizing the output from the function
     `Spec.link`
 
--   **ggAO.link** : Visualizing the output from the function `AO.link`
+-   **ggObsAsy.link** : Visualizing the output from the function
+    `ObsAsy.link`
 
 -   **ggiNEXT.link** : Visualizing the output from the function
     `iNEXT.link`
@@ -359,9 +360,7 @@ TD only.
 ``` r
 linkoutTD = iNEXT.link(data = beetles, diversity = 'TD', q = c(0,1,2), nboot = 30)
 linkoutTD$DataInfo
-  Networks    n S.obs(row) S.obs(col) Links.obs Connectance Coverage  f1 f2 f3 f4 f5 f6 f7 f8 f9 f10
-1   Closed  816          6         83       178      0.3574   0.8800  98 31 15  3  3  5  0  2  2   1
-2     Open 1932          6         88       206      0.3902   0.9431 110 33 15  8  7  5  3  2  3   2
+NULL
 ```
 
 Second part of output from function `iNEXT.link` is diversity estimates
@@ -390,15 +389,7 @@ Here only show first six rows:
 
 ``` r
 head(linkoutTD$iNextEst$size_based)
-# A tibble: 6 x 10
-  Assemblage     m Method      Order.q    qD qD.LCL qD.UCL     SC SC.LCL SC.UCL
-  <chr>      <dbl> <chr>         <dbl> <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>
-1 Closed         1 Rarefaction       0   1      1      1   0.0295 0.0263 0.0326
-2 Closed        43 Rarefaction       0  28.0   27.1   29.0 0.543  0.515  0.570 
-3 Closed        86 Rarefaction       0  44.8   42.8   46.8 0.661  0.635  0.687 
-4 Closed       129 Rarefaction       0  58.2   55.1   61.2 0.713  0.690  0.737 
-5 Closed       172 Rarefaction       0  69.8   65.8   73.7 0.745  0.724  0.766 
-6 Closed       215 Rarefaction       0  80.2   75.5   85.0 0.767  0.747  0.788 
+NULL
 ```
 
 The second data frame of list `$iNextEst` (as shown below for
@@ -417,15 +408,7 @@ Here only show first six rows:
 
 ``` r
 head(linkoutTD$iNextEst$coverage_based)
-# A tibble: 6 x 8
-  Assemblage     SC      m Method      Order.q    qD qD.LCL qD.UCL
-  <chr>       <dbl>  <dbl> <chr>         <dbl> <dbl>  <dbl>  <dbl>
-1 Closed     0.0295   1.00 Rarefaction       0  1.00  0.967   1.03
-2 Closed     0.543   43.0  Rarefaction       0 28.0  24.7    31.4 
-3 Closed     0.661   86.0  Rarefaction       0 44.8  38.3    51.2 
-4 Closed     0.713  129.   Rarefaction       0 58.2  49.4    66.9 
-5 Closed     0.745  172.   Rarefaction       0 69.8  59.0    80.5 
-6 Closed     0.767  215.   Rarefaction       0 80.2  67.8    92.7 
+NULL
 ```
 
 The output `$AsyEst` lists the diversity labels (`Diversity` in TD,
@@ -436,19 +419,14 @@ observed diversity (`Observed` in TD, `Phylogenetic Observed` in PD,
 `Functional Estimator` in FD), estimated bootstrap standard error
 (`s.e.`) and confidence intervals for diversity with q = 0, 1, and 2
 (`LCL`, `UCL`). The estimated asymptotic and observed diversity can also
-be computed via the function `AO.link()`. The output are shown below:
+be computed via the function `ObsAsy.link()`. The output are shown
+below:
 
 Here only show first six rows:
 
 ``` r
 head(linkoutTD$AsyEst)
-  Assemblage         Diversity   Observed  Estimator       s.e.        LCL        UCL
-1     Closed  Species richness 178.000000 332.713393 31.1752765 271.610974 393.815813
-2     Closed Shannon diversity  64.690053  80.316088  4.1719161  72.139283  88.492894
-3     Closed Simpson diversity  32.627205  33.944467  2.2120701  29.608889  38.280045
-4       Open  Species richness 206.000000 389.238440 33.3141682 323.943870 454.533010
-5       Open Shannon diversity  23.311453  25.911799  0.9921214  23.967277  27.856321
-6       Open Simpson diversity   8.059978   8.089554  0.2130638   7.671957   8.507151
+NULL
 ```
 
 ### GRAPHIC DISPLAYS: FUNCTION ggiNEXT.link()
@@ -556,8 +534,8 @@ DataInfo.link(beetles, diversity = 'TD')
 2     Open 1932          6         88       206      0.3902   0.9431 110 33 15  8  7  5  3  2  3   2
 DataInfo.link(beetles, diversity = 'PD', col.tree = beetles_col_tree)
   Networks    n S.obs(row) S.obs(col) Links.obs Connectance f1* f2*       g1       g2 PD.obs mean_T
-1   Closed  816          6         83       178      0.3574  98  31 11508.99 3873.052    924    285
-2     Open 1932          6         88       206      0.3902 110  33 13918.45 5172.410   1014    285
+1   Closed  816          6         83       178      0.3574 171  76 11508.99 3873.052    924    285
+2     Open 1932          6         88       206      0.3902 190  76 13918.45 5172.410   1014    285
 DataInfo.link(beetles, diversity = 'FD', col.distM = beetles_col_distM)
   Networks    n S.obs(row) S.obs(col) Links.obs Connectance  f1 f2 a1' a2' threshold
 1   Closed  816          6         83       178      0.3574  98 31   0   0  8.930741
@@ -590,95 +568,95 @@ extrapolation, as indicated in the method of the output.
 
 ``` r
 estimateD.link(beetles, diversity = 'TD', q = c(0, 1, 2), base = "coverage", level = 0.95)
-  Assemblage   SC        m        Method Order.q         qD       s.e.     qD.LCL     qD.UCL
-1     Closed 0.95 1944.292 Extrapolation       0 268.252103 26.4582800 216.394827 320.109379
-2     Closed 0.95 1944.292 Extrapolation       1  74.577021  4.5977860  65.565526  83.588516
-3     Closed 0.95 1944.292 Extrapolation       2  33.378889  1.8286390  29.794822  36.962955
-4       Open 0.95 2349.132 Extrapolation       0 228.271774 16.1616117 196.595597 259.947950
-5       Open 0.95 2349.132 Extrapolation       1  23.704215  1.0733930  21.600403  25.808026
-6       Open 0.95 2349.132 Extrapolation       2   8.065214  0.2848699   7.506879   8.623548
+  Assemblage Order.q   SC        m        Method        qTD       s.e.    qTD.LCL    qTD.UCL
+1     Closed       0 0.95 1944.292 Extrapolation 268.252103 24.1669586 220.885735 315.618472
+2     Closed       1 0.95 1944.292 Extrapolation  74.577021  4.7230582  65.319997  83.834045
+3     Closed       2 0.95 1944.292 Extrapolation  33.378889  2.2012080  29.064600  37.693177
+4       Open       0 0.95 2349.132 Extrapolation 228.271774 15.0484387 198.777376 257.766172
+5       Open       1 0.95 2349.132 Extrapolation  23.704215  1.1724852  21.406186  26.002243
+6       Open       2 0.95 2349.132 Extrapolation   8.065214  0.3137991   7.450179   8.680249
 ```
 
-### ASYMPTOTIC AND OBSERVED DIVERSITY FUNCTION: AO.link()
+### ASYMPTOTIC AND OBSERVED DIVERSITY FUNCTION: ObsAsy.link()
 
 ``` r
-AO.link(data, diversity = "TD", q = seq(0, 2, 0.2),  nboot = 30, 
-        conf = 0.95, method = c("Asymptotic", "Observed"), 
-        row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, 
-        col.distM = NULL, FDtype = "AUC", FDtau = NULL)
+ObsAsy.link(data, diversity = "TD", q = seq(0, 2, 0.2),  nboot = 30, 
+            conf = 0.95, method = c("Asymptotic", "Observed"), 
+            row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, 
+            col.distM = NULL, FDtype = "AUC", FDtau = NULL)
 ```
 
-The function `AO.link()` compute three diversity dimensions (TD, PD, FD)
-for empirical (observed) diversity and estimated asymptotic diversity
-with any diversity order. For example, the following commands returns
-empirical and asymptotic taxonomic diversity (‘TD’) for dunes data,
-along with its confidence interval at diversity order q from 0 to 2.
-Here only show the first ten rows.
+The function `ObsAsy.link()` compute three diversity dimensions (TD, PD,
+FD) for empirical (observed) diversity and estimated asymptotic
+diversity with any diversity order. For example, the following commands
+returns empirical and asymptotic taxonomic diversity (‘TD’) for dunes
+data, along with its confidence interval at diversity order q from 0 to
+2. Here only show the first ten rows.
 
 ``` r
-out1 <- AO.link(beetles, diversity = 'TD', q = seq(0, 2, 0.2), method = c("Asymptotic", "Observed"),
+out1 <- ObsAsy.link(beetles, diversity = 'TD', q = seq(0, 2, 0.2), method = c("Asymptotic", "Observed"),
                 nboot = 5,conf = 0.95)
 
 out1
-   Order.q         qD       s.e.     qD.LCL     qD.UCL Network     Method
-1      0.0 332.713393 47.6339429 264.713598 382.952328  Closed Asymptotic
-2      0.2 265.977501 34.6174453 215.331048 299.827893  Closed Asymptotic
-3      0.4 203.167245 23.3553062 168.336598 224.074177  Closed Asymptotic
-4      0.6 149.540048 14.6527608 127.490557 161.255012  Closed Asymptotic
-5      0.8 108.592546  8.6879960  95.500774 115.588269  Closed Asymptotic
-6      1.0  80.316088  5.0217924  72.722726  84.283473  Closed Asymptotic
-7      1.2  61.983531  2.9695122  57.486378  64.454141  Closed Asymptotic
-8      1.4  50.295815  1.9215576  47.504884  52.272936  Closed Asymptotic
-9      1.6  42.699384  1.4443154  40.882291  44.516358  Closed Asymptotic
-10     1.8  37.568079  1.2538592  36.340699  39.297767  Closed Asymptotic
-11     2.0  33.944467  1.1868870  33.040037  35.611586  Closed Asymptotic
-12     0.0 389.238440 47.7646970 343.387407 448.531820    Open Asymptotic
-13     0.2 263.223968 30.1542543 231.442321 301.370141    Open Asymptotic
-14     0.4 159.174040 16.4806654 140.310949 180.279271    Open Asymptotic
-15     0.6  86.647814  7.7701721  77.219649  96.599799    Open Asymptotic
-16     0.8  45.571274  3.4098289  41.548157  49.867582    Open Asymptotic
-17     1.0  25.911799  1.6100479  24.295969  27.915712    Open Asymptotic
-18     1.2  16.963237  0.9034461  15.860975  18.056868    Open Asymptotic
-19     1.4  12.643810  0.6015139  11.834999  13.340102    Open Asymptotic
-20     1.6  10.333946  0.4535803   9.696431  10.833443    Open Asymptotic
-21     1.8   8.967960  0.3717088   8.433284   9.358168    Open Asymptotic
-22     2.0   8.089554  0.3221836   7.617326   8.413607    Open Asymptotic
-23     0.0 178.000000  7.7588659 170.200000 187.500000  Closed  Empirical
-24     0.2 149.140436  7.5280512 140.581196 158.182492  Closed  Empirical
-25     0.4 122.284123  7.1198567 113.370515 130.545727  Closed  Empirical
-26     0.6  98.784711  6.5147978  90.019007 105.992205  Closed  Empirical
-27     0.8  79.539008  5.7669976  71.367384  85.554654  Closed  Empirical
-28     1.0  64.690053  4.9846188  57.369923  69.553727  Closed  Empirical
-29     1.2  53.711702  4.2693738  47.290519  57.588955  Closed  Empirical
-30     1.4  45.761569  3.6746674  40.148286  48.863305  Closed  Empirical
-31     1.6  40.008527  3.2076497  35.058990  42.530385  Closed  Empirical
-32     1.8  35.788959  2.8512496  31.359836  37.886709  Closed  Empirical
-33     2.0  32.627205  2.5820378  28.597796  34.415644  Closed  Empirical
-34     0.0 206.000000  6.6708320 196.800000 213.500000    Open  Empirical
-35     0.2 147.911160  4.9466099 141.184481 153.761847    Open  Empirical
-36     0.4  98.276240  3.4218954  93.591861 102.291322    Open  Empirical
-37     0.6  60.906771  2.2109276  57.854181  63.350517    Open  Empirical
-38     0.8  36.832763  1.3709137  34.924125  38.134790    Open  Empirical
-39     1.0  23.311453  0.8609654  22.105863  24.174035    Open  Empirical
-40     1.2  16.195155  0.5756396  15.388715  16.819711    Open  Empirical
-41     1.4  12.394607  0.4179621  11.812580  12.867369    Open  Empirical
-42     1.6  10.237828  0.3279282   9.786904  10.620150    Open  Empirical
-43     1.8   8.920980  0.2740524   8.551053   9.249634    Open  Empirical
-44     2.0   8.059978  0.2403748   7.742941   8.357278    Open  Empirical
+   Network Order.q        qTD       s.e.    qTD.LCL    qTD.UCL     Method
+1   Closed     0.0 332.713393 79.8971444 245.567759 443.743250 Asymptotic
+2   Closed     0.2 265.977501 54.2432356 206.204509 340.376251 Asymptotic
+3   Closed     0.4 203.167245 32.4673486 166.764988 246.659584 Asymptotic
+4   Closed     0.6 149.540048 16.7663547 130.344772 171.129591 Asymptotic
+5   Closed     0.8 108.592546  7.4472021  99.989743 117.646703 Asymptotic
+6   Closed     1.0  80.316088  2.8741512  77.150976  83.608431 Asymptotic
+7   Closed     1.2  61.983531  0.9922423  60.983193  63.114169 Asymptotic
+8   Closed     1.4  50.295815  0.4924943  49.577512  50.802752 Asymptotic
+9   Closed     1.6  42.699384  0.5331674  42.104006  43.187985 Asymptotic
+10  Closed     1.8  37.568079  0.6050662  36.799280  38.150384 Asymptotic
+11  Closed     2.0  33.944467  0.6558162  33.052300  34.629710 Asymptotic
+12    Open     0.0 389.238440 15.9915430 372.920680 412.320081 Asymptotic
+13    Open     0.2 263.223968  9.7622490 252.828606 276.582634 Asymptotic
+14    Open     0.4 159.174040  5.3354503 153.725808 165.800671 Asymptotic
+15    Open     0.6  86.647814  2.7752760  83.369111  89.516554 Asymptotic
+16    Open     0.8  45.571274  1.5758383  43.468313  47.288974 Asymptotic
+17    Open     1.0  25.911799  1.0161061  24.501243  27.005331 Asymptotic
+18    Open     1.2  16.963237  0.7154571  15.973895  17.712882 Asymptotic
+19    Open     1.4  12.643810  0.5429466  11.897262  13.205631 Asymptotic
+20    Open     1.6  10.333946  0.4398815   9.730315  10.784907 Asymptotic
+21    Open     1.8   8.967960  0.3752038   8.452904   9.349680 Asymptotic
+22    Open     2.0   8.089554  0.3324437   7.632537   8.425293 Asymptotic
+23  Closed     0.0 178.000000 10.6395489 167.000000 193.500000   Observed
+24  Closed     0.2 149.140436  9.6407438 139.357912 163.277725   Observed
+25  Closed     0.4 122.284123  8.4020610 113.968196 134.682484   Observed
+26  Closed     0.6  98.784711  7.0167453  92.049510 109.217447   Observed
+27  Closed     0.8  79.539008  5.6301918  74.321513  87.998261   Observed
+28  Closed     1.0  64.690053  4.3834406  60.781181  71.334871   Observed
+29  Closed     1.2  53.711702  3.3583332  50.835311  58.833433   Observed
+30  Closed     1.4  45.761569  2.5667595  43.657486  49.681975   Observed
+31  Closed     1.6  40.008527  1.9767959  38.469564  43.012054   Observed
+32  Closed     1.8  35.788959  1.5430942  34.661333  38.099196   Observed
+33  Closed     2.0  32.627205  1.2242586  31.786429  34.409994   Observed
+34    Open     0.0 206.000000  7.9561297 197.900000 217.400000   Observed
+35    Open     0.2 147.911160  6.0766149 142.129205 156.876381   Observed
+36    Open     0.4  98.276240  4.1012860  94.604428 104.468904   Observed
+37    Open     0.6  60.906771  2.3879428  58.842494  64.535937   Observed
+38    Open     0.8  36.832763  1.2464269  35.756406  38.719065   Observed
+39    Open     1.0  23.311453  0.6690883  22.712100  24.233410   Observed
+40    Open     1.2  16.195155  0.4212312  15.744129  16.668794   Observed
+41    Open     1.4  12.394607  0.3086129  12.029989  12.704356   Observed
+42    Open     1.6  10.237828  0.2473696   9.933245  10.492271   Observed
+43    Open     1.8   8.920980  0.2091711   8.657255   9.131287   Observed
+44    Open     2.0   8.059978  0.1835039   7.824583   8.235896   Observed
 ```
 
-### GRAPHIC DISPLAYS FUNCTION: ggAO.link()
+### GRAPHIC DISPLAYS FUNCTION: ggObsAsy.link()
 
 ``` r
-ggAO.link(outcome)
+ggObsAsy.link(outcome)
 ```
 
-`ggAO.link()` plots q-profile based on `ggplot2`. Here `outcome` is the
-object from the function `AO.link`.
+`ggObsAsy.link()` plots q-profile based on `ggplot2`. Here `outcome` is
+the object from the function `ObsAsy.link`.
 
 ``` r
 # q profile curve
-ggAO.link(out1)
+ggObsAsy.link(out1)
 ```
 
 <img src="README/README-unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" />
@@ -919,67 +897,67 @@ Abundance_TD
 ```
 
     $gamma
-        Dataset Order.q    SC   Size Estimate      Method  s.e.    LCL    UCL Diversity
-    1 Dataset_1       0 0.500 20.941   13.978 Rarefaction 0.772 12.465 15.492        TD
-    2 Dataset_1       0 0.525 25.102   16.017 Rarefaction 0.886 14.281 17.753        TD
-    3 Dataset_1       0 0.550 30.426   18.489 Rarefaction 1.012 16.505 20.473        TD
-    4 Dataset_1       0 0.575 37.171   21.450 Rarefaction 1.151 19.194 23.706        TD
-    5 Dataset_1       0 0.600 45.591   24.932 Rarefaction 1.304 22.376 27.487        TD
-    6 Dataset_1       0 0.625 56.005   28.975 Rarefaction 1.480 26.076 31.875        TD
+        Dataset Order.q    SC   Size  Gamma      Method  s.e.    LCL    UCL Diversity
+    1 Dataset_1       0 0.500 20.941 13.978 Rarefaction 0.799 12.413 15.544        TD
+    2 Dataset_1       0 0.525 25.102 16.017 Rarefaction 0.943 14.169 17.865        TD
+    3 Dataset_1       0 0.550 30.426 18.489 Rarefaction 1.111 16.311 20.668        TD
+    4 Dataset_1       0 0.575 37.171 21.450 Rarefaction 1.302 18.897 24.002        TD
+    5 Dataset_1       0 0.600 45.591 24.932 Rarefaction 1.515 21.963 27.900        TD
+    6 Dataset_1       0 0.625 56.005 28.975 Rarefaction 1.751 25.543 32.408        TD
 
     $alpha
-        Dataset Order.q    SC   Size Estimate      Method  s.e.    LCL    UCL Diversity
-    1 Dataset_1       0 0.500 25.949    8.432 Rarefaction 0.509  7.435  9.429        TD
-    2 Dataset_1       0 0.525 32.249    9.972 Rarefaction 0.618  8.761 11.184        TD
-    3 Dataset_1       0 0.550 40.247   11.826 Rarefaction 0.737 10.381 13.271        TD
-    4 Dataset_1       0 0.575 50.044   13.974 Rarefaction 0.865 12.278 15.669        TD
-    5 Dataset_1       0 0.600 61.802   16.403 Rarefaction 1.008 14.428 18.378        TD
-    6 Dataset_1       0 0.625 75.870   19.132 Rarefaction 1.172 16.834 21.430        TD
+        Dataset Order.q    SC   Size  Alpha      Method  s.e.    LCL    UCL Diversity
+    1 Dataset_1       0 0.500 25.949  8.432 Rarefaction 0.456  7.537  9.327        TD
+    2 Dataset_1       0 0.525 32.249  9.972 Rarefaction 0.535  8.924 11.021        TD
+    3 Dataset_1       0 0.550 40.247 11.826 Rarefaction 0.617 10.617 13.035        TD
+    4 Dataset_1       0 0.575 50.044 13.974 Rarefaction 0.704 12.594 15.354        TD
+    5 Dataset_1       0 0.600 61.802 16.403 Rarefaction 0.803 14.830 17.976        TD
+    6 Dataset_1       0 0.625 75.870 19.132 Rarefaction 0.921 17.328 20.937        TD
 
     $beta
-        Dataset Order.q    SC   Size Estimate      Method  s.e.   LCL   UCL Diversity
-    1 Dataset_1       0 0.500 25.949    1.658 Rarefaction 0.019 1.620 1.696        TD
-    2 Dataset_1       0 0.525 32.249    1.606 Rarefaction 0.020 1.567 1.645        TD
-    3 Dataset_1       0 0.550 40.247    1.563 Rarefaction 0.019 1.526 1.601        TD
-    4 Dataset_1       0 0.575 50.044    1.535 Rarefaction 0.018 1.499 1.571        TD
-    5 Dataset_1       0 0.600 61.802    1.520 Rarefaction 0.018 1.484 1.556        TD
-    6 Dataset_1       0 0.625 75.870    1.514 Rarefaction 0.018 1.479 1.550        TD
+        Dataset Order.q    SC   Size  Beta      Method  s.e.   LCL   UCL Diversity
+    1 Dataset_1       0 0.500 25.949 1.658 Rarefaction 0.020 1.618 1.697        TD
+    2 Dataset_1       0 0.525 32.249 1.606 Rarefaction 0.020 1.567 1.645        TD
+    3 Dataset_1       0 0.550 40.247 1.563 Rarefaction 0.019 1.526 1.601        TD
+    4 Dataset_1       0 0.575 50.044 1.535 Rarefaction 0.018 1.500 1.570        TD
+    5 Dataset_1       0 0.600 61.802 1.520 Rarefaction 0.017 1.486 1.554        TD
+    6 Dataset_1       0 0.625 75.870 1.514 Rarefaction 0.017 1.481 1.548        TD
 
     $`1-C`
-        Dataset Order.q    SC   Size Estimate      Method  s.e.   LCL   UCL Diversity
-    1 Dataset_1       0 0.500 25.949    0.658 Rarefaction 0.019 0.620 0.696        TD
-    2 Dataset_1       0 0.525 32.249    0.606 Rarefaction 0.020 0.567 0.645        TD
-    3 Dataset_1       0 0.550 40.247    0.563 Rarefaction 0.019 0.526 0.601        TD
-    4 Dataset_1       0 0.575 50.044    0.535 Rarefaction 0.018 0.499 0.571        TD
-    5 Dataset_1       0 0.600 61.802    0.520 Rarefaction 0.018 0.484 0.556        TD
-    6 Dataset_1       0 0.625 75.870    0.514 Rarefaction 0.018 0.479 0.550        TD
+        Dataset Order.q    SC   Size Dissimilarity      Method  s.e.   LCL   UCL Diversity
+    1 Dataset_1       0 0.500 25.949         0.658 Rarefaction 0.020 0.618 0.697        TD
+    2 Dataset_1       0 0.525 32.249         0.606 Rarefaction 0.020 0.567 0.645        TD
+    3 Dataset_1       0 0.550 40.247         0.563 Rarefaction 0.019 0.526 0.601        TD
+    4 Dataset_1       0 0.575 50.044         0.535 Rarefaction 0.018 0.500 0.570        TD
+    5 Dataset_1       0 0.600 61.802         0.520 Rarefaction 0.017 0.486 0.554        TD
+    6 Dataset_1       0 0.625 75.870         0.514 Rarefaction 0.017 0.481 0.548        TD
 
     $`1-U`
-        Dataset Order.q    SC   Size Estimate      Method  s.e.   LCL   UCL Diversity
-    1 Dataset_1       0 0.500 25.949    0.794 Rarefaction 0.014 0.766 0.821        TD
-    2 Dataset_1       0 0.525 32.249    0.755 Rarefaction 0.015 0.725 0.785        TD
-    3 Dataset_1       0 0.550 40.247    0.721 Rarefaction 0.016 0.690 0.751        TD
-    4 Dataset_1       0 0.575 50.044    0.697 Rarefaction 0.015 0.667 0.727        TD
-    5 Dataset_1       0 0.600 61.802    0.684 Rarefaction 0.015 0.654 0.715        TD
-    6 Dataset_1       0 0.625 75.870    0.679 Rarefaction 0.016 0.648 0.710        TD
+        Dataset Order.q    SC   Size Dissimilarity      Method  s.e.   LCL   UCL Diversity
+    1 Dataset_1       0 0.500 25.949         0.794 Rarefaction 0.015 0.765 0.822        TD
+    2 Dataset_1       0 0.525 32.249         0.755 Rarefaction 0.015 0.725 0.785        TD
+    3 Dataset_1       0 0.550 40.247         0.721 Rarefaction 0.015 0.690 0.751        TD
+    4 Dataset_1       0 0.575 50.044         0.697 Rarefaction 0.015 0.667 0.727        TD
+    5 Dataset_1       0 0.600 61.802         0.684 Rarefaction 0.015 0.656 0.713        TD
+    6 Dataset_1       0 0.625 75.870         0.679 Rarefaction 0.014 0.651 0.708        TD
 
     $`1-V`
-        Dataset Order.q    SC   Size Estimate      Method  s.e.   LCL   UCL Diversity
-    1 Dataset_1       0 0.500 25.949    0.658 Rarefaction 0.019 0.620 0.696        TD
-    2 Dataset_1       0 0.525 32.249    0.606 Rarefaction 0.020 0.567 0.645        TD
-    3 Dataset_1       0 0.550 40.247    0.563 Rarefaction 0.019 0.526 0.601        TD
-    4 Dataset_1       0 0.575 50.044    0.535 Rarefaction 0.018 0.499 0.571        TD
-    5 Dataset_1       0 0.600 61.802    0.520 Rarefaction 0.018 0.484 0.556        TD
-    6 Dataset_1       0 0.625 75.870    0.514 Rarefaction 0.018 0.479 0.550        TD
+        Dataset Order.q    SC   Size Dissimilarity      Method  s.e.   LCL   UCL Diversity
+    1 Dataset_1       0 0.500 25.949         0.658 Rarefaction 0.020 0.618 0.697        TD
+    2 Dataset_1       0 0.525 32.249         0.606 Rarefaction 0.020 0.567 0.645        TD
+    3 Dataset_1       0 0.550 40.247         0.563 Rarefaction 0.019 0.526 0.601        TD
+    4 Dataset_1       0 0.575 50.044         0.535 Rarefaction 0.018 0.500 0.570        TD
+    5 Dataset_1       0 0.600 61.802         0.520 Rarefaction 0.017 0.486 0.554        TD
+    6 Dataset_1       0 0.625 75.870         0.514 Rarefaction 0.017 0.481 0.548        TD
 
     $`1-S`
-        Dataset Order.q    SC   Size Estimate      Method  s.e.   LCL   UCL Diversity
-    1 Dataset_1       0 0.500 25.949    0.794 Rarefaction 0.014 0.766 0.821        TD
-    2 Dataset_1       0 0.525 32.249    0.755 Rarefaction 0.015 0.725 0.785        TD
-    3 Dataset_1       0 0.550 40.247    0.721 Rarefaction 0.016 0.690 0.751        TD
-    4 Dataset_1       0 0.575 50.044    0.697 Rarefaction 0.015 0.667 0.727        TD
-    5 Dataset_1       0 0.600 61.802    0.684 Rarefaction 0.015 0.654 0.715        TD
-    6 Dataset_1       0 0.625 75.870    0.679 Rarefaction 0.016 0.648 0.710        TD
+        Dataset Order.q    SC   Size Dissimilarity      Method  s.e.   LCL   UCL Diversity
+    1 Dataset_1       0 0.500 25.949         0.794 Rarefaction 0.015 0.765 0.822        TD
+    2 Dataset_1       0 0.525 32.249         0.755 Rarefaction 0.015 0.725 0.785        TD
+    3 Dataset_1       0 0.550 40.247         0.721 Rarefaction 0.015 0.690 0.751        TD
+    4 Dataset_1       0 0.575 50.044         0.697 Rarefaction 0.015 0.667 0.727        TD
+    5 Dataset_1       0 0.600 61.802         0.684 Rarefaction 0.015 0.656 0.713        TD
+    6 Dataset_1       0 0.625 75.870         0.679 Rarefaction 0.014 0.651 0.708        TD
 
 The output contains seven data frames: `gamma`, `alpha`, `beta`, `C`,
 `U`, `V`, `S`. For each data frame, it includes the diversity estimate

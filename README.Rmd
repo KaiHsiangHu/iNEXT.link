@@ -79,7 +79,7 @@ In this document, we provide a quick introduction demonstrating how to run the p
     
 - **estimateD.link** : computes species diversity with a particular user-specified level of sample size or sample coverage.
     
-- **AO.link**: compute asymptotic or empirical(observed) diversity of order q.
+- **ObsAsy.link**: compute asymptotic or empirical(observed) diversity of order q.
 
 - **Completeness.link** : Calculates estimated sample completeness with order q. 
 
@@ -96,7 +96,7 @@ In this document, we provide a quick introduction demonstrating how to run the p
 
 - **ggSpec.link** : Visualizing the output from the function `Spec.link`
 
-- **ggAO.link** : Visualizing the output from the function `AO.link`
+- **ggObsAsy.link** : Visualizing the output from the function `ObsAsy.link`
 
 - **ggiNEXT.link** : Visualizing the output from the function `iNEXT.link`
     
@@ -200,7 +200,7 @@ Here only show first six rows:
 head(linkoutTD$iNextEst$coverage_based)
 ```
 
-The output `$AsyEst` lists the diversity labels (`Diversity` in TD, `Phylogenetic Diversity` in PD, `Functional Diversity` in FD), the observed diversity (`Observed` in TD, `Phylogenetic Observed` in PD, `Functional Observed` in FD), asymptotic diversity estimates  (`Estimator` in TD, `Phylogenetic Estimator` in PD, `Functional Estimator` in FD), estimated bootstrap standard error (`s.e.`) and  confidence intervals for diversity with q = 0, 1, and 2 (`LCL`, `UCL`). The estimated asymptotic and observed diversity can also be computed via the function `AO.link()`. The output are shown below:
+The output `$AsyEst` lists the diversity labels (`Diversity` in TD, `Phylogenetic Diversity` in PD, `Functional Diversity` in FD), the observed diversity (`Observed` in TD, `Phylogenetic Observed` in PD, `Functional Observed` in FD), asymptotic diversity estimates  (`Estimator` in TD, `Phylogenetic Estimator` in PD, `Functional Estimator` in FD), estimated bootstrap standard error (`s.e.`) and  confidence intervals for diversity with q = 0, 1, and 2 (`LCL`, `UCL`). The estimated asymptotic and observed diversity can also be computed via the function `ObsAsy.link()`. The output are shown below:
 
 Here only show first six rows:
 
@@ -293,36 +293,36 @@ For example, the following command returns the taxonomic diversity ('TD') with a
 estimateD.link(beetles, diversity = 'TD', q = c(0, 1, 2), base = "coverage", level = 0.95)
 ```
 
-### ASYMPTOTIC AND OBSERVED DIVERSITY FUNCTION: AO.link()
+### ASYMPTOTIC AND OBSERVED DIVERSITY FUNCTION: ObsAsy.link()
 
 ```{r,eval=FALSE}
-AO.link(data, diversity = "TD", q = seq(0, 2, 0.2),  nboot = 30, 
-        conf = 0.95, method = c("Asymptotic", "Observed"), 
-        row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, 
-        col.distM = NULL, FDtype = "AUC", FDtau = NULL)
+ObsAsy.link(data, diversity = "TD", q = seq(0, 2, 0.2),  nboot = 30, 
+            conf = 0.95, method = c("Asymptotic", "Observed"), 
+            row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, 
+            col.distM = NULL, FDtype = "AUC", FDtau = NULL)
 ```
 
-The function `AO.link()` compute three diversity dimensions (TD, PD, FD) for empirical (observed) diversity and estimated asymptotic diversity with any diversity order. For example, the following commands returns empirical and asymptotic taxonomic diversity ('TD') for dunes data, along with its confidence interval at diversity order q from 0 to 2. Here only show the first ten rows.
+The function `ObsAsy.link()` compute three diversity dimensions (TD, PD, FD) for empirical (observed) diversity and estimated asymptotic diversity with any diversity order. For example, the following commands returns empirical and asymptotic taxonomic diversity ('TD') for dunes data, along with its confidence interval at diversity order q from 0 to 2. Here only show the first ten rows.
 
 ```{r}
-out1 <- AO.link(beetles, diversity = 'TD', q = seq(0, 2, 0.2), method = c("Asymptotic", "Observed"),
+out1 <- ObsAsy.link(beetles, diversity = 'TD', q = seq(0, 2, 0.2), method = c("Asymptotic", "Observed"),
                 nboot = 5,conf = 0.95)
 
 out1
 ```
 
 
-### GRAPHIC DISPLAYS FUNCTION: ggAO.link()
+### GRAPHIC DISPLAYS FUNCTION: ggObsAsy.link()
 
 ```{r,eval=FALSE}
-ggAO.link(outcome)
+ggObsAsy.link(outcome)
 ```
 
-`ggAO.link()` plots q-profile based on `ggplot2`. Here `outcome` is the object from the function `AO.link`.  
+`ggObsAsy.link()` plots q-profile based on `ggplot2`. Here `outcome` is the object from the function `ObsAsy.link`.  
 
 ```{r }
 # q profile curve
-ggAO.link(out1)
+ggObsAsy.link(out1)
 ```
 
 
@@ -441,7 +441,7 @@ Abundance_TD = iNEXTbeta.link(data = beetles, diversity = 'TD', level = NULL, q 
 
 lapply(Abundance_TD$Dataset_1, function(x) {
     tmp = x[1:6,]
-    tmp[,c('Estimate', 'SC','Size', 's.e.', 'LCL', 'UCL')] = round(tmp[,c('Estimate', 'SC','Size', 's.e.', 'LCL', 'UCL')], 3)
+    tmp[,c(3,4,5,7,8,9)] = round(tmp[,c(3,4,5,7,8,9)], 3)
     tmp
 })
 ```

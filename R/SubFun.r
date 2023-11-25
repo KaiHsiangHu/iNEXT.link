@@ -555,83 +555,90 @@ plot.tree2 <- function(mat){
 ### ke-wei
 my_PhD.q.est <- function (ai, Lis, q, nt, cal)
 {
-  t_bars <- as.numeric(t(ai) %*% Lis/nt)
-  I1 <- which(ai == 1)
-  I2 <- which(ai == 2)
-  f1 <- length(I1)
-  f2 <- length(I2)
-  if (f2 > 0) {
-    A = 2 * f2/((nt - 1) * f1 + 2 * f2)
-  }
-  else if (f2 == 0 & f1 > 0) {
-    A = 2/((nt - 1) * (f1 - 1) + 2)
-  }
-  else {
-    A = 1
-  }
-  S <- length(ai)
-  if (1 %in% q) {
-    ai_h1_I <- ai <= (nt - 1)
-    h1_pt2 <- rep(0, S)
-    ai_h1 <- ai[ai_h1_I]
-    h1_pt2[ai_h1_I] <- tibble(ai = ai) %>% .[ai_h1_I, ] %>%
-      mutate(diga = digamma(nt) - digamma(ai)) %>% apply(.,
-                                                         1, prod)/nt
-  }
-  if (2 %in% q) {
-    q2_pt2 <- unlist(ai * (ai - 1)/nt/(nt - 1))
-  }
-  if (sum(abs(q - round(q)) != 0) > 0 | max(q) > 2) {
-    deltas_pt2 <- sapply(0:(nt - 1), function(k) {
-      ai_delt_I <- ai <= (nt - k)
-      deltas_pt2 <- rep(0, S)
-      deltas_pt2[ai_delt_I] <- iNEXT.3D:::delta_part2(ai = ai[ai_delt_I],
-                                                      k = k, n = nt)
-      deltas_pt2
-    }) %>% t()
-  }
-  Sub <- function(q, g1, g2, PD_obs, t_bar, Li) {
-    if (q == 0) {
-      ans <- PD_obs + iNEXT.3D:::PDq0(nt, f1, f2, g1, g2)
+  if ((sum(ai == 1) != 0) | (sum(ai == 2) == 0 & sum(ai == 1) > 1)) {
+    
+    t_bars <- as.numeric(t(ai) %*% Lis/nt)
+    I1 <- which(ai == 1)
+    I2 <- which(ai == 2)
+    f1 <- length(I1)
+    f2 <- length(I2)
+    if (f2 > 0) {
+      A = 2 * f2/((nt - 1) * f1 + 2 * f2)
     }
-    else if (q == 1) {
-      h2 <- iNEXT.3D:::PDq1_2(nt, g1, A)
-      h1 <- sum(Li * h1_pt2)
-      h <- h1 + h2
-      ans <- t_bar * exp(h/t_bar)
-    }
-    else if (q == 2) {
-      ans <- t_bar^2/sum(Li * q2_pt2)
+    else if (f2 == 0 & f1 > 0) {
+      A = 2/((nt - 1) * (f1 - 1) + 2)
     }
     else {
-      k <- 0:(nt - 1)
-      deltas <- as.numeric(deltas_pt2 %*% Li)
-      a <- (choose(q - 1, k) * (-1)^k * deltas) %>% sum
-      b <- ifelse(g1 == 0 | A == 1, 0, (g1 * ((1 - A)^(1 -
-                                                         nt))/nt) * (A^(q - 1) - sum(choose(q - 1, k) *
-                                                                                       (A - 1)^k)))
-      ans <- ((a + b)/(t_bar^q))^(1/(1 - q))
+      A = 1
     }
-    return(ans)
-  }
-  Lis = as.data.frame(Lis)
-  est <- sapply(1:ncol(Lis), function(i) {
-    Li = Lis[, i]
-    t_bar <- t_bars[i]
-    PD_obs <- sum(Li)
-    g1 <- sum(Li[I1])
-    g2 <- sum(Li[I2])
-    est <- sapply(q, function(q_) Sub(q = q_, g1 = g1, g2 = g2,
-                                      PD_obs = PD_obs, t_bar = t_bar, Li = Li))
-  })
-  if (cal == "PD") {
-    est <- as.numeric(est)
-  }
-  else if (cal == "meanPD") {
-    est <- as.numeric(sapply(1:length(t_bars), function(i) {
-      est[, i]/t_bars[i]
-    }))
-  }
+    S <- length(ai)
+    if (1 %in% q) {
+      ai_h1_I <- ai <= (nt - 1)
+      h1_pt2 <- rep(0, S)
+      ai_h1 <- ai[ai_h1_I]
+      h1_pt2[ai_h1_I] <- tibble(ai = ai) %>% .[ai_h1_I, ] %>%
+        mutate(diga = digamma(nt) - digamma(ai)) %>% apply(.,
+                                                           1, prod)/nt
+    }
+    if (2 %in% q) {
+      q2_pt2 <- unlist(ai * (ai - 1)/nt/(nt - 1))
+    }
+    if (sum(abs(q - round(q)) != 0) > 0 | max(q) > 2) {
+      deltas_pt2 <- sapply(0:(nt - 1), function(k) {
+        ai_delt_I <- ai <= (nt - k)
+        deltas_pt2 <- rep(0, S)
+        deltas_pt2[ai_delt_I] <- iNEXT.3D:::delta_part2(ai = ai[ai_delt_I],
+                                                        k = k, n = nt)
+        deltas_pt2
+      }) %>% t()
+    }
+    Sub <- function(q, g1, g2, PD_obs, t_bar, Li) {
+      if (q == 0) {
+        ans <- PD_obs + iNEXT.3D:::PDq0(nt, f1, f2, g1, g2)
+      }
+      else if (q == 1) {
+        h2 <- iNEXT.3D:::PDq1_2(nt, g1, A)
+        h1 <- sum(Li * h1_pt2)
+        h <- h1 + h2
+        ans <- t_bar * exp(h/t_bar)
+      }
+      else if (q == 2) {
+        ans <- t_bar^2/sum(Li * q2_pt2)
+      }
+      else {
+        k <- 0:(nt - 1)
+        deltas <- as.numeric(deltas_pt2 %*% Li)
+        a <- (choose(q - 1, k) * (-1)^k * deltas) %>% sum
+        b <- ifelse(g1 == 0 | A == 1, 0, (g1 * ((1 - A)^(1 -
+                                                           nt))/nt) * (A^(q - 1) - sum(choose(q - 1, k) *
+                                                                                         (A - 1)^k)))
+        ans <- ((a + b)/(t_bar^q))^(1/(1 - q))
+      }
+      return(ans)
+    }
+    Lis = as.data.frame(Lis)
+    est <- sapply(1:ncol(Lis), function(i) {
+      Li = Lis[, i]
+      t_bar <- t_bars[i]
+      PD_obs <- sum(Li)
+      g1 <- sum(Li[I1])
+      g2 <- sum(Li[I2])
+      est <- sapply(q, function(q_) Sub(q = q_, g1 = g1, g2 = g2,
+                                        PD_obs = PD_obs, t_bar = t_bar, Li = Li))
+    })
+    if (cal == "PD") {
+      est <- as.numeric(est)
+    }
+    else if (cal == "meanPD") {
+      est <- as.numeric(sapply(1:length(t_bars), function(i) {
+        est[, i]/t_bars[i]
+      }))
+    }
+    
+  } else est = iNEXT.3D:::PD.Tprofile(ai = ai, Lis = Lis, q = q,
+                                      reft = t_bars, 
+                                      cal = cal, nt = nt)
+  
   return(est)
 }
 
@@ -985,7 +992,7 @@ get.netphydiv_iNE <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, kno
       PD.sd <- sapply(1:length(m), function(x){
         sd(PD.sd[x,])
       })
-      PD.table <- data.frame(m=m,method = ifelse(m<n,"Rarefaction",ifelse(n == m,"observed","Extrapolation")),
+      PD.table <- data.frame(m=m,method = ifelse(m<n,"Rarefaction",ifelse(n == m,"Observed","Extrapolation")),
                              Order.q = q_,PD = PD, PD.UCL = PD+ci * PD.sd,PD.LCL = PD - ci * PD.sd)
       out <- left_join(PD.table,sc.table)
       out
@@ -3473,30 +3480,35 @@ Diversity_profile <- function(x,q){
   f2 = sum(x==2)
   p1 = ifelse(f2>0,2*f2/((n-1)*f1+2*f2),ifelse(f1>0,2/((n-1)*(f1-1)+2),1))
   r <- 1:(n-1)
+  
   Sub <- function(q){
-    if(q==0){
-      sum(x>0) + (n-1)/n*ifelse(f2>0, f1^2/2/f2, f1*(f1-1)/2)
-    }
-    else if(q==1){
-      A <- sum(x/n*(digamma(n)-digamma(x)))
-      B <- ifelse(f1==0|p1==1,0,f1/n*(1-p1)^(1-n)*(-log(p1)-sum((1-p1)^r/r)))
-      exp(A+B)
-    }else if(abs(q-round(q))==0){
-      A <- sum(exp(lchoose(x,q)-lchoose(n,q)))
-      #ifelse(A==0,NA,A^(1/(1-q)))
-      A^(1/(1-q))
-    }else {
-      sort.data = sort(unique(x))
-      tab = table(x)
-      term = sapply(sort.data,function(z){
-        k=0:(n-z)
-        sum(choose(k-q,k)*exp(lchoose(n-k-1,z-1)-lchoose(n,z)))
-      })
-      r <- 0:(n-1)
-      A = sum(tab*term)
-      B = ifelse(f1==0|p1==1,0,f1/n*(1-p1)^(1-n)*(p1^(q-1)-sum(choose(q-1,r)*(p1-1)^r)))
-      (A+B)^(1/(1-q))
-    }
+    
+    if ((f1 != 0) | (f2 == 0 & f1 > 1)) {
+      
+      if(q==0){
+        sum(x>0) + (n-1)/n*ifelse(f2>0, f1^2/2/f2, f1*(f1-1)/2)
+      }
+      else if(q==1){
+        A <- sum(x/n*(digamma(n)-digamma(x)))
+        B <- ifelse(f1==0|p1==1,0,f1/n*(1-p1)^(1-n)*(-log(p1)-sum((1-p1)^r/r)))
+        exp(A+B)
+      }else if(abs(q-round(q))==0){
+        A <- sum(exp(lchoose(x,q)-lchoose(n,q)))
+        #ifelse(A==0,NA,A^(1/(1-q)))
+        A^(1/(1-q))
+      }else {
+        sort.data = sort(unique(x))
+        tab = table(x)
+        term = sapply(sort.data,function(z){
+          k=0:(n-z)
+          sum(choose(k-q,k)*exp(lchoose(n-k-1,z-1)-lchoose(n,z)))
+        })
+        r <- 0:(n-1)
+        A = sum(tab*term)
+        B = ifelse(f1==0|p1==1,0,f1/n*(1-p1)^(1-n)*(p1^(q-1)-sum(choose(q-1,r)*(p1-1)^r)))
+        (A+B)^(1/(1-q))
+      }
+    } else Diversity_profile_MLE(x,q)
   }
   sapply(q, Sub)
 }

@@ -1153,7 +1153,7 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
 #' @param E.class an integer vector between 1 to 5.
-#' @param C a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).
+#' @param SC a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).
 #' @return A list of several tables containing estimated (or observed) evenness with order q.\cr
 #'         Each tables represents a class of specialization.
 #'         \item{Order.q}{the diversity order of q.}
@@ -1177,7 +1177,7 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
                       nboot = 30,
                       conf = 0.95,
                       E.class = c(1:5),
-                      C = NULL){
+                      SC = NULL){
   
   datatype = "abundance"
   diversity = 'TD'
@@ -1185,12 +1185,12 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
   if (diversity == 'TD'){
     long = lapply(data, function(da){da%>%as.data.frame()%>%gather(key = "col_sp", value = "abundance")%>%.[,2]})
     
-    if (is.null(C)) C = sapply(long, function(x) iNEXT.3D:::Coverage(x, datatype = 'abundance', 2 * sum(x))) %>% min
+    if (is.null(SC)) SC = sapply(long, function(x) iNEXT.3D:::Coverage(x, datatype = 'abundance', 2 * sum(x))) %>% min
     
     Spec <- lapply(E.class, function(e){
       each_class = lapply(seq_along(long), function(i){
         res = iNEXT.4steps::Evenness(long[[i]], q = q,datatype = datatype,
-                                     method = method, nboot=nboot, E.class = e, C = C)
+                                     method = method, nboot=nboot, E.class = e, SC = SC)
         res['Coverage'] = NULL
         res = lapply(res, function(each_class){
           each_class%>%
@@ -1210,7 +1210,7 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
     names(Spec) = paste0("1 - E",E.class)
     
     if (method == "Estimated") {
-      Spec <- lapply(Spec, function(x) x %>% mutate('SC' = C))
+      Spec <- lapply(Spec, function(x) x %>% mutate('SC' = SC))
     }
     
     return(Spec)
@@ -1292,7 +1292,7 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
     Spec <- lapply(E.class, function(e){
       each_class = lapply(seq_along(long), function(i){
         res = iNEXT.4steps::Evenness(long[[i]], q = q,datatype = datatype,
-                                     method = method, nboot=nboot, E.class = e, C = C)
+                                     method = method, nboot=nboot, E.class = e, SC = SC)
         res['Coverage'] = NULL
         res = lapply(res, function(each_class){
           each_class%>%
