@@ -769,14 +769,14 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
                          Order.q = q,
                          SC = rep(level, rep(len,length(size_m))),
                          m = rep(size_m,rep(len,length(size_m))),
-                         Method = ifelse(level > ref, 'Extrapolation', ifelse(level == ref, 'Observed', 'Rarefaction')),
+                         Method = rep(ifelse(level > ref, 'Extrapolation', ifelse(level == ref, 'Observed', 'Rarefaction')), each = len),
                          qPD = qPDm,
                          s.e. = PD.sd,
                          qPD.LCL = qPDm-tmp*PD.sd,
                          qPD.UCL = qPDm+tmp*PD.sd,
                          Reftime = tbar, 
                          Type = PDtype
-        )
+                         )
         return(res)
       }
     }
