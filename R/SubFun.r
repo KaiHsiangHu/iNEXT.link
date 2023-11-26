@@ -80,6 +80,9 @@ phyExpandData_ <- function(x, labels, phy, datatype="abundance"){
     treeNdata<-full_join(phy$phytree, tmp, by="label")
     inodelist<-treeNdata %>% filter(tgroup !="Tip") %>% pull(node)
     names(inodelist)<-treeNdata %>% filter(tgroup !="Tip") %>% pull(label)
+    
+    class(treeNdata) = c("tbl_tree", class(treeNdata))  ## tidytree version 0.4.5
+    
     inode_x<-sapply(inodelist,function(x){offspring(treeNdata,x,tiponly=T) %>% select(x) %>% sum()})
     
     tmp1<-data.frame(label=names(inode_x),branch.abun=inode_x)
