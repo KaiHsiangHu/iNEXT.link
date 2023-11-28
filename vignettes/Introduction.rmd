@@ -42,7 +42,7 @@ If you publish your work based on the results from the `iNEXT.link` package, you
 
 ## SOFTWARE NEEDED TO RUN iNEXT.link IN R
 - Required: [R](https://cran.r-project.org/)
-- Suggested: [RStudio IDE](https://www.rstudio.com/products/RStudio/#Desktop)
+- Suggested: [RStudio IDE](https://posit.co/products/open-source/rstudio/#Desktop)
 
 ## HOW TO RUN iNEXT.link:
 The `iNEXT.link` package can be downloaded from Anne Chao's [iNEXT.link_github](https://github.com/AnneChao/iNEXT.link) using the following commands. For a first-time installation, an additional visualization extension package (`ggplot2`) from CRAN and (`iNEXT.3D`), (`iNEXT.4steps`), and (`iNEXT.beta3D`) from Anne Chao's github must be installed and loaded. 

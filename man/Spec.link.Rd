@@ -11,7 +11,7 @@ Spec.link(
   nboot = 30,
   conf = 0.95,
   E.class = c(1:5),
-  C = NULL
+  SC = NULL
 )
 }
 \arguments{
@@ -28,7 +28,7 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 
 \item{E.class}{an integer vector between 1 to 5.}
 
-\item{C}{a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).}
+\item{SC}{a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).}
 }
 \value{
 A list of several tables containing estimated (or observed) evenness with order q.\cr
