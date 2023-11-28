@@ -1,9 +1,10 @@
 Package: iNEXT.link
 Type: Package
-Title: Network diversity iNterpolation/Extrapolation Estimation
+Title: Network Diversity Interpolation and Extrapolation Estimation
 Version: 1.0.1
 Author: Anne Chao, K.-H. Hu, K.W. Chen, C.G. Lo, S.Y. Wang
 Maintainer: K.-H. Hu <river19951224@gmail.com>
+URL: https://chao.stat.nthu.edu.tw/wordpress/software_download/inext-link/
 Description: iNEXT.link is an R package that extends the concepts of iNEXT.3D (Chao et al., 2021), iNEXT.4step (Chao et al., 2020) and iNEXT.beta3D (Chao et al., 2023) to ecological networks (Chiu et al., 2023). iNEXT.link is primarily designed to calculate and analyze various measures of diversity in ecological networks. Specifically, the package calculates three Hill numbers of order q (species richness, Shannon diversity, and Simpson diversity) in taxonomic diversity level, as well as phylogenetic and functional diversity levels. 
               For single ecological networks, iNEXT.link provides tools for analyzing diversity. The package provides two types of rarefaction and extrapolation (R/E) sampling curves to estimate diversity and confidence intervals for single ecological networks. These include sample-size-based (or size-based) R/E curves and coverage-based R/E curves. 
               Moreover, iNEXT.link offers dissimilarity-turnover curves for the coverage-based R/E curves for gamma, alpha, and beta diversity measures, which can be used to compare diversity patterns across different ecological networks.
