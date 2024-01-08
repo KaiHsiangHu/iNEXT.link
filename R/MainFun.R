@@ -637,7 +637,7 @@ ggObsAsy.link <- function(output){
 #' \item{Tau}{the threshold of functional distinctiveness between any two species.}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ## Taxonomic diversity
 #' data(beetles)
 #' output1 <- estimateD.link(beetles, diversity = 'TD', 

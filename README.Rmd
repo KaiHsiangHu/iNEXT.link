@@ -26,7 +26,7 @@ iNEXT.link (R package)
 
 <font color="394CAE"><h3 color= 394CAE style = "font-weight: bold"> Introduction to iNEXT.link (R package): Excerpt from iNEXT.link UserGuide </h3> </font>
 <br>
-<h5><b>Anne Chao, K.S. Hu, K.W. Chen, C.G. Lo, S.Y. Wang</b>
+<h5><b>Anne Chao, Hu, K.-H., K.W. Chen, C.G. Lo, S.Y. Wang</b>
 <br><br>
 <i>Institute of Statistics, National Tsing Hua University, Hsin-Chu, Taiwan 30043</i>  
 </h5>

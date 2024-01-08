@@ -1,6 +1,6 @@
 ---
 title: "A Quick Introduction to iNEXT.link via Examples"
-author: "Anne Chao, K.S. Hu, K.W. Chen, C.G. Lo, S.Y. Wang"
+author: "Anne Chao, Hu, K.-H., K.W. Chen, C.G. Lo, S.Y. Wang"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 	comment = "#>",
 	include = TRUE
 )
-options("width"=200)
+options("width" = 200, digits = 3)
 library(iNEXT.link)
 ```
 
