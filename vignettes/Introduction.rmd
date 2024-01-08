@@ -7,6 +7,7 @@ output:
     vignette: >
       %\VignetteIndexEntry{A Quick Introduction to iNEXT.link via Examples}
       %\VignetteEngine{knitr::rmarkdown}
+      %\VignetteEncoding{UTF-8}
 ---
 
 ```{r , include = FALSE}
