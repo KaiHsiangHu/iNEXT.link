@@ -1,6 +1,6 @@
 ---
 title: "A Quick Introduction to iNEXT.link via Examples"
-author: "Anne Chao, Hu, K.-H., K.W. Chen, C.G. Lo, S.Y. Wang"
+author: "Anne Chao, Kai-Hsiang Hu, K.W. Chen, C.G. Lo, S.Y. Wang"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
