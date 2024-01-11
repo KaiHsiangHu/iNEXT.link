@@ -27,7 +27,7 @@ ObsAsy.link(
 
 \item{q}{a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.}
 
-\item{nboot}{a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.}
+\item{nboot}{a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter \code{0} to skip the bootstrap procedures. Default is \code{30}.}
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
 
@@ -52,12 +52,12 @@ a table of diversity table including the following arguments.
 \item{Order.q}{the diversity order of q.}
 \item{qTD, qPD, qFD}{the estimated asymptotic diversity or observed diversity of order q.}
 \item{s.e.}{standard error of diversity.}
-\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
+\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
 \item{Assemblage (or Network)}{the network name.}
-\item{Method}{"Asymptotic" means asymptotic diversity and "Observed" means observed diversity.}
+\item{Method}{\code{"Asymptotic"} means asymptotic diversity and \code{"Observed"} means observed diversity.}
 \item{Reftime}{the reference times for PD.}
-\item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
-\item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
+\item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for PD.}
+\item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
 }
 \description{
 \code{ObsAsy.link}: The asymptotic (or observed) diversity of order q

@@ -19,7 +19,7 @@ Spec.link(
 
 \item{q}{a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.}
 
-\item{method}{a binary calculation method with 'Estimated' or 'Observed'.}
+\item{method}{a binary calculation method with \code{"Estimated"} or \code{"Observed"}.}
 
 \item{nboot}{a positive integer specifying the number of bootstrap replications when assessing
 sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.}
@@ -36,9 +36,9 @@ A list of several tables containing estimated (or observed) evenness with order 
         \item{Order.q}{the diversity order of q.}
         \item{Specialization}{the specialization of order q.}
         \item{s.e.}{standard error of evenness.}
-        \item{Spec.LCL, Spec.UCL}{the bootstrap lower and upper confidence limits for the evenness of order q at the specified level (with a default value of 0.95).}
-        \item{Method}{"Estimated" or "Observed".}
-        \item{SC}{the target standardized coverage value. (only when method = 'Estimated')}
+        \item{Spec.LCL, Spec.UCL}{the bootstrap lower and upper confidence limits for the evenness of order q at the specified level (with a default value of \code{0.95}).}
+        \item{Method}{\code{"Estimated"} or \code{"Observed"}.}
+        \item{SC}{the target standardized coverage value. (only when \code{method = "Estimated"})}
         \item{Network}{the network name.}
         \item{class}{specialization class.}
 }

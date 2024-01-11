@@ -24,8 +24,7 @@ estimateD.link(
 \arguments{
 \item{data}{a \code{matrix}, \code{data.frame} (species by assemblages), or \code{list} of species abundance/incidence raw data.\cr}
 
-\item{diversity}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which
-integrates several threshold functional diversity to get diversity.}
+\item{diversity}{a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold.}
 
 \item{q}{a numerical vector of the order of Hill number. Default is \code{seq(0, 2, 0.2)}.}
 
@@ -36,9 +35,9 @@ If \code{base="size"} and \code{level=NULL}, then this function computes the div
 If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes.}
 
 \item{nboot}{a positive integer specifying the number of bootstrap replications when assessing
-sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50}
+sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is \code{50}.}
 
-\item{conf}{a positive number < 1 specifying the level of confidence interval, default is 0.95.}
+\item{conf}{a positive number < 1 specifying the level of confidence interval, default is \code{0.95}.}
 
 \item{row.tree}{phylogenetic tree of row assemblage in interaction matrix.}
 
@@ -47,13 +46,13 @@ sampling uncertainty and constructing confidence intervals. Enter 0 to skip the 
 \item{PDtype}{(required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
 \code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.}
 
-\item{row.distM}{(required only when diversity = "FD"), a row species pairwise distance matrix for all row species of row assemblage in interaction matrix.}
+\item{row.distM}{(required only when \code{diversity = "FD"}), a row species pairwise distance matrix for all row species of row assemblage in interaction matrix.}
 
-\item{col.distM}{(required only when diversity = "FD"), a column species pairwise distance matrix for all column species of column assemblage in interaction matrix.}
+\item{col.distM}{(required only when \code{diversity = "FD"}), a column species pairwise distance matrix for all column species of column assemblage in interaction matrix.}
 
-\item{FDtype}{(required only when diversity = "FD"), select FD type: FDtype = "tau_values" for FD under specified threshold values, or FDtype = "AUC" (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is "AUC".}
+\item{FDtype}{(required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
 
-\item{FDtau}{(required only when diversity = "FD" and FDtype = "tau_values"), a numerical vector between 0 and 1 specifying tau values (threshold levels). If NULL (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
+\item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
 a \code{data.frame} of diversity table including the following arguments:
@@ -62,18 +61,18 @@ a \code{data.frame} of diversity table including the following arguments:
 \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
 \item{Order.q}{the diversity order of q.}
 \item{SC}{the target standardized coverage value.}
-\item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity.} 
+\item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.} 
 \item{s.e.}{standard error of diversity estimate.}
-\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
+\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
 \item{Reftime}{reference times for PD.}
-\item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).}
+\item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages).}
 \item{Tau}{the threshold of functional distinctiveness between any two species.}
 }
 \description{
 \code{estimateD.link} computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 }
 \examples{
-\dontrun{
+\donttest{
 ## Taxonomic diversity
 data(beetles)
 output1 <- estimateD.link(beetles, diversity = 'TD', 

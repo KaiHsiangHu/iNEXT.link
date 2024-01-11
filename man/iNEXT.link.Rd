@@ -38,7 +38,7 @@ If \code{NULL}, then \code{endpoint} = double reference sample size in each asse
 
 \item{knots}{an integer specifying the number of equally-spaced \code{knots} between size 1 and the \code{endpoint}. Default is \code{40}.}
 
-\item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
+\item{conf}{a positive number < \code{1} specifying the level of confidence interval. Default is \code{0.95}.}
 
 \item{nboot}{a positive integer specifying the number of bootstrap replications when assessing
 sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.}

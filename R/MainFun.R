@@ -10,10 +10,10 @@
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
 #' @param col.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.
 #' 
-#' @return a data.frame of basic data information including network name (Networks), sample size (n), observed species richness in row assemblage (S.obs(row)), observed species richness in column assemblage (S.obs(col)), the number of interactions (Link.obs), link percentage(Connectance), sample coverage estimate (Coverage).\cr\cr
-#' Besides, show the first ten species abundance (or incidence) frequency counts in the reference sample in TD. (f1-f10)\cr\cr
-#' In PD, show the the observed total branch length in the phylogenetic tree (PD.obs), the number of singletons and doubletons in the node/branch set (f1*-f2*), the total branch length of those singletons/doubletons in the node/branch set (g1-g2), mean reference time (mean_T).\cr\cr
-#' In FD (FDtype = "tau_values"), show the number of singletons and doubletons in the data (f1-f2), the number of singletons and doubletons in the functional group (a1*-a2*), the threshold of functional distinctiveness between any two species (threshold).\cr\cr
+#' @return a data.frame of basic data information including network name (\code{Networks}), sample size (\code{n}), observed species richness in row assemblage (\code{S.obs(row)}), observed species richness in column assemblage (\code{S.obs(col)}), the number of interactions (\code{Link.obs}), link percentage(\code{Connectance}), sample coverage estimate (\code{Coverage}).\cr\cr
+#' Besides, show the first ten species abundance (or incidence) frequency counts in the reference sample in TD. (\code{f1}-\code{f10})\cr\cr
+#' In PD, show the the observed total branch length in the phylogenetic tree (\code{PD.obs}), the number of singletons and doubletons in the node/branch set (\code{f1*}-\code{f2*}), the total branch length of those singletons/doubletons in the node/branch set (\code{g1}-\code{g2}), mean reference time (\code{mean_T}).\cr\cr
+#' In FD (\code{FDtype = "tau_values"}), show the number of singletons and doubletons in the data (\code{f1}-\code{f2}), the number of singletons and doubletons in the functional group (\code{a1*}-\code{a2*}), the threshold of functional distinctiveness between any two species (\code{threshold}).\cr\cr
 #' @examples
 #' #' ## Taxonomic diversity
 #' data(beetles)
@@ -72,12 +72,12 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
 #' @param q q a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
-#' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
+#' @param conf a positive number < \code{1} specifying the level of confidence interval. Default is \code{0.95}.
 #' @return a matrix of estimated sample completeness with order q: 
 #'         \item{Order.q}{the diversity order of q.}
 #'         \item{Estimate.SC}{the estimated (or observed) sample completeness of order q.}
 #'         \item{s.e.}{standard error of sample completeness.}
-#'         \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the sample completeness of order q at the specified level (with a default value of 0.95).}
+#'         \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the sample completeness of order q at the specified level (with a default value of \code{0.95}).}
 #'         \item{Assemblage}{the assemblage name.}
 #'
 #' @examples
@@ -141,7 +141,7 @@ ggCompleteness.link <- function(output){
 #' @param knots an integer specifying the number of equally-spaced \code{knots} between size 1 and the \code{endpoint}. Default is \code{40}.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
-#' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
+#' @param conf a positive number < \code{1} specifying the level of confidence interval. Default is \code{0.95}.
 #' @param row.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.
 #' @param col.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.
 #' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
@@ -316,7 +316,6 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
 #'  use different colors for diversity orders (\code{color.var="Order.q"});
 #'  use different colors for sites (\code{color.var="Assemblage"});
 #'  use different colors for combinations of order x assemblage (\code{color.var="Both"}).
-#' @param ... other arguments passed on to methods. Not currently used.
 #' @return a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
 #' @examples
 #' ## Taxonomic diversity
@@ -408,7 +407,7 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
 #' @param data a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param diversity selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.
 #' @param q a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.
-#' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
+#' @param nboot a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter \code{0} to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
 #' @param method asymptotic or Observed
 #' @param row.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.
@@ -422,12 +421,12 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
 #' \item{Order.q}{the diversity order of q.}
 #' \item{qTD, qPD, qFD}{the estimated asymptotic diversity or observed diversity of order q.}
 #' \item{s.e.}{standard error of diversity.}
-#' \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
+#' \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
 #' \item{Assemblage (or Network)}{the network name.}
-#' \item{Method}{"Asymptotic" means asymptotic diversity and "Observed" means observed diversity.}
+#' \item{Method}{\code{"Asymptotic"} means asymptotic diversity and \code{"Observed"} means observed diversity.}
 #' \item{Reftime}{the reference times for PD.}
-#' \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages) for PD.}
-#' \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under FDtype = tau_values).}
+#' \item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for PD.}
+#' \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
 #'
 #' @examples
 #' ## Taxonomic diversity
@@ -605,35 +604,34 @@ ggObsAsy.link <- function(output){
 #' \code{estimateD.link} computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 #'
 #' @param data a \code{matrix}, \code{data.frame} (species by assemblages), or \code{list} of species abundance/incidence raw data.\cr
-#' @param diversity a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold. Besides,'AUC' is the fourth choice which
-#' integrates several threshold functional diversity to get diversity.
+#' @param diversity a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold.
 #' @param q a numerical vector of the order of Hill number. Default is \code{seq(0, 2, 0.2)}.
 #' @param base comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).
 #' @param level a sequence specifying the particular sample sizes or sample coverages(between 0 and 1).
 #' If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes.
 #' If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing
-#' sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50
-#' @param conf a positive number < 1 specifying the level of confidence interval, default is 0.95.
+#' sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is \code{50}.
+#' @param conf a positive number < 1 specifying the level of confidence interval, default is \code{0.95}.
 #' @param row.tree phylogenetic tree of row assemblage in interaction matrix.
 #' @param col.tree phylogenetic tree of column assemblage in interaction matrix.
 #' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
 #' \code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.
-#' @param row.distM (required only when diversity = "FD"), a row species pairwise distance matrix for all row species of row assemblage in interaction matrix.
-#' @param col.distM (required only when diversity = "FD"), a column species pairwise distance matrix for all column species of column assemblage in interaction matrix.
-#' @param FDtype (required only when diversity = "FD"), select FD type: FDtype = "tau_values" for FD under specified threshold values, or FDtype = "AUC" (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is "AUC".
-#' @param FDtau (required only when diversity = "FD" and FDtype = "tau_values"), a numerical vector between 0 and 1 specifying tau values (threshold levels). If NULL (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
+#' @param row.distM (required only when \code{diversity = "FD"}), a row species pairwise distance matrix for all row species of row assemblage in interaction matrix.
+#' @param col.distM (required only when \code{diversity = "FD"}), a column species pairwise distance matrix for all column species of column assemblage in interaction matrix.
+#' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
+#' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @return a \code{data.frame} of diversity table including the following arguments:
 #' \item{Assemblage}{the assemblage name.}
 #' \item{m}{the corresponding sample size for the standardized coverage value.}
 #' \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
 #' \item{Order.q}{the diversity order of q.}
 #' \item{SC}{the target standardized coverage value.}
-#' \item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity.} 
+#' \item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.} 
 #' \item{s.e.}{standard error of diversity estimate.}
-#' \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
+#' \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
 #' \item{Reftime}{reference times for PD.}
-#' \item{Type}{"PD" (effective total branch length) or "meanPD" (effective number of equally divergent lineages).}
+#' \item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages).}
 #' \item{Tau}{the threshold of functional distinctiveness between any two species.}
 #'
 #' @examples
@@ -822,17 +820,17 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @param row.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
-#' @param FDcut_number (required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is 30.
+#' @param FDcut_number (required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is \code{30}.
 #' @return A list of seven matrices with three diversity dimensions and four dissimilarity measures.
 #' \item{Dataset}{the datasets name.}
 #' \item{Order.q}{the diversity order of q.}
-#' \item{SC}{the target standardized coverage value. The observed coverage and extrapolation limit for beta diversity are defined the same as those for alpha diversity. For q = 0, the extrapolation can be extended to a maximum coverage value C(2n, alpha) = coverage value of twice the alpha reference sample size; for q = 1 and 2, target coverage can be extended to 1 (complete coverage) if data are not sparse.}
+#' \item{SC}{the target standardized coverage value. The observed coverage and extrapolation limit for beta diversity are defined the same as those for alpha diversity. For \code{q = 0}, the extrapolation can be extended to a maximum coverage value \code{C(2n, alpha)} = coverage value of twice the alpha reference sample size; for \code{q = 1} and \code{2}, target coverage can be extended to \code{1} (complete coverage) if data are not sparse.}
 #' \item{Size}{the corresponding sample size for the standardized coverage value.}
-#' \item{Alpha/Beta/Gamma/Dissimilarity}{the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity.}
+#' \item{Alpha/Beta/Gamma/Dissimilarity}{the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.}
 #' \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample. (For beta diversity, observed coverage is defined as the coverage of the alpha reference sample).}
 #' \item{s.e.}{standard error of diversity estimate.}
-#' \item{LCL, UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
-#' \item{Diversity}{"TD" (taxonomic diversity), "PD" (phylogenetic diversity of effective total branch length), "meanPD" (phylogenetic diversity of effective number of equally divergent lineages), "FD_tau" (functional diversity under a single tau), "FD_AUC" (functional diversity by integrating all threshold values between zero and one.}
+#' \item{LCL, UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
+#' \item{Diversity}{\code{"TD"} (taxonomic diversity), \code{"PD"} (phylogenetic diversity of effective total branch length), \code{"meanPD"} (phylogenetic diversity of effective number of equally divergent lineages), \code{"FD_tau"} (functional diversity under a single tau), \code{"FD_AUC"} (functional diversity by integrating all threshold values between zero and one.}
 #' \item{Tau}{the threshold of functional distinctiveness between any two species.}
 #' 
 #' 
@@ -1149,7 +1147,7 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
 #' Standardized estimation (or observed) of specialization with order q
 #' @param data a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.
 #' @param q a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.
-#' @param method a binary calculation method with 'Estimated' or 'Observed'.
+#' @param method a binary calculation method with \code{"Estimated"} or \code{"Observed"}.
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
@@ -1160,9 +1158,9 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
 #'         \item{Order.q}{the diversity order of q.}
 #'         \item{Specialization}{the specialization of order q.}
 #'         \item{s.e.}{standard error of evenness.}
-#'         \item{Spec.LCL, Spec.UCL}{the bootstrap lower and upper confidence limits for the evenness of order q at the specified level (with a default value of 0.95).}
-#'         \item{Method}{"Estimated" or "Observed".}
-#'         \item{SC}{the target standardized coverage value. (only when method = 'Estimated')}
+#'         \item{Spec.LCL, Spec.UCL}{the bootstrap lower and upper confidence limits for the evenness of order q at the specified level (with a default value of \code{0.95}).}
+#'         \item{Method}{\code{"Estimated"} or \code{"Observed"}.}
+#'         \item{SC}{the target standardized coverage value. (only when \code{method = "Estimated"})}
 #'         \item{Network}{the network name.}
 #'         \item{class}{specialization class.}
 #'         

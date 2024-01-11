@@ -51,19 +51,19 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 
-\item{FDcut_number}{(required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is 30.}
+\item{FDcut_number}{(required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is \code{30}.}
 }
 \value{
 A list of seven matrices with three diversity dimensions and four dissimilarity measures.
 \item{Dataset}{the datasets name.}
 \item{Order.q}{the diversity order of q.}
-\item{SC}{the target standardized coverage value. The observed coverage and extrapolation limit for beta diversity are defined the same as those for alpha diversity. For q = 0, the extrapolation can be extended to a maximum coverage value C(2n, alpha) = coverage value of twice the alpha reference sample size; for q = 1 and 2, target coverage can be extended to 1 (complete coverage) if data are not sparse.}
+\item{SC}{the target standardized coverage value. The observed coverage and extrapolation limit for beta diversity are defined the same as those for alpha diversity. For \code{q = 0}, the extrapolation can be extended to a maximum coverage value \code{C(2n, alpha)} = coverage value of twice the alpha reference sample size; for \code{q = 1} and \code{2}, target coverage can be extended to \code{1} (complete coverage) if data are not sparse.}
 \item{Size}{the corresponding sample size for the standardized coverage value.}
-\item{Alpha/Beta/Gamma/Dissimilarity}{the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or size = infinity) represents the estimated asymptotic diversity.}
+\item{Alpha/Beta/Gamma/Dissimilarity}{the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.}
 \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample. (For beta diversity, observed coverage is defined as the coverage of the alpha reference sample).}
 \item{s.e.}{standard error of diversity estimate.}
-\item{LCL, UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
-\item{Diversity}{"TD" (taxonomic diversity), "PD" (phylogenetic diversity of effective total branch length), "meanPD" (phylogenetic diversity of effective number of equally divergent lineages), "FD_tau" (functional diversity under a single tau), "FD_AUC" (functional diversity by integrating all threshold values between zero and one.}
+\item{LCL, UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
+\item{Diversity}{\code{"TD"} (taxonomic diversity), \code{"PD"} (phylogenetic diversity of effective total branch length), \code{"meanPD"} (phylogenetic diversity of effective number of equally divergent lineages), \code{"FD_tau"} (functional diversity under a single tau), \code{"FD_AUC"} (functional diversity by integrating all threshold values between zero and one.}
 \item{Tau}{the threshold of functional distinctiveness between any two species.}
 }
 \description{

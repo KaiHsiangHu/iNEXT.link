@@ -28,8 +28,6 @@ all curves are in the same color (\code{color.var="None"});
 use different colors for diversity orders (\code{color.var="Order.q"});
 use different colors for sites (\code{color.var="Assemblage"});
 use different colors for combinations of order x assemblage (\code{color.var="Both"}).}
-
-\item{...}{other arguments passed on to methods. Not currently used.}
 }
 \value{
 a ggplot2 object for coverage-based or size-based rarefaction and extrapolation

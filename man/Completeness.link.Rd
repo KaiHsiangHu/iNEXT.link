@@ -14,14 +14,14 @@ Completeness.link(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95)
 \item{nboot}{a positive integer specifying the number of bootstrap replications when assessing
 sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.}
 
-\item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
+\item{conf}{a positive number < \code{1} specifying the level of confidence interval. Default is \code{0.95}.}
 }
 \value{
 a matrix of estimated sample completeness with order q: 
         \item{Order.q}{the diversity order of q.}
         \item{Estimate.SC}{the estimated (or observed) sample completeness of order q.}
         \item{s.e.}{standard error of sample completeness.}
-        \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the sample completeness of order q at the specified level (with a default value of 0.95).}
+        \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the sample completeness of order q at the specified level (with a default value of \code{0.95}).}
         \item{Assemblage}{the assemblage name.}
 }
 \description{
