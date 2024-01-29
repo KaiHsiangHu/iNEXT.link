@@ -291,7 +291,8 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                        endpoint = endpoint, knots = knots, conf = conf,
                        nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
   }
-
+  
+  class(res) = "iNEXT3D"
   return(res)
 }
 
