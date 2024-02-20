@@ -1,7 +1,7 @@
 Package: iNEXT.link
 Type: Package
 Title: Network Diversity Interpolation and Extrapolation Estimation
-Version: 1.0.1
+Version: 1.0.0
 Author: Anne Chao, Kai-Hsiang Hu, K.W. Chen, C.G. Lo, S.Y. Wang
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
 URL: https://chao.stat.nthu.edu.tw/wordpress/software_download/inext-link/
