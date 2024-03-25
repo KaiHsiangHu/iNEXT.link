@@ -3603,4 +3603,27 @@ MakeTable_Empericalprofile = function(data, B, q, conf){
 }
 
 
+# Generate Color Palette for ggplot2
+#
+# This function creates a color palette suitable for ggplot2 visualizations by evenly spacing colors in the HCL color space. The function ensures that the colors are well-distributed and visually distinct, making it ideal for categorical data where each category needs to be represented by a different color.
+#
+# @param g An integer indicating the number of distinct colors to generate. This value should be a positive integer, with higher values resulting in a broader range of colors.
+# @return A vector of color codes in hexadecimal format, suitable for use in ggplot2 charts and plots. The length of the vector will match the input parameter `g`.
+# @examples
+# # Generate a palette of 5 distinct colors
+# ggplotColors(5)
+#
+# # Use the generated colors in a ggplot2 chart
+# library(ggplot2)
+# df <- data.frame(x = 1:5, y = rnorm(5), group = factor(1:5))
+# ggplot(df, aes(x, y, color = group)) +
+#   geom_point() +
+#   scale_color_manual(values = ggplotColors(5))
+#
+ggplotColors <- function(g){
+  d <- 360/g # Calculate the distance between colors in HCL color space
+  h <- cumsum(c(15, rep(d,g - 1))) # Create cumulative sums to define hue values
+  hcl(h = h, c = 100, l = 65) # Convert HCL values to hexadecimal color codes
+}
+
 

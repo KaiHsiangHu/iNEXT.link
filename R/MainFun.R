@@ -116,8 +116,19 @@ Completeness.link <- function(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95)
 #' Chao, A., Y. Kubota, D. Zelen??, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
 ##' @export
 ggCompleteness.link <- function(output){
-  cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
-                     "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+  
+  # Check if the number of unique 'Assemblage' is 8 or less
+  if (length(unique(output$Assemblage)) <= 8){
+    cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
+                       "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+  }else{
+    # If there are more than 8 assemblages, start with the same predefined color palette
+    # Then extend the palette by generating additional colors using the 'ggplotColors' function
+    cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
+                       "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+    cbPalette <- c(cbPalette, ggplotColors(length(unique(output$Assemblage))-8))
+  }
+  
   ggplot(output, aes(x = Order.q, y = Estimate.SC, colour = Assemblage)) +
     geom_line(size = 1.2) + scale_colour_manual(values = cbPalette) +
     geom_ribbon(aes(ymin = SC.LCL, ymax = SC.UCL, fill = Assemblage),
@@ -170,8 +181,9 @@ ggCompleteness.link <- function(output){
 #' @import tibble
 #' @import reshape2
 #' @import sets
+#' @importFrom grDevices hcl
+#' 
 #' @return
-
 #' \itemize{
 #'  \item{\code{$DataInfo}: A dataframe summarizing data information}
 #'  \item{\code{$iNextEst}: coverage-based diversity estimates along with confidence intervals}
@@ -1111,8 +1123,18 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
 
   double_size = unique(df[df$Method=="Observed",]$Size)*2
   double_extrapolation = df %>% filter(Method=="Extrapolation" & round(Size) %in% double_size)
-  cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
-                     "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+  
+  # Check if the number of unique 'Assemblage' is 8 or less
+  if (length(unique(df$Dataset)) <= 8){
+    cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
+                       "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+  }else{
+    # If there are more than 8 assemblages, start with the same predefined color palette
+    # Then extend the palette by generating additional colors using the 'ggplotColors' function
+    cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
+                       "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+    cbPalette <- c(cbPalette, ggplotColors(length(unique(df$Dataset))-8))
+  }
   point_size = 2
 
   ggplot(data = df, aes(x = SC, y = Estimate, col = Dataset)) +
@@ -1346,9 +1368,20 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
 ggSpec.link = function (output)
 {
 
-  cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73",
-                     "#330066", "#CC79A7", "#0072B2", "#D55E00"))
   classdata = cbind(do.call(rbind, output))
+  
+  # Check if the number of unique 'Network' is 8 or less
+  if (length(unique(classdata$Network)) <= 8){
+    cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
+                       "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+  }else{
+    # If there are more than 8 networks, start with the same predefined color palette
+    # Then extend the palette by generating additional colors using the 'ggplotColors' function
+    cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
+                       "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+    cbPalette <- c(cbPalette, ggplotColors(length(unique(classdata$Network))-8))
+  }
+  
   fig = ggplot(classdata, aes(x = Order.q, y = Specialization, colour = Network)) +
     geom_line(size = 1.2) + 
     geom_ribbon(aes(ymin = Spec.LCL, ymax = Spec.UCL, fill = Network), alpha = 0.2, linetype = 0) +
