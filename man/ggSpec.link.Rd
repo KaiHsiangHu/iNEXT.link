@@ -16,7 +16,7 @@ a figure of estimated sample completeness with order q
 ggplot for Specialization ggSpec.link The figure for estimation of Specialization with order q
 }
 \examples{
-data(beetles)
-output = Spec.link(beetles)
-ggSpec.link(output)
+data(beetles_plotA)
+output_spec = Spec.link(beetles_plotA)
+ggSpec.link(output_spec)
 }

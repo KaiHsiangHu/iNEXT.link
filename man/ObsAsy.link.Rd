@@ -23,70 +23,68 @@ ObsAsy.link(
 \arguments{
 \item{data}{a \code{list} of \code{data.frames}, each \code{data.frames} represents col.species-by-row.species abundance matrix.}
 
-\item{diversity}{selection of diversity type: \code{'TD'} = Taxonomic diversity, \code{'PD'} = Phylogenetic diversity, and \code{'FD'} = Functional diversity.}
+\item{diversity}{selection of diversity type: \code{'TD'} = Taxonomic network diversity, \code{'PD'} = Phylogenetic network diversity, and \code{'FD'} = Functional network diversity.}
 
-\item{q}{a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, 0.2)}.}
+\item{q}{a numerical vector specifying the diversity orders. Default is \code{seq(0, 2, by = 0.2)}.}
 
-\item{nboot}{a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter \code{0} to skip the bootstrap procedures. Default is \code{30}.}
+\item{nboot}{a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Enter 0 to skip the bootstrap procedures. Default is 50.}
 
-\item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
+\item{conf}{a positive number < 1 specifying the level of confidence interval. Default is 0.95.}
 
-\item{method}{asymptotic or Observed}
+\item{method}{Select \code{'Asymptotic'} or \code{'Observed'}.}
 
-\item{row.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.}
+\item{row.tree}{(required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for row species in the row assemblage.}
 
-\item{col.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.}
+\item{col.tree}{(required argument for \code{diversity = "PD"}), a phylogenetic tree in Newick format for column species in the column assemblage.}
 
-\item{PDtype}{(required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or \code{PDtype = "meanPD"}(effective number of equally divergent lineages).Default is \code{"meanPD"}.}
+\item{PDtype}{(argument only for \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"} (effective total branch length) or \code{PDtype = "meanPD"} (effective number of equally divergent lineages). Default is \code{"meanPD"}, where \code{meanPD = PD/tree depth}.}
 
-\item{row.distM}{(required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of row assemblage in the pooled network row assemblage.}
+\item{row.distM}{(required argument for \code{diversity = "FD"}), a species pairwise distance matrix for row species in the row assemblage.}
 
-\item{col.distM}{(required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.}
+\item{col.distM}{(required argument for \code{diversity = "FD"}), a species pairwise distance matrix for column species in the column assemblage.}
 
-\item{FDtype}{(required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
+\item{FDtype}{(argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for qiFD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall qiFD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
 
-\item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
+\item{FDtau}{(argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
 a table of diversity table including the following arguments.
-\item{Order.q}{the diversity order of q.}
-\item{qTD, qPD, qFD}{the estimated asymptotic diversity or observed diversity of order q.}
-\item{s.e.}{standard error of diversity.}
-\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
-\item{Assemblage (or Network)}{the network name.}
-\item{Method}{\code{"Asymptotic"} means asymptotic diversity and \code{"Observed"} means observed diversity.}
-\item{Reftime}{the reference times for PD.}
-\item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for PD.}
-\item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
+\item{Dataset}{the name of datasets.}
+\item{Order.q}{the network diversity order of q.}
+\item{qiTD, qiPD, qiFD}{the asymptotic/observed network network diversity estimates of order q.}
+\item{s.e.}{standard error of the estimated network diversity.}
+\item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for the network diversity of order q at the specified level (with a default value of \code{0.95}).}
+\item{Method}{\code{"Asymptotic"} means asymptotic network diversity and \code{"Observed"} means observed network diversity.}
+\item{Reftime}{the reference times for qiPD.}
+\item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length),\code{"meanPD"} (effective number of equally divergent lineages) for qiPD.}
 }
 \description{
 \code{ObsAsy.link}: The asymptotic (or observed) diversity of order q
 }
 \examples{
-## Taxonomic diversity
-data(beetles)
-output1 = ObsAsy.link(data = beetles, diversity = 'TD', q = seq(0, 2, 0.2))
-output1
+# Compute the observed and asymptotic taxonomic network diversity 
+# for interaction data with order q between 0 and 2 
+# (in increments of 0.2 by default)
+data(beetles_plotA)
+output_ObsAsy_qiTD = ObsAsy.link(data = beetles_plotA, diversity = 'TD', q = seq(0, 2, 0.2))
+output_ObsAsy_qiTD
 
 
-## Phylogenetic diversity
-data(beetles)
+# Compute the observed and asymptotic phylogenetic network diversity
+# for interaction data with order q between 0 and 2 
+# (in increments of 0.2 by default)
+data(beetles_plotA)
 data(beetles_col_tree)
-output2 = ObsAsy.link(data = beetles, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
-output2
+output_ObsAsy_qiPD = ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
+output_ObsAsy_qiPD
 
 
-## Functional diversity under single threshold
-data(beetles)
+# Compute the observed and asymptotic functional network diversity
+# for interaction data with order q between 0 and 2 and FDtype = "AUC"
+# (in increments of 0.25 by default)
+data(beetles_plotA)
 data(beetles_col_distM)
-output3 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.2), col.distM = beetles_col_distM, FDtype = "tau_values")
-output3
+output_ObsAsy_qiFD = ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 10)
+output_ObsAsy_qiFD
 
-
-## Functional diversity with thresholds integrating from 0 to 1
-data(beetles)
-data(beetles_col_distM)
-output4 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25),
-                      col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-output4
 }

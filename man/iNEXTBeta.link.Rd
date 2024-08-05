@@ -8,10 +8,11 @@ Function \code{iNEXTbeta.link} Interpolation and extrapolation of beta diversity
 iNEXTbeta.link(
   data,
   diversity = "TD",
-  level = seq(0.5, 1, 0.05),
+  level = NULL,
   q = c(0, 1, 2),
   nboot = 20,
   conf = 0.95,
+  comparison = "pool",
   row.tree = NULL,
   col.tree = NULL,
   PDtype = "meanPD",
@@ -36,6 +37,8 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
 
+\item{comparison}{selection of comparison method. \code{'pool'} compares all datasets in once, and \code{'pair'} compares all datasets two by two.}
+
 \item{row.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.}
 
 \item{col.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.}
@@ -55,46 +58,42 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 }
 \value{
 A list of seven matrices with three diversity dimensions and four dissimilarity measures.
-\item{Dataset}{the datasets name.}
-\item{Order.q}{the diversity order of q.}
+\item{Dataset}{the name of datasets.}
+\item{Order.q}{the network diversity order of q.}
 \item{SC}{the target standardized coverage value. The observed coverage and extrapolation limit for beta diversity are defined the same as those for alpha diversity. For \code{q = 0}, the extrapolation can be extended to a maximum coverage value \code{C(2n, alpha)} = coverage value of twice the alpha reference sample size; for \code{q = 1} and \code{2}, target coverage can be extended to \code{1} (complete coverage) if data are not sparse.}
 \item{Size}{the corresponding sample size for the standardized coverage value.}
-\item{Alpha/Beta/Gamma/Dissimilarity}{the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.}
+\item{Alpha/Beta/Gamma/Dissimilarity}{the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic network diversity.}
 \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample. (For beta diversity, observed coverage is defined as the coverage of the alpha reference sample).}
-\item{s.e.}{standard error of diversity estimate.}
-\item{LCL, UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
-\item{Diversity}{\code{"TD"} (taxonomic diversity), \code{"PD"} (phylogenetic diversity of effective total branch length), \code{"meanPD"} (phylogenetic diversity of effective number of equally divergent lineages), \code{"FD_tau"} (functional diversity under a single tau), \code{"FD_AUC"} (functional diversity by integrating all threshold values between zero and one.}
-\item{Tau}{the threshold of functional distinctiveness between any two species.}
+\item{s.e.}{standard error of network diversity estimate.}
+\item{LCL, UCL}{the bootstrap lower and upper confidence limits for the network diversity of order q at the specified level (with a default value of \code{0.95}).}
+\item{Diversity}{\code{"TD"} (taxonomic network diversity), \code{"PD"} (phylogenetic diversity of effective total branch length), \code{"meanPD"} (phylogenetic diversity of effective number of equally divergent lineages), \code{"FD_tau"} (functional diversity under a single tau), \code{"FD_AUC"} (functional diversity by integrating all threshold values between zero and one.}
 }
 \description{
 Interpolation (rarefaction) and extrapolation of network beta diversity
 Function \code{iNEXTbeta.link} Interpolation and extrapolation of beta diversity with order q
 }
 \examples{
-## Taxonomic diversity
-data(beetles)
-output1 = iNEXTbeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
-output1
+## Taxonomic network diversity for interaction data
+# Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+data(beetles_plotA)
+output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level = NULL, q = c(0, 1, 2))
+output_beta_qiTD
 
-## Phylogenetic diversity
-data(beetles)
+## Phylogenetic network diversity for interaction data
+# Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+data(beetles_plotA)
 data(beetles_col_tree)
-output2 = iNEXTbeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
-output2
+output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL, q = c(0, 1, 2), col.tree = beetles_col_tree, nboot = 10)
+output_beta_qiPD
 
 
-## Functional diversity under single threshold
-data(beetles)
+## Functional network diversity for interaction data
+# Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+data(beetles_plotA)
 data(beetles_col_distM)
-output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_value")
-output3
+output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+output_beta_qiFD
 
-
-## Functional diversity with thresholds integrating from 0 to 1
-data(beetles)
-data(beetles_col_distM)
-output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-output4
 }
 \references{
 Chao, A., Chazdon, R. L., Colwell, R. K. and Shen, T.-J.(2005). A new statistical approach for assessing similarity of species composition with incidence and abundance data. Ecology Letters 8, 148-159. (pdf file) Spanish translation in pp. 85-96 of Halffter, G. Soberon, J., Koleff, P. and Melic, A. (eds) 2005 Sobre Diversidad Biologica: el Sognificado de las Diversidades Alfa, Beta y Gamma. m3m-Monografias 3ercer Milenio, vol. 4, SEA, CONABIO, Grupo DIVERSITAS & CONACYT, Zaragoza. IV +242 pp.

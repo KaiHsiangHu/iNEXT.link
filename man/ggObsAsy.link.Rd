@@ -16,29 +16,27 @@ a figure of asymptotic or empirical (observed) diversity in q-profile.\cr\cr
 \code{ggObsAsy.link} Plots q-profile based on the output of \code{ObsAsy.link} using the ggplot2 package.\cr
 }
 \examples{
-## Taxonomic diversity
-data(beetles)
-output1 = ObsAsy.link(data = beetles, diversity = 'TD', q = seq(0, 2, 0.2))
-ggObsAsy.link(output1)
+# Plot q-profile of taxonomic network diversity for interaction data
+# with order q between 0 and 2 (in increments of 0.2 by default).
+data(beetles_plotA)
+output_ObsAsy_qiTD = ObsAsy.link(data = beetles_plotA, diversity = 'TD', q = seq(0, 2, 0.2))
+ggObsAsy.link(output_ObsAsy_qiTD)
 
 
-## Phylogenetic diversity
-data(beetles)
+# Plot q-profile of phylogenetic network diversity for interaction data
+# with order q between 0 and 2 (in increments of 0.2 by default).
+data(beetles_plotA)
 data(beetles_col_tree)
-output2 = ObsAsy.link(data = beetles, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
-ggObsAsy.link(output2)
+output_ObsAsy_qiPD = ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
+ggObsAsy.link(output_ObsAsy_qiPD)
 
 
-## Functional diversity under single threshold
-data(beetles)
+# Plot q-profile of functional network diversity for interaction data
+# with order q between 0 and 2 (in increments of 0.2 by default)
+# under tau values from 0 to 1
+data(beetles_plotA)
 data(beetles_col_distM)
-output3 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.2), col.distM = beetles_col_distM, FDtype = "tau_values")
-ggObsAsy.link(output3)
+output_ObsAsy_qiFD = ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 10)
+ggObsAsy.link(output_ObsAsy_qiFD)
 
-
-## Functional diversity with thresholds integrating from 0 to 1
-data(beetles)
-data(beetles_col_distM)
-output4 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-ggObsAsy.link(output4)
 }

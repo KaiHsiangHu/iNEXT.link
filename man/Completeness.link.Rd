@@ -18,19 +18,20 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 }
 \value{
 a matrix of estimated sample completeness with order q: 
-        \item{Order.q}{the diversity order of q.}
-        \item{Estimate.SC}{the estimated (or observed) sample completeness of order q.}
-        \item{s.e.}{standard error of sample completeness.}
-        \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the sample completeness of order q at the specified level (with a default value of \code{0.95}).}
-        \item{Assemblage}{the assemblage name.}
+        \item{Order.q}{the network completeness order of q.}
+        \item{Estimate.SC}{the estimated completeness of order q.}
+        \item{s.e.}{standard error of the estimated network completeness.}
+        \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the expected network completeness of order q at the specified level (with a default value of \code{0.95}).}
+        \item{Dataset}{the dataset name.}
 }
 \description{
 \code{Completeness.link} Estimation of Sample Completeness with order q
 }
 \examples{
-data(beetles)
-output = Completeness.link(beetles)
-output
+# Sample Completeness for interaction data
+data(beetles_plotA)
+output_com = Completeness.link(beetles_plotA)
+output_com
 
 }
 \references{

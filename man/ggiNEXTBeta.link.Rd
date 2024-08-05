@@ -19,32 +19,29 @@ a figure for gamma, alpha, and beta diversity or four dissimilarity measures.
 \code{ggiNEXTbeta.link}: ggplot for Interpolation and extrapolation of beta diversity with order q
 }
 \examples{
-## Taxonomic diversity
-data(beetles)
-output1 = iNEXTbeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
-ggiNEXTbeta.link(output1, type = 'B')
-ggiNEXTbeta.link(output1, type = 'D')
+## Taxonomic network diversity for interaction data
+# Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+data(beetles_plotA)
+output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level = NULL, q = c(0, 1, 2))
+ggiNEXTbeta.link(output_beta_qiTD, type = 'B')
+ggiNEXTbeta.link(output_beta_qiTD, type = 'D')
 
-## Phylogenetic diversity
-data(beetles)
+## Phylogenetic network diversity for interaction data
+# Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+data(beetles_plotA)
 data(beetles_col_tree)
-output2 = iNEXTbeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
-ggiNEXTbeta.link(output2, type = 'B')
-ggiNEXTbeta.link(output2, type = 'D')
+output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL, q = c(0, 1, 2), col.tree = beetles_col_tree, nboot = 10)
+ggiNEXTbeta.link(output_beta_qiPD, type = 'B')
+ggiNEXTbeta.link(output_beta_qiPD, type = 'D')
 
 
-## Functional diversity under single threshold
-data(beetles)
+## Functional network diversity for interaction data
+# Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+data(beetles_plotA)
 data(beetles_col_distM)
-output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_value")
-ggiNEXTbeta.link(output3, type = 'B')
-ggiNEXTbeta.link(output3, type = 'D')
+output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+ggiNEXTbeta.link(output_beta_qiFD, type = 'B')
+ggiNEXTbeta.link(output_beta_qiFD, type = 'D')
 
 
-## Functional diversity with thresholds integrating from 0 to 1
-data(beetles)
-data(beetles_col_distM)
-output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-ggiNEXTbeta.link(output4, type = 'B')
-ggiNEXTbeta.link(output4, type = 'D')
 }

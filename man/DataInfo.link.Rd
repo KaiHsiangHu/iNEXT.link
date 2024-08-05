@@ -27,28 +27,35 @@ DataInfo.link(
 \item{col.distM}{(required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.}
 }
 \value{
-a data.frame of basic data information including network name (\code{Networks}), sample size (\code{n}), observed species richness in row assemblage (\code{S.obs(row)}), observed species richness in column assemblage (\code{S.obs(col)}), the number of interactions (\code{Link.obs}), link percentage(\code{Connectance}), sample coverage estimate (\code{Coverage}).\cr\cr
-Besides, show the first ten species abundance (or incidence) frequency counts in the reference sample in TD. (\code{f1}-\code{f10})\cr\cr
-In PD, show the the observed total branch length in the phylogenetic tree (\code{PD.obs}), the number of singletons and doubletons in the node/branch set (\code{f1*}-\code{f2*}), the total branch length of those singletons/doubletons in the node/branch set (\code{g1}-\code{g2}), mean reference time (\code{mean_T}).\cr\cr
-In FD (\code{FDtype = "tau_values"}), show the number of singletons and doubletons in the data (\code{f1}-\code{f2}), the number of singletons and doubletons in the functional group (\code{a1*}-\code{a2*}), the threshold of functional distinctiveness between any two species (\code{threshold}).\cr\cr
+a data.frame including basic data information.\cr\cr
+Basic information shared by TD, mean-PD and FD includes Network name (\code{Network}),
+number of observed interaction events in the reference sample (\code{n}), number of observed species in row assemblage (\code{S.obs(row)}), number of observed species in column assemblage (\code{S.obs(col)}), 
+number of observed interactions in the reference sample (\code{Link.obs}), the proportion of links between species that are realized in the network matrix (\code{Connectance}), estimator of the sample coverage of the reference sample (\code{Coverage}).\cr\cr
+Other additional information is given below.\cr\cr
+(1) TD: the first ten frequency counts in the reference sample (\code{f1}--\code{f10}).\cr\cr
+(2) Mean-PD: the number of those singletons and doubletons in the node/branch set (\code{f1*},\code{f2*}) , 
+the total branch length of those singletons (\code{g1}) and of those doubletons (\code{g2}) in the node/branch set,
+the observed total branch length in the phylogenetic tree (\code{PD.obs}),  and the product of column tree depth and row tree depth (\code{T1*T2}).\cr\cr
+(3) FD : the number of singletons and doubletons in the reference sample (\code{f1},\code{f2}), the number of singletons and doubletons in the functional group (\code{a1*},\code{a2*}),
+and the mean weighted pairwise distance between any two interactions (\code{d_mean}).\cr\cr.\cr\cr
 }
 \description{
 \code{DataInfo.link}: exhibits basic data information
 }
 \examples{
-#' ## Taxonomic diversity
-data(beetles)
-DataInfo.link(data = beetles, diversity = 'TD')
+# Taxonomic network diversity for interaction data
+data(beetles_plotA)
+DataInfo.link(data = beetles_plotA, diversity = 'TD')
 
 
-## Phylogenetic diversity
-data(beetles)
+# Phylogenetic network diversity for interaction data
+data(beetles_plotA)
 data(beetles_col_tree)
-DataInfo.link(data = beetles, diversity = 'PD', col.tree = beetles_col_tree)
+DataInfo.link(data = beetles_plotA, diversity = 'PD', col.tree = beetles_col_tree)
 
 
-## Functional diversity
-data(beetles)
+# Functional network diversity for interaction data
+data(beetles_plotA)
 data(beetles_col_distM)
-DataInfo.link(data = beetles, diversity = 'FD', col.distM = beetles_col_distM)
+DataInfo.link(data = beetles_plotA, diversity = 'FD', col.distM = beetles_col_distM)
 }

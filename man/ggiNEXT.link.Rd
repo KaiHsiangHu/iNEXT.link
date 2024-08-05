@@ -12,53 +12,49 @@ ggiNEXT.link(
 )
 }
 \arguments{
-\item{output}{a list object computed by \code{\link{iNEXT.link}}.}
+\item{output}{an \code{iNEXT.link} object computed by \code{iNEXT.link}.}
 
-\item{type}{three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1});
-sample coverage curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).}
+\item{type}{three types of plots: sample-size-based rarefaction/extrapolation curve (\code{type = 1}); 
+sample completeness curve (\code{type = 2}); coverage-based rarefaction/extrapolation curve (\code{type = 3}).}
 
-\item{facet.var}{create a separate plot for each value of a specified variable:
-no separation \cr (\code{facet.var="None"});
-a separate plot for each diversity order (\code{facet.var="Order.q"});
-a separate plot for each assemblage (\code{facet.var="Assemblage"});
-a separate plot for each combination of order x assemblage (\code{facet.var="Both"}).}
+\item{facet.var}{create a separate plot for each value of a specified variable: 
+no separation (\code{facet.var = "None"}); 
+a separate plot for each diversity order (\code{facet.var = "Order.q"}); 
+a separate plot for each assemblage (\code{facet.var = "Assemblage"}); 
+a separate plot for each combination of diversity order and assemblage (\code{facet.var = "Both"}).}
 
 \item{color.var}{create curves in different colors for values of a specified variable:
-all curves are in the same color (\code{color.var="None"});
-use different colors for diversity orders (\code{color.var="Order.q"});
-use different colors for sites (\code{color.var="Assemblage"});
-use different colors for combinations of order x assemblage (\code{color.var="Both"}).}
+all curves are in the same color (\code{color.var = "None"}); 
+use different colors for diversity orders (\code{color.var = "Order.q"}); 
+use different colors for assemblages/sites (\code{color.var = "Assemblage"}); 
+use different colors for combinations of diversity order and assemblage (\code{color.var = "Both"}).}
 }
 \value{
-a ggplot2 object for coverage-based or size-based rarefaction and extrapolation
+a \code{ggplot2} object for sample-size-based rarefaction/extrapolation curve (\code{type = 1}), sample completeness curve (\code{type = 2}), and coverage-based rarefaction/extrapolation curve (\code{type = 3}).
 }
 \description{
-\code{ggiNEXT.link}: the \code{\link[ggplot2]{ggplot}} extension for \code{\link{iNEXT.link}} Object to plot sample-size-based and coverage-based rarefaction/extrapolation curves along with a bridging sample completeness curve
+\code{ggiNEXT.link} is a \code{ggplot} extension for an \code{iNEXT.link} object to plot sample-size- and coverage-based rarefaction/extrapolation sampling curves along with a bridging sample completeness curve.
 }
 \examples{
-## Taxonomic diversity
-data(beetles)
-output1 = iNEXT.link(data = beetles, diversity = 'TD', q = c(0,1,2))
-ggiNEXT.link(output1)
+# Plot three types of curves of taxonomic network diversity with facet.var = "Assemblage"
+# for interaction data with order q = 0, 1, 2
+data(beetles_plotA)
+output_qiTD = iNEXT.link(beetles_plotA, diversity = 'TD', q = c(0,1,2), nboot = 30)
+ggiNEXT.link(output_qiTD, facet.var = "Assemblage")
 
 
-## Phylogenetic diversity
-data(beetles)
+# Plot two types (1 and 3) of curves of phylogenetic network diversity 
+# for interaction data with order q = 0, 1, 2
+data(beetles_plotA)
 data(beetles_col_tree)
-output2 = iNEXT.link(data = beetles, diversity = 'PD', q = c(0,1,2), col.tree = beetles_col_tree)
-ggiNEXT.link(output2)
+output_qiPD = iNEXT.link(beetles_plotA, diversity = 'PD', q = c(0, 1, 2), nboot = 20, col.tree = beetles_col_tree)
+ggiNEXT.link(output_qiPD, type = c(1, 3))
 
 
-## Functional diversity under single threshold
-data(beetles)
+# Plot three types of curves of functional network diversity
+# for interaction data with order q = 0, 1, 2
+data(beetles_plotA)
 data(beetles_col_distM)
-output3 = iNEXT.link(data = beetles, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "tau_values")
-ggiNEXT.link(output3)
-
-
-## Functional diversity with thresholds integrating from 0 to 1
-data(beetles)
-data(beetles_col_distM)
-output4 = iNEXT.link(data = beetles, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "AUC")
-ggiNEXT.link(output4)
+output_qiFD = iNEXT.link(data = beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "AUC")
+ggiNEXT.link(output_qiFD)
 }

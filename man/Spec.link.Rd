@@ -33,20 +33,20 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 \value{
 A list of several tables containing estimated (or observed) evenness with order q.\cr
         Each tables represents a class of specialization.
-        \item{Order.q}{the diversity order of q.}
+        \item{Order.q}{the network diversity order of q.}
         \item{Specialization}{the specialization of order q.}
         \item{s.e.}{standard error of evenness.}
         \item{Spec.LCL, Spec.UCL}{the bootstrap lower and upper confidence limits for the evenness of order q at the specified level (with a default value of \code{0.95}).}
         \item{Method}{\code{"Estimated"} or \code{"Observed"}.}
         \item{SC}{the target standardized coverage value. (only when \code{method = "Estimated"})}
-        \item{Network}{the network name.}
+        \item{Dataset}{the Dataset name.}
         \item{class}{specialization class.}
 }
 \description{
 Standardized estimation (or observed) of specialization with order q
 }
 \examples{
-data(beetles)
-output = Spec.link(beetles)
-output
+data(beetles_plotA)
+output_spec = Spec.link(beetles_plotA)
+output_spec
 }

@@ -59,49 +59,55 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 }
 \value{
-\itemize{
- \item{\code{$DataInfo}: A dataframe summarizing data information}
- \item{\code{$iNextEst}: coverage-based diversity estimates along with confidence intervals}
- for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
- \item{\code{$AsyEst}: for
-showing asymptotic diversity estimates along with related statistics.}
-}
-
-a list of three objects: \code{$DataInfo} (or \code{$PDInfo}, \code{$FDInfo}, \code{$AUCInfo}) for summarizing data information; 
-\code{$iNextEst} (or \code{$PDiNextEst}, \code{$FDiNextEst}, \code{$AUCiNextEst}) for showing diversity estimates for rarefied and extrapolated samples along with related statistics;
-and \code{$AsyEst} (or \code{$PDAsyEst}, \code{$FDAsyEst}, \code{$AUCAsyEst}) for showing asymptotic diversity estimates along with related statistics.
+a list of three objects: \cr\cr
+(1) \code{$TDInfo} (\code{$PDInfo}, or \code{$FDInfo}) for summarizing data information for q = 0, 1 and 2. Refer to the output of \code{DataInfo.link} for details.
+(2) \code{$TDiNextEst}(\code{$PDiNextEst}, or \code{$FDiNextEst}) for showing network diversity estimates for rarefied and extrapolated samples along with related statistics. There are two data frames: \code{"$size_based"} and \code{"$coverage_based"}.
+   In \code{"$size_based"}, the output includes:
+   \item{Dataset}{the name of datasets.} 
+   \item{Order.q}{the network diversity order of q.}
+   \item{m}{the target standardized sample size.}
+   \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the size m is less than, equal to, or greater than the reference sample size.}
+   \item{qiTD, qiPD, qiFD}{the estimated network diversity of order q for a sample of size m.}
+   \item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for the network diversity of order q at the level specified in the settings (with a default value of 0.95).}
+   \item{SC}{the estimated network coverage for a sample of size m.}
+   \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the expected sample coverage at the level specified in the settings (with a default value of 0.95).}
+   \item{Reftime}{the reference times for PD.}
+   \item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length),\code{"meanPD"} (effective number of equally divergent lineages) for PD.}
+ Similar output is obtained for \code{"$coverage_based"}. \cr\cr
+(3) \code{$TDAsyEst}(\code{$PDAsyEst}, or \code{$FDAsyEst}): for showing asymptotic diversity estimates along with related statistics:
+   \item{Dataset}{the name of datasets.} 
+   \item{qTD, qPD, qFD}{the network diversity order of q.}
+   \item{TD_obs, PD_obs, FD_obs}{the observed network diversity.}
+   \item{TD_asy, PD_asy, FD_asy}{the asymptotic network diversity estimate.}
+   \item{s.e.}{standard error of asymptotic network diversity.}
+   \item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for asymptotic network diversity at the specified level (with a default value of 0.95).}
+   \item{Reftime}{the reference times for PD.}
+   \item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length),\code{"meanPD"} (effective number of equally divergent lineages) for PD.}
 }
 \description{
 Interpolation (rarefaction) and extrapolation of network diversity
 }
 \examples{
-## Taxonomic diversity
-data(beetles)
-output1 = iNEXT.link(data = beetles, diversity = 'TD', q = c(0,1,2))
-output1$TDInfo   # showing basic data information.
-output1$TDiNextEst   # showing diversity estimates with rarefied and extrapolated.
-output1$TDAsyEst   # showing asymptotic diversity estimates.
+# Compute standardized estimates of taxonomic network diversity for interaction data with order q = 0, 1, 2
+data(beetles_plotA)
+output_qiTD = iNEXT.link(beetles_plotA, diversity = 'TD', q = c(0,1,2), nboot = 30)
+output_qiTD$TDInfo   # showing basic data information.
+output_qiTD$TDiNextEst   # showing diversity estimates with rarefied and extrapolated.
+output_qiTD$TDAsyEst   # showing asymptotic diversity estimates.
 
 
-## Phylogenetic diversity
-data(beetles)
+# Compute standardized estimates of phylogenetic network diversity for interaction data with order q = 0, 1, 2
+data(beetles_plotA)
 data(beetles_col_tree)
-output2 = iNEXT.link(data = beetles, diversity = 'PD', q = c(0,1,2), col.tree = beetles_col_tree)
-output2
+output_qiPD = iNEXT.link(beetles_plotA, diversity = 'PD', q = c(0, 1, 2), nboot = 20, col.tree = beetles_col_tree)
+output_qiPD
 
 
-## Functional diversity under single threshold
-data(beetles)
+# Compute standardized estimates of functional network diversity for interaction data with order q = 0, 1, 2
+data(beetles_plotA)
 data(beetles_col_distM)
-output3 = iNEXT.link(data = beetles, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "tau_values")
-output3
-
-
-## Functional diversity with thresholds integrating from 0 to 1
-data(beetles)
-data(beetles_col_distM)
-output4 = iNEXT.link(data = beetles, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "AUC")
-output4
+output_qiFD = iNEXT.link(data = beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "AUC")
+output_qiFD
 
 }
 \references{

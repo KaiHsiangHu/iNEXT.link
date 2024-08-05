@@ -1,3 +1,74 @@
+check.size <- function(data, datatype, size, endpoint, knots) {
+  
+  if (length(knots) != length(data)) knots <- rep(knots,length(data))
+  
+  if (is.null(size)) {
+    
+    if (is.null(endpoint)) {
+      
+      if (datatype == "abundance") {
+        endpoint <- sapply(data, function(x) 2*sum(x))
+      } else if (datatype == "incidence_freq"){
+        endpoint <- sapply(data, function(x) 2*x[1])
+      } else if (datatype == "incidence_raw"){
+        endpoint <- sapply(data, function(x) 2*ncol(x))
+      }
+      
+    } else {
+      
+      if(length(endpoint) != length(data)){
+        endpoint <- rep(endpoint, length(data))
+      }
+      
+    }
+    
+    size <- lapply(1:length(data), function(i){
+      
+      if (datatype == "abundance") {
+        ni <- sum(data[[i]])
+      } else if (datatype == "incidence_freq") {
+        ni <- data[[i]][1]
+      } else if (datatype == "incidence_raw") {
+        ni <- ncol(data[[i]])
+      }
+      
+      if(endpoint[i] <= ni){
+        mi <- floor(seq(1,endpoint[i], length.out = knots[i]))
+      }else{
+        mi <- floor(c(seq(1, ni, length.out = floor(knots[i]/2)), seq(ni+1, endpoint[i], length.out = knots[i]-floor(knots[i]/2))))
+      }
+      
+      if(sum(mi < 0) > 0) stop("Sample size (or number of sampling units) cannot be a negative value.", call. = FALSE)
+      unique(mi)
+    })
+    
+  } else {
+    
+    if (inherits(size, c("numeric", "integer", "double"))) {
+      size <- list(size = size)
+    }
+    
+    if (length(size) != length(data)) size <- lapply(1:length(data), function(x) size[[1]])
+    size <- lapply(1:length(data),function(i){
+      if(datatype == "abundance") {
+        ni <- sum(data[[i]])
+      } else if (datatype == "incidence_freq") {
+        ni <- data[[i]][1]
+      } else if(datatype == "incidence_raw"){
+        ni <- ncol(data[[i]])
+      }
+      
+      if ( (sum(size[[i]] == ni) == 0) & (sum(size[[i]] > ni) != 0) & (sum(size[[i]] < ni) != 0) ) 
+        mi <- sort(c(ni,size[[i]])) else mi <- sort(size[[i]])
+        
+        if(sum(mi < 0) > 0) stop("Sample size (or number of sampling units) cannot be a negative value.", call. = FALSE)
+        unique(mi)
+    })
+  }
+  
+  
+  return(size)
+}
 ready4beta <- function(x){
   ## transform 2d matrix to vector
   ## expand each assemblage to the union of all networks
@@ -423,7 +494,7 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
 
   res <- matrix(0,10,1,dimnames=list(1:10, "value"))
 
-  rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1", "f2", "a1'", "a2'", "threshold")
+  rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1", "f2", "a1'", "a2'", "d_mean")
 
   res[1,1] <- as.integer(sum(data))
   if("matrix" %in% class(data)){
@@ -431,8 +502,8 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
     res[3,1] <-  sum(colSums(data)>0)%>%as.integer() 
   }
   else{
-    res[2,1] <-  nrow(data[rowSums(data)>0])%>%as.integer()
-    res[3,1] <-  ncol(data[colSums(data)>0])%>%as.integer() 
+    res[2,1] <-  nrow(data[rowSums(data)>0,])%>%as.integer()
+    res[3,1] <-  ncol(data[,colSums(data)>0])%>%as.integer() 
   }
   res[4,1] <-  sum(data>0)%>%as.integer()
 
@@ -464,7 +535,7 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
 datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   if (!inherits(data, "data.frame")) 
   #data <- as.data.frame(data)
-
+  
   rownames(data) = gsub('\\.', '_',rownames(data))
   colnames(data) = gsub('\\.', '_',colnames(data))
   # if(datatype == "abundance"){
@@ -478,7 +549,7 @@ datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   # }
   res <- matrix(0,11,1,dimnames=list(1:11, "value"))
   # rownames(res) <- c("n", "S.obs","Links.obs","S.obs.row","S.obs.col","Connectance", "f1*", "f2*", "g1", "g2", "observed PD", "mean_T")
-  rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1*", "f2*", "g1", "g2", "PD.obs", "mean_T")
+  rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1*", "f2*", "g1", "g2", "PD.obs", "T1*T2")
 
   res[1,1] <- as.integer(sum(data))
   if("matrix" %in% class(data)){
@@ -486,8 +557,8 @@ datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
     res[3,1] <-  sum(colSums(data)>0)%>%as.integer() 
   }
   else{
-    res[2,1] <-  nrow(data[rowSums(data)>0])%>%as.integer()
-    res[3,1] <-  ncol(data[colSums(data)>0])%>%as.integer() 
+    res[2,1] <-  nrow(data[rowSums(data)>0,])%>%as.integer()
+    res[3,1] <-  ncol(data[,colSums(data)>0])%>%as.integer() 
   }
   res[4,1] <-  sum(data>0)%>%as.integer()
 
@@ -523,8 +594,8 @@ datainf <- function(data, datatype){
     res[3,1] <-  sum(colSums(data)>0)%>%as.integer() 
   }
   else{
-    res[2,1] <-  nrow(data[rowSums(data)>0])%>%as.integer()
-    res[3,1] <-  ncol(data[colSums(data)>0])%>%as.integer() 
+    res[2,1] <-  nrow(data[rowSums(data)>0,])%>%as.integer()
+    res[3,1] <-  ncol(data[,colSums(data)>0])%>%as.integer() 
   }
   res[4,1] <-  sum(data>0)%>%as.integer()
   res[5,1] <-  round(sum(data>0)/ncol(data)/nrow(data),4)
@@ -1030,7 +1101,16 @@ get.netphydiv_iNE <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, kno
 iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
                              nboot = 20, conf = 0.95,
                              row.tree = NULL,col.tree = NULL, PDtype){
+  
+  
   max_alpha_coverage = F
+  
+  
+  if(is.null(level)){
+    level <- seq(0.5,1, 0.025)
+  }else{
+    levle <- level
+  }
 
   if(datatype=='abundance'){
 
@@ -1051,7 +1131,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
 
     #data
     if (datatype=='abundance') {
-
+        
       n = sum(data)
       data_gamma = rowSums(data)
       data_gamma = data_gamma[data_gamma>0]
@@ -1060,15 +1140,16 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
       ref_gamma = iNEXT.3D:::Coverage(data_gamma, n, datatype = 'abundance')
       ref_alpha = iNEXT.3D:::Coverage(data_alpha, n, datatype = 'abundance')
 
-      ref_alpha_max = iNEXT.3D:::Coverage(data_gamma, n*2, datatype = 'abundance')
-      ref_gamma_max = iNEXT.3D:::Coverage(data_alpha, n*2, datatype = 'abundance')
+      ref_alpha_max = iNEXT.3D:::Coverage(data_alpha, n*2, datatype = 'abundance')
+      ref_gamma_max = iNEXT.3D:::Coverage(data_gamma, n*2, datatype = 'abundance')
 
       level = level[level<1]
-      # level = c(level, ref_gamma, ref_alpha, ref_alpha_max, ref_gamma_max) %>% sort %>% unique
+      level = c(level, ref_gamma, ref_alpha, ref_alpha_max, ref_gamma_max) %>% sort %>% unique
 
       m_gamma = sapply(level, function(i) coverage_to_size(x = data_gamma, C = i, datatype='abundance'))
       m_alpha = sapply(level, function(i) coverage_to_size(data_alpha, i, datatype='abundance'))
     }
+    
 
     if (datatype=='abundance') {
       ### 1. aL_table_gamma
@@ -1256,10 +1337,15 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
           seen_interaction_aili%>%filter(tgroup == 'Tip')%>%summarise(sum(branch.abun))
           # unseen_interaction_aili = data.frame(branch.abun = rep(pi$unseen,f0_k), branch.length = g0 / f0_k,
           #                                      tgroup = "Tip",interaction = "unseen")
-          unseen_interaction_aili = data.frame(branch.abun = rep(0,f0_pool), branch.length = rep(0,f0_pool),
-                                               tgroup = "Tip",interaction = "unseen")%>%
-            mutate(interaction = paste0(interaction, row_number()))
-          seen_unseen = rbind(seen_interaction_aili, unseen_interaction_aili)
+          if(f0_pool == 0){
+            seen_unseen = seen_interaction_aili
+          }else{
+            unseen_interaction_aili = data.frame(branch.abun = rep(0,f0_pool), branch.length = rep(0,f0_pool),
+                                                 tgroup = "Tip",interaction = "unseen")%>%
+              mutate(interaction = paste0(interaction, row_number()))
+            seen_unseen = rbind(seen_interaction_aili, unseen_interaction_aili)
+          }
+          
           ## 8268 candidates out of 8977
           candidates = which(seen_unseen$branch.abun == 0)
           ###
@@ -1483,28 +1569,65 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
                              Dataset = dataset_name,
                              Diversity = PDtype) %>% 
       arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Dissimilarity" = "Estimate")
-
     
-    beta$Method[beta$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    #add plot point alpha
+    gamma$Method[gamma$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    C$Method[C$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    alpha$Method[alpha$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    U$Method[U$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    beta$Method[beta$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    V$Method[V$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    C$Method[C$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    S$Method[S$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    U$Method[U$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    beta$Method[beta$SC == ref_alpha] = "Observed_C(n, alpha)"
+    V$Method[V$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    C$Method[C$SC == ref_alpha] = "Observed_C(n, alpha)"
+    S$Method[S$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    U$Method[U$SC == ref_alpha] = "Observed_C(n, alpha)"
+    gamma$Method[gamma$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
-    V$Method[V$SC == ref_alpha] = "Observed_C(n, alpha)"
+    alpha$Method[alpha$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
-    S$Method[S$SC == ref_alpha] = "Observed_C(n, alpha)"
+    beta$Method[beta$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
+    C$Method[C$SC == ref_alpha] = "Observed_SC(n, alpha)"
+    
+    U$Method[U$SC == ref_alpha] = "Observed_SC(n, alpha)"
+    
+    V$Method[V$SC == ref_alpha] = "Observed_SC(n, alpha)"
+    
+    S$Method[S$SC == ref_alpha] = "Observed_SC(n, alpha)"
+    
+    
+    #add plot point gamma
+    gamma$Method[gamma$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    alpha$Method[alpha$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    beta$Method[beta$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    C$Method[C$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    U$Method[U$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    V$Method[V$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    S$Method[S$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    gamma$Method[gamma$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    alpha$Method[alpha$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    beta$Method[beta$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    C$Method[C$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    U$Method[U$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    V$Method[V$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    S$Method[S$SC == ref_gamma] = "Observed_SC(n, gamma)"
     
     list(gamma = gamma, alpha = alpha, beta = beta, `1-C` = C, `1-U` = U, `1-V` = V, `1-S` = S)
   }
@@ -1685,10 +1808,10 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   index <- ObsAsy.link(data = data, diversity = "PD",row.tree = row.tree, col.tree  = col.tree,
                        q = c(0, 1, 2), PDtype = type, nboot = nboot, conf = 0.95)
   index = index[order(index$Network), ]
-  LCL <- index$qPD.LCL[index$Method == "Asymptotic"]
-  UCL <- index$qPD.UCL[index$Method == "Asymptotic"]
+  LCL <- index$qiPD.LCL[index$Method == "Asymptotic"]
+  UCL <- index$qiPD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Network + Order.q ~ Method,
-                 value.var = "qPD")
+                 value.var = "qiPD")
   index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
     index$LCL[index$LCL < index$Empirical & index$Order.q == 0] <- index$Empirical[index$LCL < index$Empirical &
@@ -1743,7 +1866,8 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
 
         if (unconditional_var) {
           ses <- sapply(1:nboot, function(B) {
-
+            
+            x_B = boot.sam[[B]] %>% filter(tgroup == "Tip") %>% .$branch.abun %>% as.matrix()
             ai_B <- boot.sam[[B]]$branch.abun %>% as.matrix()
             Li_b <- boot.sam[[B]]$branch.length %>% as.matrix()
             colnames(Li_b) = paste0("T",reft)
@@ -1751,7 +1875,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
             qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], m = m[[i]], q = q, nt = n,
                                            reft = reft, cal = cal) %>% as.numeric()
             covm_b <- iNEXT.3D:::Coverage(ai_B[isn0], datatype, m[[i]])
-            qPD_unc_b <- unique(iNEXT.3D:::invChatPD_abu(x = ai_B[isn0], ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], q = q, Cs = goalSC, n = n,
+            qPD_unc_b <- unique(iNEXT.3D:::invChatPD_abu(x = x_B, ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], q = q, Cs = goalSC, n = sum(x_B),
                                                          reft = reft, cal = cal))$qPD
             return(c(qPDm_b, covm_b, qPD_unc_b))
           }) %>% apply(., 1, sd)
@@ -1801,9 +1925,9 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
       out_m$SC.UCL[out_m$SC.UCL > 1] <- 1
       if (unconditional_var) {
         ses_pd_unc <- ses[-(1:(length(qPDm) + length(covm)))]
-        out_C <- qPD_unc %>% mutate(qPD.LCL = qPD -
-                                      qtile * ses_pd_unc, qPD.UCL = qPD + qtile *
-                                      ses_pd_unc, Type = cal,
+        out_C <- qPD_unc %>% mutate(qPD.LCL = qPD_unc$qPD - qtile*ses_pd_unc, 
+                                    qPD.UCL = qPD + qtile *ses_pd_unc, 
+                                    Type = cal,
                                     Assemblage = nms[i])
         id_C <- match(c("Assemblage", "goalSC", "SC", "m", "Method", "Order.q", 
                         "qPD", "qPD.LCL", "qPD.UCL", "Reftime", "Type"), names(out_C),

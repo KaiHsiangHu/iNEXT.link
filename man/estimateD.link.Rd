@@ -56,47 +56,43 @@ sampling uncertainty and constructing confidence intervals. Enter 0 to skip the 
 }
 \value{
 a \code{data.frame} of diversity table including the following arguments:
-\item{Assemblage}{the assemblage name.}
-\item{m}{the corresponding sample size for the standardized coverage value.}
-\item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
+\item{Dataset}{the name of datasets.}
 \item{Order.q}{the diversity order of q.}
 \item{SC}{the target standardized coverage value.}
-\item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.} 
-\item{s.e.}{standard error of diversity estimate.}
-\item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
+\item{m}{the corresponding sample size for the standardized completeness.}
+\item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
+\item{qiTD, qiPD, qiFD}{the estimated network diversity of order q for the target coverage value The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.} 
+\item{s.e.}{standard error of network diversity estimate.}
+\item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for the network diversity of order q at the specified level (with a default value of \code{0.95}).}
 \item{Reftime}{reference times for PD.}
-\item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages).}
-\item{Tau}{the threshold of functional distinctiveness between any two species.}
+\item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length), \code{"meanPD"} (effective number of equally divergent lineages).}
 }
 \description{
 \code{estimateD.link} computes species diversity (Hill numbers with q = 0, 1 and 2) with a particular user-specified level of sample size or sample coverage.
 }
 \examples{
 \donttest{
-## Taxonomic diversity
-data(beetles)
-output1 <- estimateD.link(beetles, diversity = 'TD', 
-                          base = "coverage", level = 0.7, nboot = 30)
-output1
+# Taxonomic network diversity for interaction data with two target coverages (93\% and 97\%)
+data(beetles_plotA)
+output_est_qiTD <- estimateD.link(beetles_plotA, diversity = 'TD', q = c(0,1,2),
+                                  base = "coverage", level = c(0.93, 0.97))
+output_est_qiTD
 
-## Phylogenetic diversity
-output2 <- estimateD.link(beetles, diversity = 'PD', 
-                          base = "size", level = NULL, nboot = 30, col.tree = beetles_col_tree)
-output2
+# Phylogenetic network diversity for interaction data with two target sizes (1500 and 3000)
+data(beetles_plotA)
+data(beetles_col_tree)
+output_est_qiPD <- estimateD.link(beetles_plotA, diversity = 'PD', 
+                                  base = "size", level = c(1500, 3000), col.tree = beetles_col_tree)
+output_est_qiPD
 
-## Functional diversity under single threshold
-data(beetles)
+## Functional network diversity for interaction data with two target coverages (93\% and 97\%)
+data(beetles_plotA)
 data(beetles_col_distM)
-output3 = estimateD.link(data = beetles, diversity = 'FD', col.distM = beetles_col_distM, FDtype = "tau_values")
-output3
+output_est_qiFD = estimateD.link(data = beetles_plotA, diversity = 'FD', q = c(0, 1, 2),
+                                 base = "coverage", level = c(0.93, 0.97), nboot = 10,
+                                 col.distM = beetles_col_distM, FDtype = "AUC")
+output_est_qiFD
 
-
-## Functional diversity with thresholds integrating from 0 to 1
-data(beetles)
-data(beetles_col_distM)
-output4 = estimateD.link(data = beetles, diversity = 'FD',
-                         col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-output4
 
 }
 }
