@@ -25,7 +25,7 @@ a matrix of estimated sample completeness with order q:
         \item{Dataset}{the dataset name.}
 }
 \description{
-\code{Completeness.link} Estimation of Sample Completeness with order q
+\code{Completeness.link}: Estimation of Sample Completeness with order q
 }
 \examples{
 # Sample Completeness for interaction data

@@ -33,17 +33,17 @@ Chiu et al. (2023) adapted the unified 3D-diversity framework of Chao et al. (20
 
 (1) Taxonomic network diversity that incorporates interaction richness and evenness among the strength (or frequency) of interactions. 
 
-(2) Phylogenetic network diversity that additionally considers species’ phylogeny.
+(2) Phylogenetic network diversity that additionally considers species??? phylogeny.
 
-(3) Functional network diversity that additionally accounts for species’ traits. 
+(3) Functional network diversity that additionally accounts for species??? traits. 
 
 iNEXT.link adapts iNEXT, iNEXT.3D, and iNEXT.4steps to quantify and estimate 3D network diversity based on incomplete sampling data. It also adapts iNEXT.beta3D to assess network alpha, beta and gamma diversity as well as the associated (dis)similarity measures. For the former adaption, the iNEXT.link methodology integrates the following four inference procedures: 
 
 **Step 1: Assessment of network completeness profiles** 
 
-The sample completeness of a network is characterized by profile depicting the sample completeness (developed in Chiu et al. 2023) with respect to an order q ≥ 0. When q = 0, the completeness measure reduces to (an upper bound) of the proportion of the observed interaction richness relative to an estimated interaction richness. When q = 1, the completeness measure reduces to the network-version sample coverage (the proportion of the total number of interaction events that belong to detected ones). When q ≥ 2, the completeness measure is disproportionally sensitive to highly frequent interactions. The proposed profile allows for tuning the effect of interaction frequency on the sample completeness. For a complete network (i.e., there are no undetected interactions), the estimated sample completeness profile will be a horizontal line at the level of unity for all orders of q  0. In contrast, for an incomplete network, the sample completeness profile will be an increasing function of order q.
+The sample completeness of a network is characterized by profile depicting the sample completeness (developed in Chiu et al. 2023) with respect to an order q ??? 0. When q = 0, the completeness measure reduces to (an upper bound) of the proportion of the observed interaction richness relative to an estimated interaction richness. When q = 1, the completeness measure reduces to the network-version sample coverage (the proportion of the total number of interaction events that belong to detected ones). When q ??? 2, the completeness measure is disproportionally sensitive to highly frequent interactions. The proposed profile allows for tuning the effect of interaction frequency on the sample completeness. For a complete network (i.e., there are no undetected interactions), the estimated sample completeness profile will be a horizontal line at the level of unity for all orders of q > 0. In contrast, for an incomplete network, the sample completeness profile will be an increasing function of order q.
 
-**STEP 2. Sample-size- or size-based rarefaction and extrapolation analysis with 3D network diversity for q = 0, 1, and 2, and the asymptotic network diversity profile. Here “size” means the number of interaction events.**
+**STEP 2. Sample-size- or size-based rarefaction and extrapolation analysis with 3D network diversity for q = 0, 1, and 2, and the asymptotic network diversity profile. Here “size??? means the number of interaction events.**
 
 **(STEP 2a)** For each dimension of the 3D network diversity, first examine the pattern of the size-based rarefaction and extrapolation sampling curve up to double the reference sample size for q = 0, 1 and 2. If the curve stays at a fixed level (this often occurs for the measures of q = 1 and 2), then the asymptotic network-diversity estimate presented in the next step (Step 2b) can be used to accurately infer the true network diversity. Otherwise, the asymptotic diversity estimate represents only a lower bound (this often occurs for the measure of q = 0).
 
@@ -55,9 +55,7 @@ When sampling data do not contain sufficient information to accurately infer tru
 
 **STEP 4. Assessment of network unevenness (i.e., specialization) profiles**
 
-The five classes of unevenness measures developed in Chao and Ricotta (2019) are used to measure network specialization. Each unevenness measure is parameterized by an order q > 0; for q = 0, interaction frequencies are disregarded, so it is not meaningful to evaluate (un)evenness among frequencies. For each class, one can construct a continuous profile that depicts the measure as a function of diversity order q > 0. All five classes are functions of taxonomic network diversity and interaction richness. Because interaction richness often cannot be accurately estimated for incomplete sampling data, unevenness/specialization profiles across networks can only be compared at a standardized coverage level, up to a maximum coverage value of C_max, defined in Step 3.
-
-The following step was not included in the proposed procedure in Chiu et al. (2023), but is featured in this R package.
+The five classes of unevenness measures developed by Chao and Ricotta (2019) are utilized to assess network specialization. Each unevenness measure is parameterized by an order q > 0; for q = 0, interaction frequencies are disregarded, making it meaningless to evaluate (un)evenness among frequencies. For each class, a continuous profile can be constructed that illustrates the measure as a function of diversity order q > 0 . All five classes are functions of taxonomic network diversity and interaction richness. Since interaction richness is often difficult to estimate accurately from incomplete sampling data, unevenness and specialization profiles across networks can only be compared at a standardized coverage level, with a maximum coverage value denoted as C_max , defined in Step 3. Additionally, users can specify the type of decomposition for network specialization as either relative or absolute, depending on their research objectives. The relative decomposition reflects how each column species' interaction distribution contributes to the overall specialization of the network, while the absolute decomposition emphasizes the overall interaction strength at the regional level, thereby capturing macro-scale specialization patterns. This flexibility allows researchers to customize their analyses to address specific ecological questions of interest.
 
 **STEP 5. Beta diversity and dissimilarity among networks**
 
@@ -135,11 +133,13 @@ Two functions for completeness analysis with graphical displays:
 
 
 
-Two functions for specialization analysis with graphical displays: 
+Three functions for specialization analysis with graphical displays: 
 
-- **Spec.link** computes standardized specialization estimation under specified sample coverage(or observed) with order q.
+- **Spec.link.est** computes standardized specialization estimation under specified sample coverage with order q.
 
-- **ggSpec.link** visualizes the output from the function `Spec.link`
+- **Spec.link.ObsAsy** computes standardized specialization under the asymptotic (or observed) estimation with order q.
+
+- **ggSpec.link** visualizes the output from the function `Spec.link.est` or `Spec.link.ObsAsy`
 
 
 Two functions for alpha, beta, gamma network diversity analysis and dissimilarity analysis with graphical displays: 
@@ -168,25 +168,25 @@ lapply(beetles_plotA, function(x) x[,1:4])
 
 ### Phylogenetic tree for phylogenetic network diversity
 
-To conduct phylogenetic network diversity analysis, the phylogenetic tree (in Newick format) spanned by species observed in all datasets must be stored in a data file. For example, the phylogenetic tree for all observed species (including species in "Closed" and "Open" fragments) is stored in a data file named `"beetles_col_tree"` for demonstration purpose. A partial list of the tip labels and node labels are shown below. 
+To conduct phylogenetic network diversity analysis, the phylogenetic tree (in Newick format) spanned by species observed in all datasets must be stored in a data file. For example, the phylogenetic tree for all observed species (including species in "Closed" and "Open" fragments) is stored in a data file named `"beetles_row_tree"` for demonstration purpose. A partial list of the tip labels and node labels are shown below. 
 
 ```{r}
-data(beetles_col_tree)
-beetles_col_tree
+data(beetles_row_tree)
+beetles_row_tree
 ```
 
 ### Species pairwise distance matrix for functional network diversity
 
-To compute functional network diversity, the species-pairwise distance matrix (Gower distance computed from species traits) for species observed in all datasets must be stored in a matrix/data.frame format. Typically, the distance between any two species is computed from species traits using the Gower distance. In our demo data, the distance matrix for all species (including species in "Closed", and "Open" fragments) is stored in a data file named `"beetles_col_distM"` for demonstration purpose. Here we only show the first three rows and three columns of the distance matrix.
+To compute functional network diversity, the species-pairwise distance matrix (Gower distance computed from species traits) for species observed in all datasets must be stored in a matrix/data.frame format. Typically, the distance between any two species is computed from species traits using the Gower distance. In our demo data, the distance matrix for all species (including species in "Closed", and "Open" fragments) is stored in a data file named `"beetles_row_distM"` for demonstration purpose. Here we only show the first three rows and three columns of the distance matrix.
 
 ```{r eval=FALSE}
-data(beetles_col_distM)
-beetles_col_distM
+data(beetles_row_distM)
+beetles_row_distM
 ```
 
 ```{r echo=FALSE, cache=TRUE}
-data(beetles_col_distM)
-round(beetles_col_distM[1:3,1:3], 4)
+data(beetles_row_distM)
+round(beetles_row_distM[1:3,1:3], 4)
 ```
 
 
@@ -333,18 +333,18 @@ The `ggiNEXT.link()` function is a wrapper with the package `ggplot2` to create 
 
 ```{r, echo=FALSE, cache = TRUE}
 data(beetles_plotA)
-data(beetles_col_tree)
-data(beetles_col_distM)
+data(beetles_row_tree)
+data(beetles_row_distM)
 
 data <- beetles_plotA
-tree <- beetles_col_tree
-distM <- beetles_col_distM
+tree <- beetles_row_tree
+distM <- beetles_row_distM
 
 output_qiTD <- iNEXT.link(data, diversity = 'TD', q = c(0,1,2), nboot = 30)
 
-output_qiPD  <- iNEXT.link(data, diversity = 'PD', q = c(0, 1, 2), nboot = 20, col.tree = tree)
+output_qiPD  <- iNEXT.link(data, diversity = 'PD', q = c(0, 1, 2), nboot = 20, row.tree = tree)
 
-output_qiFD  <- iNEXT.link(data, diversity = 'FD', q = c(0, 1, 2), nboot = 10, col.distM = distM, FDtype = 'AUC')
+output_qiFD  <- iNEXT.link(data, diversity = 'FD', q = c(0, 1, 2), nboot = 10, row.distM = distM, FDtype = 'AUC')
 ```
 
 ### EXAMPLE 1: qiTD rarefaction/extrapolation for interaction frequency data 
@@ -455,12 +455,12 @@ Based on the dataset (`beetles_plotA`) included in the package, the following co
 
 ```{r echo=TRUE, cache=TRUE}
 data(beetles_plotA)
-data(beetles_col_tree)
+data(beetles_row_tree)
 
 data <- beetles_plotA
-tree <- beetles_col_tree
+tree <- beetles_row_tree
 
-output_qiPD  <- iNEXT.link(data, diversity = 'PD', q = c(0, 1, 2), nboot = 20, col.tree = tree)
+output_qiPD  <- iNEXT.link(data, diversity = 'PD', q = c(0, 1, 2), nboot = 20, row.tree = tree)
 output_qiPD$PDInfo
 ```
 
@@ -559,12 +559,12 @@ Based on the dataset (`beetles_plotA`) included in the package, the following co
 
 ```{r echo=TRUE, cache=TRUE}
 data(beetles_plotA)
-data(beetles_col_distM)
+data(beetles_row_distM)
 
 data <- beetles_plotA
-distM <- beetles_col_distM
+distM <- beetles_row_distM
 
-output_qiFD  <- iNEXT.link(data, diversity = 'FD', q = c(0, 1, 2), nboot = 10, col.distM = distM, FDtype = 'AUC')
+output_qiFD  <- iNEXT.link(data, diversity = 'FD', q = c(0, 1, 2), nboot = 10, row.distM = distM, FDtype = 'AUC')
 output_qiFD$FDInfo
 ```
 
@@ -701,14 +701,14 @@ Output description:
 
 ```{r eval=FALSE}
 data(beetles_plotA)
-data(beetles_col_tree)
-DataInfo.link(data = beetles_plotA, diversity = 'PD', col.tree = beetles_col_tree)
+data(beetles_row_tree)
+DataInfo.link(data = beetles_plotA, diversity = 'PD', row.tree = beetles_row_tree)
 ```
 
 ```{r echo=FALSE, cache = TRUE}
 data(beetles_plotA)
-data(beetles_col_tree)
-DataInfo.link(data = beetles_plotA, diversity = 'PD', col.tree = beetles_col_tree)
+data(beetles_row_tree)
+DataInfo.link(data = beetles_plotA, diversity = 'PD', row.tree = beetles_row_tree)
 ```
 
 Output description:
@@ -737,14 +737,14 @@ Output description:
 
 ```{r eval=FALSE}
 data(beetles_plotA)
-data(beetles_col_distM)
-DataInfo.link(data = beetles_plotA, diversity = 'FD', col.distM = beetles_col_distM)
+data(beetles_row_distM)
+DataInfo.link(data = beetles_plotA, diversity = 'FD', row.distM = beetles_row_distM)
 ```
 
 ```{r echo=FALSE, cache = TRUE}
 data(beetles_plotA)
-data(beetles_col_distM)
-DataInfo.link(data = beetles_plotA, diversity = 'FD', col.distM = beetles_col_distM)
+data(beetles_row_distM)
+DataInfo.link(data = beetles_plotA, diversity = 'FD', row.distM = beetles_row_distM)
 ```
 
 - `Netwrok` = assemblage name. 
@@ -805,17 +805,17 @@ The following commands return the qiPD estimates with two specified levels of sa
 
 ```{r, eval=FALSE}
 data(beetles_plotA)
-data(beetles_col_tree)
+data(beetles_row_tree)
 output_est_qiPD <- estimateD.link(beetles_plotA, diversity = 'PD', q = c(0,1,2), 
-                                  base = "coverage", level = c(0.975, 0.99), col.tree = beetles_col_tree)
+                                  base = "coverage", level = c(0.975, 0.99), row.tree = beetles_row_tree)
 output_est_qiPD
 ```
 
 ```{r, echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-data(beetles_col_tree)
+data(beetles_row_tree)
 output_est_qiPD <- estimateD.link(beetles_plotA, diversity = 'PD', q = c(0,1,2), 
-                                  base = "coverage", level = c(0.975, 0.99), col.tree = beetles_col_tree)
+                                  base = "coverage", level = c(0.975, 0.99), row.tree = beetles_row_tree)
 output_est_qiPD[,c(4,6:10)] <- round(output_est_qiPD[,c(4,6:10)], 3)
 
 
@@ -828,17 +828,17 @@ The following commands return the qiPD estimates with two specified levels of sa
 
 ```{r, eval=FALSE}
 data(beetles_plotA)
-data(beetles_col_distM)
+data(beetles_row_distM)
 output_est_qiFD <- estimateD.link(beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 10,
-                                  base = "size", level = c(500, 1000), col.distM = beetles_col_distM, FDtype = "AUC")
+                                  base = "size", level = c(500, 1000), row.distM = beetles_row_distM, FDtype = "AUC")
 output_est_qiFD
 ```
 
 ```{r, echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-data(beetles_col_distM)
+data(beetles_row_distM)
 output_est_qiFD <- estimateD.link(beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 10,
-                                  base = "size", level = c(500, 1000), col.distM = beetles_col_distM, FDtype = "AUC")
+                                  base = "size", level = c(500, 1000), row.distM = beetles_row_distM, FDtype = "AUC")
 output_est_qiFD[,c(5:9)] <- round(output_est_qiFD[,c(5:9)], 3)
 
 
@@ -904,15 +904,15 @@ The following commands returns the observed and asymptotic phylogenetic network 
 
 ```{r, eval=FALSE}
 data(beetles_plotA)
-data(beetles_col_tree)
-output_ObsAsy_qiPD <- ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
+data(beetles_row_tree)
+output_ObsAsy_qiPD <- ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), row.tree = beetles_row_tree)
 output_ObsAsy_qiPD
 ```
 
 ```{r, echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-data(beetles_col_tree)
-output_ObsAsy_qiPD <- ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
+data(beetles_row_tree)
+output_ObsAsy_qiPD <- ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), row.tree = beetles_row_tree)
 
 tmp = output_ObsAsy_qiPD
 tmp[,(3:6)] <- round(tmp[,(3:6)], 3)
@@ -934,17 +934,17 @@ The following commands returns the observed and asymptotic functional network di
 
 ```{r, eval=FALSE}
 data(beetles_plotA)
-data(beetles_col_distM)
+data(beetles_row_distM)
 output_ObsAsy_qiFD <- ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25), 
-                                  col.distM = beetles_col_distM, FDtype = "AUC", nboot = 10)
+                                  col.distM = beetles_row_distM, FDtype = "AUC", nboot = 10)
 output_ObsAsy_qiFD
 ```
 
 ```{r, echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-data(beetles_col_distM)
+data(beetles_row_distM)
 output_ObsAsy_qiFD <- ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), 
-                                  col.distM = beetles_col_distM, FDtype = "AUC", nboot = 10)
+                                  row.distM = beetles_row_distM, FDtype = "AUC", nboot = 10)
 
 tmp = output_ObsAsy_qiFD
 tmp[,(3:6)] <- round(tmp[,(3:6)], 3)
@@ -1056,16 +1056,66 @@ The following commands plot the corresponding q-profile, along with its confiden
 ggCompleteness.link(output_com)
 ```
 
-## <span style="color:red;">FUNCTION Spec.link and ggSpec.link: NETWORK SPECIALIZATION PROFILES</span>
+## <span style="color:red;">FUNCTION Spec.link.est, Spec.link.ObsAsy and ggSpec.link: NETWORK SPECIALIZATION PROFILES</span>
 
-`Spec.link()` the network specialization q-profiles for q between 0 and 2 in increments of 0.2 (by default) based on five classes of specialization measures, and function `ggSpec.link` is used to plot the corresponding specialization profiles. These two functions are specifically for users who only require specialization estimates and profiles. The two functions with arguments are described below: 
+The functions `Spec.link.est()` and `Spec.link.ObsAsy()` compute network specialization q-profiles for q between 0 and 2 in increments of 0.2 (by default) based on five classes of specialization measures, and function `ggSpec.link` is used to plot the corresponding specialization profiles. These three functions are specifically for users who only require specialization estimates and profiles. The three functions with arguments are described below: 
 
-```{r eval=FALSE}
-Spec.link(data, q = seq(0, 2, 0.2), method = "Estimated",
-         nboot = 30, conf = 0.95, E.class = c(1:5), SC = NULL) 
+```{r, eval=FALSE}
+output <- Spec.link.est(data, q = seq(0, 2, 0.2),
+         nboot = 30, conf = 0.95, E.class = c(1:5), SC = NULL, decomposition = "relative") 
+ggSpec.link(output)
 ```
 
+<table style="width:100%;">
+<colgroup>
+<col width="20%">
+<col width="80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Argument</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><code>data</code></td>
+<td align="left">a <code>list</code> of <code>data.frames</code>, each <code>data.frames</code> represents col.species-by-row.species abundance matrix.</td>
+</td>
+</tr>
+<tr class="even">
+<td align="center"><code>q</code></td>
+<td align="left">a numerical vector specifying the diversity orders. Default is (0, 0.2, 0.4,..., 2).</td>
+
+</tr>
+<tr class="even">
+<td align="center"><code>nboot</code></td>
+<td align="left">a positive integer specifying the number of bootstrap replications when assessing sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is <code>30</code>.</td>
+</tr>
+<tr class="odd">
+<td align="center"><code>conf</code></td>
+<td align="left">a positive number < 1 specifying the level of confidence interval. Default is <code>0.95</code>.</td>
+</tr>
+<tr class="even">
+<td align="center"><code>E.class</code></td>
+<td align="left">an integer vector between 1 to 5. There are five transformation for evenness in Chao and Ricotta (2019). Default is 1:5.</td>
+</tr>
+<tr class="odd">
+<td align="center"><code>SC</code></td>
+<td align="left">a standardized coverage for calculating evenness index. If `NULL`, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (`C = Cmax`).</td>
+</tr>
+<tr class="odd">
+<td align="center"><code>decomposition</code></td>
+<td align="left">decomposition type: relative decomposition(decomposition = "relative") or absolute decomposition(decomposition = "absolute"). Default is relative.</td>
+</tr>
+
+</tbody>
+</table>
+
+
 ```{r eval=FALSE}
+output <- Spec.link.ObsAsy(data, q = seq(0, 2, 0.2),method = "Asymptotic",
+         nboot = 30, conf = 0.95, E.class = c(1:5), decomposition = "relative") 
 ggSpec.link(output)
 ```
 
@@ -1093,7 +1143,7 @@ ggSpec.link(output)
 </tr>
 <tr class="odd">
 <td align="center"><code>method</code></td>
-<td align="left">a binary calculation method with 'Estimated' or 'Observed'.</td>
+<td align="left">a binary calculation method with 'Asymptotic' or 'Observed'. Default is <code>"Asymptotic".</td>
 </tr>
 <tr class="even">
 <td align="center"><code>nboot</code></td>
@@ -1107,15 +1157,18 @@ ggSpec.link(output)
 <td align="center"><code>E.class</code></td>
 <td align="left">an integer vector between 1 to 5. There are five transformation for evenness in Chao and Ricotta (2019). Default is 1:5.</td>
 </tr>
-<tr class="odd">
-<td align="center"><code>C</code></td>
-<td align="left">a standardized coverage for calculating evenness index. It is used when `method = 'Estimated'`. If `NULL`, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (`C = Cmax`).</td>
 </tr>
+<tr class="odd">
+<td align="center"><code>decomposition</code></td>
+<td align="left">decomposition type: relative decomposition(decomposition = "relative") or absolute decomposition(decomposition = "absolute"). Default is relative.</td>
+</tr>
+
 
 </tbody>
 </table>
 
-A simple example for demonstrating functions `Spec.link` and `ggSpec.link` are given below. 
+A simple example for demonstrating functions `Spec.link.est` and `ggSpec.link` are given below.
+
 
 ### Example 11: Specialization for interaction frequency data
 
@@ -1123,13 +1176,13 @@ The dataset `beetles_plotA` is used to estimate specialization at the default st
 
 ```{r, eval=FALSE}
 data(beetles_plotA)
-output_spec <- Spec.link(data = beetles_plotA)
+output_spec <- Spec.link.est(data = beetles_plotA)
 output_spec[[1]]
 ```
 
 ```{r, echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-output_spec <- Spec.link(data = beetles_plotA)
+output_spec <- Spec.link.est(data = beetles_plotA, nboot = 2)
 
 tmp <- output_spec
 for(i in 1:5){
@@ -1137,6 +1190,12 @@ for(i in 1:5){
 }
 
 tmp[[1]]
+```
+
+Run the following code to display the different class of curves:
+
+```{r}
+ggSpec.link(output_spec)
 ```
 
 ## <span style="color:red;">FUNCTION iNEXTbeta.link</span>
@@ -1341,9 +1400,9 @@ Because all the network diversity/dissimilarity estimates are computed for the s
 
 ```{r echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-data(beetles_col_tree)
+data(beetles_row_tree)
 output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL, q = c(0, 1, 2), 
-                                  col.tree = beetles_col_tree)
+                                  row.tree = beetles_row_tree)
 
 tmp = output_beta_qiPD$Dataset_1$beta
 tmp[,c(3:5, 7:9)] = round(tmp[,c(3:5, 7:9)], 3)
@@ -1371,9 +1430,9 @@ ggiNEXTbeta.link(output_beta_qiPD, type = 'D')
 ```{r eval=FALSE}
 # Taxonomic diversity
 data(beetles_plotA)
-data(beetles_col_distM)
+data(beetles_row_distM)
 output_beta_qiFD = iNEXTbeta.link(data = beetles, diversity = 'FD', level = NULL, q = c(0, 1, 2), 
-                                  col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
+                                  row.distM = beetles_row_distM, FDtype = "AUC", nboot = 0)
 output_beta_qiFD
 ```
 
@@ -1386,9 +1445,9 @@ Because all the network diversity/dissimilarity estimates are computed for the s
 
 ```{r echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-data(beetles_col_distM)
+data(beetles_row_distM)
 output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2), 
-                                  col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
+                                  row.distM = beetles_row_distM, FDtype = "AUC", nboot = 0)
 
 tmp = output_beta_qiFD$Dataset_1$beta
 tmp[,c(3:5, 7:9)] = round(tmp[,c(3:5, 7:9)], 3)
@@ -1415,7 +1474,7 @@ The iNEXT.link package is licensed under the GPLv3. To help refine `iNEXT.link`,
 ## References
 - Chiu, C.-H., Jost, L. and Chao*, A. (2014). Phylogenetic beta diversity, similarity, and differentiation measures based on Hill numbers. Ecological Monographs 84, 21-44.
 
-- Chao, A., Chiu, C.-H., Villéger, S., Sun, I.-F., Thorn, S., Lin, Y.-C., Chiang, J. M. and Sherwin, W. B. (2019). An attribute-diversity approach to functional diversity, functional beta diversity, and related (dis)similarity measures. Ecological Monographs, 89, e01343. 10.1002/ecm.1343.
+- Chao, A., Chiu, C.-H., Vill??ger, S., Sun, I.-F., Thorn, S., Lin, Y.-C., Chiang, J. M. and Sherwin, W. B. (2019). An attribute-diversity approach to functional diversity, functional beta diversity, and related (dis)similarity measures. Ecological Monographs, 89, e01343. 10.1002/ecm.1343.
 
 - Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H., Colwell, R. K. and Ellison, A.
 M. (2014). Rarefaction and extrapolation with Hill numbers: a framework for sampling and estimation in species diversity studies. Ecological Monographs, 84, 45–67.
@@ -1426,7 +1485,7 @@ M. (2014). Rarefaction and extrapolation with Hill numbers: a framework for samp
 
 - Chao, A., Thorn, S., Chiu, C.-H., Moyes, F., Hu, K.-H., Chazdon, R. L., Wu, J., Dornelas, M., Zeleny, D., Colwell, R. K., and Magurran, A. E. (2023). Rarefaction and extrapolation with beta diversity under a framework of Hill numbers: the iNEXT.beta3D standardization. Ecological Monographs, e1588.
 
-- Chao, A., Y. Kubota, D. Zelený, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
+- Chao, A., Y. Kubota, D. Zelen??, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
 
 - Chiu, C-H., Chao, A., Vogel, S., Kriegel, P. and Thorn, S. (2023). Quantifying and estimating ecological network diversity based on incomplete sampling data. Philosophical Transactions of the Royal Society B, 378: 20220183. https://doi.org/10.1098/rstb.2022.0183
 

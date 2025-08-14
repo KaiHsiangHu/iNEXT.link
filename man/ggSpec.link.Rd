@@ -2,7 +2,7 @@
 % Please edit documentation in R/MainFun.R
 \name{ggSpec.link}
 \alias{ggSpec.link}
-\title{ggplot for Specialization ggSpec.link The figure for estimation of Specialization with order q}
+\title{ggplot2 extension for output from \code{Spec.link.est} and \code{Spec.link.ObsAsy}.}
 \usage{
 ggSpec.link(output)
 }
@@ -13,10 +13,10 @@ ggSpec.link(output)
 a figure of estimated sample completeness with order q
 }
 \description{
-ggplot for Specialization ggSpec.link The figure for estimation of Specialization with order q
+\code{ggSpec.link}: Plots q-profile based on the output of \code{Spec.link.est} and \code{Spec.link.ObsAsy} using the ggplot2 package
 }
 \examples{
 data(beetles_plotA)
-output_spec = Spec.link(beetles_plotA)
+output_spec = Spec.link.est(beetles_plotA, nboot = 5)
 ggSpec.link(output_spec)
 }

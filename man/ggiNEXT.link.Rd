@@ -27,7 +27,7 @@ a separate plot for each combination of diversity order and assemblage (\code{fa
 all curves are in the same color (\code{color.var = "None"}); 
 use different colors for diversity orders (\code{color.var = "Order.q"}); 
 use different colors for assemblages/sites (\code{color.var = "Assemblage"}); 
-use different colors for combinations of diversity order and assemblage (\code{color.var = "Both"}).}
+use different colors for combinations of diversity orders and assemblage (\code{color.var = "Both"}).}
 }
 \value{
 a \code{ggplot2} object for sample-size-based rarefaction/extrapolation curve (\code{type = 1}), sample completeness curve (\code{type = 2}), and coverage-based rarefaction/extrapolation curve (\code{type = 3}).
@@ -46,15 +46,17 @@ ggiNEXT.link(output_qiTD, facet.var = "Assemblage")
 # Plot two types (1 and 3) of curves of phylogenetic network diversity 
 # for interaction data with order q = 0, 1, 2
 data(beetles_plotA)
-data(beetles_col_tree)
-output_qiPD = iNEXT.link(beetles_plotA, diversity = 'PD', q = c(0, 1, 2), nboot = 20, col.tree = beetles_col_tree)
+data(beetles_row_tree)
+output_qiPD = iNEXT.link(beetles_plotA, diversity = 'PD', q = c(0, 1, 2), nboot = 20, 
+                         row.tree = beetles_row_tree)
 ggiNEXT.link(output_qiPD, type = c(1, 3))
 
 
 # Plot three types of curves of functional network diversity
 # for interaction data with order q = 0, 1, 2
 data(beetles_plotA)
-data(beetles_col_distM)
-output_qiFD = iNEXT.link(data = beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 0, col.distM = beetles_col_distM, FDtype = "AUC")
+data(beetles_row_distM)
+output_qiFD = iNEXT.link(data = beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 0, 
+                         row.distM = beetles_row_distM, FDtype = "AUC")
 ggiNEXT.link(output_qiFD)
 }

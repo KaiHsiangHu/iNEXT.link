@@ -2,15 +2,14 @@
 % Please edit documentation in R/MainFun.R
 \name{iNEXTbeta.link}
 \alias{iNEXTbeta.link}
-\title{Interpolation (rarefaction) and extrapolation of network beta diversity
-Function \code{iNEXTbeta.link} Interpolation and extrapolation of beta diversity with order q}
+\title{Interpolation (rarefaction) and extrapolation of network beta diversity}
 \usage{
 iNEXTbeta.link(
   data,
   diversity = "TD",
   level = NULL,
   q = c(0, 1, 2),
-  nboot = 20,
+  nboot = 30,
   conf = 0.95,
   comparison = "pool",
   row.tree = NULL,
@@ -37,7 +36,7 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
 
-\item{comparison}{selection of comparison method. \code{'pool'} compares all datasets in once, and \code{'pair'} compares all datasets two by two.}
+\item{comparison}{selection of comparison method. \code{'pool'} compares all datasets in once, and \code{'pair'} compares will be computed for all pairs of datasets in the input list.}
 
 \item{row.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.}
 
@@ -50,9 +49,9 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 
 \item{col.distM}{(required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.}
 
-\item{FDtype}{(required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
+\item{FDtype}{(required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_value"} for FD under specified threshold value, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.}
 
-\item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
+\item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau value (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 
 \item{FDcut_number}{(required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is \code{30}.}
 }
@@ -69,34 +68,38 @@ A list of seven matrices with three diversity dimensions and four dissimilarity 
 \item{Diversity}{\code{"TD"} (taxonomic network diversity), \code{"PD"} (phylogenetic diversity of effective total branch length), \code{"meanPD"} (phylogenetic diversity of effective number of equally divergent lineages), \code{"FD_tau"} (functional diversity under a single tau), \code{"FD_AUC"} (functional diversity by integrating all threshold values between zero and one.}
 }
 \description{
-Interpolation (rarefaction) and extrapolation of network beta diversity
-Function \code{iNEXTbeta.link} Interpolation and extrapolation of beta diversity with order q
+\code{iNEXTbeta.link} Interpolation and extrapolation of beta diversity with order q.
 }
 \examples{
 ## Taxonomic network diversity for interaction data
-# Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+# Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and 
+# related statistics
 data(beetles_plotA)
-output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level = NULL, q = c(0, 1, 2))
+output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level = NULL, 
+                                  q = c(0, 1, 2))
 output_beta_qiTD
 
 ## Phylogenetic network diversity for interaction data
-# Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+# Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and
+# related statistics
 data(beetles_plotA)
-data(beetles_col_tree)
-output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL, q = c(0, 1, 2), col.tree = beetles_col_tree, nboot = 10)
+data(beetles_row_tree)
+output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL,
+                                  q = c(0, 1, 2),row.tree = beetles_row_tree, nboot = 10)
 output_beta_qiPD
 
 
 ## Functional network diversity for interaction data
-# Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+# Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and 
+# related statistics
 data(beetles_plotA)
-data(beetles_col_distM)
-output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+data(beetles_row_distM)
+output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, 
+                                  q = c(0, 1, 2),row.distM = beetles_row_distM, FDtype = "AUC", nboot = 10)
 output_beta_qiFD
 
 }
 \references{
-Chao, A., Chazdon, R. L., Colwell, R. K. and Shen, T.-J.(2005). A new statistical approach for assessing similarity of species composition with incidence and abundance data. Ecology Letters 8, 148-159. (pdf file) Spanish translation in pp. 85-96 of Halffter, G. Soberon, J., Koleff, P. and Melic, A. (eds) 2005 Sobre Diversidad Biologica: el Sognificado de las Diversidades Alfa, Beta y Gamma. m3m-Monografias 3ercer Milenio, vol. 4, SEA, CONABIO, Grupo DIVERSITAS & CONACYT, Zaragoza. IV +242 pp.
-Chiu, C.-H., Jost, L. and Chao*, A. (2014). Phylogenetic beta diversity, similarity, and differentiation measures based on Hill numbers. Ecological Monographs 84, 21-44.
-Chao, A., Thorn, S., Chiu, C.-H., Moyes, F., Hu, K.-H., Chazdon, R. L., Wu, J., Dornelas, M., Zelen??, D., Colwell, R. K., and Magurran, A. E. (2023). Rarefaction and extrapolation with beta diversity under a framework of Hill numbers: the iNEXT.beta3D standardization. To appear in Ecological Monographs.
+Chao, A., Thorn, S., Chiu, C.-H., Moyes, F., Hu, K.-H., Chazdon, R. L., Wu, J., Dornelas, M., Zeleny, D., Colwell, R. K., and Magurran, A. E. (2023). Rarefaction and extrapolation with beta diversity under a framework of Hill numbers: the iNEXT.beta3D standardization. 
+\emph{Ecological Monographs e1588.} \cr\cr
 }

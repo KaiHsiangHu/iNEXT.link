@@ -1,3 +1,15 @@
+utils::globalVariables(c(
+  ".", "Assemblage", "Boots.one", "Coverage", "Dataset", "Estimate.SC",
+  "Even.LCL", "Even.UCL", "LCL", "Method", "ObsND", "Order", "Order.q",
+  "Reftime", "SC", "SC.LCL", "SC.UCL", "Size", "Spec.LCL", "Spec.UCL",
+  "Specialization", "Species", "Target", "ToListExplicit", "UCL", 
+  "aL_table", "abun", "as.Node", "branch.abun", "branch.length", 
+  "col.name", "data_gamma", "diagonalNetwork", "div_type", "even.class", 
+  "invChatPD_inc", "label", "map", "node", "nt", "phyBranchAL_Inc", 
+  "phylotr", "qPD", "row.name", "s.e.", "sd", "spe.c", "spe.r", "tgroup","Estimate"
+))
+
+
 check.size <- function(data, datatype, size, endpoint, knots) {
   
   if (length(knots) != length(data)) knots <- rep(knots,length(data))
@@ -165,7 +177,7 @@ phyExpandData_ <- function(x, labels, phy, datatype="abundance"){
   }else if(datatype=="incidence_raw"){
     
     if(nrow(x) !=length(labels)) stop("Length of labels and incidence data not matach")
-    y <- iNEXT::as.incfreq(x)
+    y <- iNEXT.3D:::as.incfreq(x)
     t <- y[1]
     y <- y[-1]
     names(y) <- labels
@@ -497,19 +509,19 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
   rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1", "f2", "a1'", "a2'", "d_mean")
 
   res[1,1] <- as.integer(sum(data))
-  if("matrix" %in% class(data)){
-    res[2,1] <-  sum(rowSums(data)>0)%>%as.integer()
-    res[3,1] <-  sum(colSums(data)>0)%>%as.integer() 
+  if("matrix" %in% class(data)|"data.frame" %in% class(data)){
+    res[2,1] <-  as.integer(sum(rowSums(data)>0))
+    res[3,1] <-  as.integer(sum(colSums(data)>0))
   }
   else{
-    res[2,1] <-  nrow(data[rowSums(data)>0,])%>%as.integer()
-    res[3,1] <-  ncol(data[,colSums(data)>0])%>%as.integer() 
+    res[2,1] <-  as.integer(nrow(data[rowSums(data)>0]))
+    res[3,1] <-  as.integer(ncol(data[colSums(data)>0]))
   }
-  res[4,1] <-  sum(data>0)%>%as.integer()
+  res[4,1] <-  as.integer(sum(data>0))
 
   res[5,1] <-  round(sum(data>0)/ncol(data)/nrow(data),4)
-  res[6,1] <-  sum(data == 1)%>%as.integer()
-  res[7,1] <-  sum(data == 2)%>%as.integer()
+  res[6,1] <-  as.integer(sum(data == 1))
+  res[7,1] <-  as.integer(sum(data == 2))
   distM =  1-(1-row.distM[rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM))),rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM)))])*(1-col.distM[rep(1:nrow(col.distM),nrow(row.distM)),rep(1:nrow(col.distM),nrow(row.distM))])
   distM_name = paste0(rep(colnames(col.distM),3),".",rep(rownames(row.distM),rep(ncol(col.distM),nrow(row.distM))))
   colnames(distM) = distM_name
@@ -552,23 +564,22 @@ datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1*", "f2*", "g1", "g2", "PD.obs", "T1*T2")
 
   res[1,1] <- as.integer(sum(data))
-  if("matrix" %in% class(data)){
-    res[2,1] <-  sum(rowSums(data)>0)%>%as.integer()
-    res[3,1] <-  sum(colSums(data)>0)%>%as.integer() 
+  if("matrix" %in% class(data)|"data.frame" %in% class(data)){
+    res[2,1] <-  as.integer(sum(rowSums(data)>0)) 
+    res[3,1] <-  as.integer(sum(colSums(data)>0))
+  }else{
+    res[2,1] <-  as.integer(nrow(data[rowSums(data)>0]))
+    res[3,1] <-  as.integer(ncol(data[colSums(data)>0])) 
   }
-  else{
-    res[2,1] <-  nrow(data[rowSums(data)>0,])%>%as.integer()
-    res[3,1] <-  ncol(data[,colSums(data)>0])%>%as.integer() 
-  }
-  res[4,1] <-  sum(data>0)%>%as.integer()
+  res[4,1] <-  as.integer(sum(data>0))
 
   res[5,1] <-  round(sum(data>0)/ncol(data)/nrow(data),4)
   phy <- create.aili(data,row.tree = row.tree,col.tree = col.tree)
-  res[6,1] <-  sum(phy$branch.abun==1)%>%as.integer()
-  res[7,1] <-  sum(phy$branch.abun==2)%>%as.integer()
+  res[6,1] <-  as.integer(sum(phy$branch.abun==1))
+  res[7,1] <-  as.integer(sum(phy$branch.abun==2))
   res[8,1] <- sum(phy$branch.length[phy$branch.abun==1])
   res[9,1] <- sum(phy$branch.length[phy$branch.abun==2])
-  res[10,1] <- nrow(phy)%>%as.integer()
+  res[10,1] <- as.integer(nrow(phy))
   res[11,1] <- sum(phy$branch.length*phy$branch.abun)/sum(data)
 
   res = res%>%t()%>%as.data.frame()
@@ -589,21 +600,20 @@ datainf <- function(data, datatype){
 
   res[1,1] <- as.integer(sum(data))
   # res[2,1] <-  sum(ncol(data),nrow(data))
-  if("matrix" %in% class(data)){
-    res[2,1] <-  sum(rowSums(data)>0)%>%as.integer()
-    res[3,1] <-  sum(colSums(data)>0)%>%as.integer() 
+  if("matrix" %in% class(data) | "data.frame" %in% class(data)){
+    res[2,1] <-  as.integer(sum(rowSums(data)>0))
+    res[3,1] <-  as.integer(sum(colSums(data)>0)) 
+  }else{
+    res[2,1] <-  as.integer(nrow(data[rowSums(data)>0]))
+    res[3,1] <-  as.integer(ncol(data[colSums(data)>0]))
   }
-  else{
-    res[2,1] <-  nrow(data[rowSums(data)>0,])%>%as.integer()
-    res[3,1] <-  ncol(data[,colSums(data)>0])%>%as.integer() 
-  }
-  res[4,1] <-  sum(data>0)%>%as.integer()
+  res[4,1] <-  as.integer(sum(data>0))
   res[5,1] <-  round(sum(data>0)/ncol(data)/nrow(data),4)
   res[7:16,1] <- c(sum(data==1),sum(data==2),sum(data==3),sum(data==4),sum(data==5),
                    sum(data==6),sum(data==7),sum(data==8),sum(data==9),sum(data==10))%>%as.integer()
-  f1 = sum(data==1)%>%as.integer()
-  f2 = sum(data==2)%>%as.integer()
-  n = sum(data)%>%as.integer()
+  f1 = as.integer(sum(data==1))
+  f2 = as.integer(sum(data==2))
+  n = as.integer(sum(data))
   
   f0.hat <- ifelse(f2 == 0, (n - 1)/n * f1 * (f1 - 1)/2, 
                    (n - 1)/n * f1^2/2/f2)
@@ -613,7 +623,7 @@ datainf <- function(data, datatype){
   res = res%>%t()%>%as.data.frame()
   return(res)
 }
-plot.tree2 <- function(mat){
+plot_tree2 <- function(mat){
   #number of lower level must be large than or equal to the number of higher level
   t <- apply(mat,MARGIN = 1, function(x) length(unique(x)))
   if(sum((t[-1]-t[-length(t)])<0)>0) stop("number of lower level must be large than or equal to the number of higher level, please renew your structure matrix.")
@@ -994,6 +1004,8 @@ get.netphydiv <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype 
 
     })
   }, future.seed=NULL)
+  plan(sequential)
+  
   mle.sd <- lapply(mle.boot, function(x){
     tmp <- do.call(rbind,x)
     sapply(1:length(q), function(x){
@@ -1088,6 +1100,7 @@ get.netphydiv_iNE <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, kno
   out <- future_lapply(data, function(x){
     inex(data = x,q,B,row.tree,col.tree)
   }, future.seed = T)
+  plan(sequential)
 
   out1 <- c()
   for (i in 1:length(out)) {
@@ -1097,6 +1110,7 @@ get.netphydiv_iNE <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, kno
   }
   return(out1)
 }
+
 
 iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
                              nboot = 20, conf = 0.95,
@@ -1172,6 +1186,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
           filter(branch.abun>0)
         return(aL_table)
       }, future.seed = TRUE)%>%do.call("rbind",.)
+      plan(sequential)
 
 
       get_phylogenetic_alpha_gamma <- function(aL_table_gamma, aL_table_alpha, n, m_gamma, m_alpha){
@@ -1321,8 +1336,10 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
 
         return(res)
       }, future.seed = T)
-      # plan(multisession)
-
+      plan(sequential)
+      
+      
+      plan(multisession)
       # se = future_lapply(1:nboot, function(b){
       se = future_lapply(1:nboot, function(b){
         ## for each bootstrap samples
@@ -1446,6 +1463,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
 
           return(aL_table)
         }, future.seed = TRUE)%>%do.call("rbind",.)
+        plan(sequential)
 
         bootstrap_data_alpha = as.matrix(x_bt) %>% as.vector
         bootstrap_data_alpha = bootstrap_data_alpha[bootstrap_data_alpha>0]
@@ -1509,6 +1527,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
         # })%>%
       }, future.seed = T)%>%
         abind(along=3) %>% apply(1:2, sd)
+      plan(sequential)
 
 
     } else {
@@ -2307,7 +2326,7 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
   colnames(index) <- c("Assemblage", "Functional Diversity",
                        "Functional Observed", "Functional Estimator", "s.e.",
                        "LCL", "UCL")
-  info <- iNEXT.3D:::DataInfo3D(data1, diversity = "FD", datatype = datatype,
+  info <- iNEXT.3D::DataInfo3D(data1, diversity = "FD", datatype = datatype,
                                 FDdistM = distM, FDtype = "tau_values", FDtau = threshold,
                                 nT = nT)
   info$n = lapply(dat, function(x) sum(x))
@@ -2555,7 +2574,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
   colnames(index) <- c("Assemblage", "Functional Diversity",
                        "Functional Observed", "Functional Estimator", "s.e.",
                        "LCL", "UCL")
-  info <- iNEXT.3D:::DataInfo3D(data1, diversity = "FD", datatype = datatype,
+  info <- iNEXT.3D::DataInfo3D(data1, diversity = "FD", datatype = datatype,
                                 FDdistM = distM, FDtype = "AUC", nT = nT)
 
 
@@ -2565,6 +2584,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
 
 AsylinkTD = function (data, diversity = 'TD', q = seq(0, 2, 0.2), datatype = "abundance", nboot = 50, conf = 0.95)
 {
+  
   out = lapply(1:length(data), function(i) {
     x = data[[i]]
     assemblage = names(data)[[i]]
@@ -2715,6 +2735,8 @@ ObslinkPD = function (data,q,B,row.tree = NULL,col.tree = NULL,conf, PDtype = 'P
       return(PD)
     })
   }, future.seed=NULL)
+  plan(sequential)
+  
   mle.sd <- lapply(mle.boot, function(x){
     tmp <- do.call(rbind,x)
     sapply(1:length(q), function(x){
@@ -3647,7 +3669,7 @@ Diversity_profile <- function(x,q){
   }
   sapply(q, Sub)
 }
-Diversity_profile_MLE <- function(x,q){
+Diversity_profile_MLE <- function(x,q, decomposition = 'relative'){
   p <- x[x>0]/sum(x)
   Sub <- function(q){
     if(q==0) sum(p>0)
@@ -3727,6 +3749,176 @@ MakeTable_Empericalprofile = function(data, B, q, conf){
 }
 
 
+Evenness.profile_asym <- function(x, q, datatype = c("abundance","incidence_freq"), E.class) {
+  
+  estqD = iNEXT.3D::ObsAsy3D(x, diversity = 'TD', q, datatype, nboot = 0) |> filter(Method == "Asymptotic")
+  estS = iNEXT.3D::ObsAsy3D(x, diversity = 'TD', 0, datatype, nboot = 0) |> filter(Method == "Asymptotic")
+  
+  out = lapply(E.class, function(i) {
+    tmp = sapply(1:length(x), function(k) iNEXT.4steps:::even.class(q, estqD[estqD$Assemblage == names(x)[k], "qTD"], estS[estS$Assemblage == names(x)[k], "qTD"], i, x[[k]]/sum(x[[k]])))
+    if (inherits(tmp, c("numeric","integer"))) {tmp = t(as.matrix(tmp, nrow = 1))}
+    rownames(tmp) = q
+    tmp
+  })
+  
+  names(out) = paste("E", E.class, sep="")
+  return(out)
+}
+
+
+Evenness_asym <- function (data, q = seq(0, 2, 0.2), datatype = "abundance", 
+          nboot = 30, conf = 0.95, nT = NULL, E.class = 1:5){
+  
+  method = "Estimated"
+  SC = 1
+  
+  TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
+  if (is.na(pmatch(datatype, TYPE))) 
+    stop("invalid datatype")
+  if (pmatch(datatype, TYPE) == -1) 
+    stop("ambiguous datatype")
+  datatype <- match.arg(datatype, TYPE)
+  if (!inherits(q, "numeric")) 
+    stop("invalid class of order q, q should be a postive value/vector of numeric object", 
+         call. = FALSE)
+  if (min(q) < 0) {
+    warning("ambigous of order q, we only compute postive q", 
+            call. = FALSE)
+    q <- q[q >= 0]
+  }
+  if (length(nboot) != 1) 
+    stop("Please enter a non-negative integer for nboot.", 
+         call. = FALSE)
+  if ((nboot < 0) | (is.numeric(nboot) == F)) 
+    stop("Please enter a non-negative integer for nboot.", 
+         call. = FALSE)
+  if (length(conf) != 1) 
+    stop("Please enter a value between zero and one for conf.", 
+         call. = FALSE)
+  if ((conf < 0) | (conf > 1) | (is.numeric(conf) == F)) 
+    stop("Please enter a value between zero and one for conf.", 
+         call. = FALSE)
+  if (datatype == "incidence") 
+    stop("Evenness can only accept 'datatype = incidence_raw'.")
+  kind <- c("Estimated", "Observed")
+  if (length(method) > 1) 
+    stop("only one calculation method")
+  if (is.na(pmatch(method, kind))) 
+    stop("invalid method")
+  if (pmatch(method, kind) == -1) 
+    stop("ambiguous method")
+  class <- c(1:5)
+  if (sum(E.class %in% class) != length(E.class)) 
+    stop("invalid E.class")
+  if (datatype == "incidence_raw") {
+    if (length(data) != 1) {
+      data = iNEXT.3D:::as.incfreq(data, nT = nT)
+      datatype = "incidence_freq"
+    }
+    if (length(data) == 1) {
+      name = names(data)
+      data = list(iNEXT.3D:::as.incfreq(data, nT = nT))
+      names(data) = name
+      datatype = "incidence_freq"
+    }
+  }
+  if (inherits(data, c("numeric", "integer"))) {
+    data <- list(Assemblage_1 = data)
+  }
+  if (inherits(data, c("data.frame", "matrix"))) {
+    datalist <- lapply(1:ncol(data), function(i) data[, i])
+    if (is.null(colnames(data))) 
+      names(datalist) <- paste0("Assemblage_", 1:ncol(data))
+    else names(datalist) <- colnames(data)
+    data <- datalist
+  }
+  if (inherits(data, "list")) {
+    if (is.null(names(data))) 
+      names(data) = paste0("Assemblage_", 1:length(data))
+  }
+  if (is.null(SC) == TRUE) {
+    if (datatype == "abundance") 
+      SC = sapply(data, function(x) iNEXT.3D:::Coverage(x, 
+                                                        "abundance", 2 * sum(x))) %>% min
+    if (datatype == "incidence_freq") 
+      SC = sapply(data, function(x) iNEXT.3D:::Coverage(x, 
+                                                        "incidence_freq", 2 * x[1])) %>% min
+  }
+  if ((length(SC) != 1) | (SC < 0) | (SC > 1) | (is.numeric(SC) == 
+                                                 F)) 
+    stop("The sample coverage value should be a value between zero and one.", 
+         call. = FALSE)
+  if (datatype == "abundance") {
+    qD <- Evenness.profile_asym(data, q, "abundance", E.class)
+    qD <- purrr::map(qD, as.vector)
+    if (nboot > 1) {
+      Prob.hat <- lapply(1:length(data), function(i) iNEXT.3D:::EstiBootComm.Ind(data[[i]]))
+      Abun.Mat <- lapply(1:length(data), function(i) rmultinom(nboot, 
+                                                               sum(data[[i]]), Prob.hat[[i]]))
+      error = apply(matrix(sapply(1:nboot, function(b) {
+        dat = lapply(1:length(Abun.Mat), function(j) Abun.Mat[[j]][, 
+                                                                   b])
+        names(dat) = paste("Site", 1:length(dat), sep = "")
+        dat.qD = Evenness.profile_asym(dat, q, "abundance", E.class)
+        unlist(dat.qD)
+      }), nrow = length(q) * length(E.class) * length(Abun.Mat)), 
+      1, sd, na.rm = TRUE)
+      error = matrix(error, ncol = length(E.class))
+      se = split(error, col(error))
+    }else {
+      se = lapply(1:length(E.class), function(x) NA)
+    }
+    out <- lapply(1:length(E.class), function(k) {
+      tmp = data.frame(Order.q = rep(q, length(data)), 
+                       Evenness = as.vector(qD[[k]]), s.e. = as.vector(se[[k]]), 
+                       Even.LCL = as.vector(qD[[k]] - qnorm(1 - (1 - 
+                                                                   conf)/2) * se[[k]]), Even.UCL = as.vector(qD[[k]] + 
+                                                                                                               qnorm(1 - (1 - conf)/2) * se[[k]]), Assemblage = rep(names(data), 
+                                                                                                                                                                    each = length(q)), Method = rep("Asymptotic", length(q) * 
+                                                                                                                                                                                                      length(data)))
+      tmp$Even.LCL[tmp$Even.LCL < 0] <- 0
+      tmp
+    })
+  }else if (datatype == "incidence_freq") {
+    qD <- Evenness.profile(data, q, "incidence_freq", method, 
+                           E.class, SC)
+    qD <- map(qD, as.vector)
+    if (nboot > 1) {
+      nT <- lapply(1:length(data), function(i) data[[i]][1])
+      Prob.hat <- lapply(1:length(data), function(i) iNEXT.3D:::EstiBootComm.Sam(data[[i]]))
+      Incid.Mat <- lapply(1:length(data), function(i) t(sapply(Prob.hat[[i]], 
+                                                               function(p) rbinom(nboot, nT[[i]], p))))
+      Incid.Mat <- lapply(1:length(data), function(i) matrix(c(rbind(nT[[i]], 
+                                                                     Incid.Mat[[i]])), ncol = nboot))
+      error = apply(matrix(sapply(1:nboot, function(b) {
+        dat = lapply(1:length(Incid.Mat), function(j) Incid.Mat[[j]][, 
+                                                                     b])
+        names(dat) = paste("Site", 1:length(dat), sep = "")
+        dat.qD = Evenness.profile(dat, q, "incidence_freq", 
+                                  method, E.class, SC)
+        unlist(dat.qD)
+      }), nrow = length(q) * length(E.class) * length(Incid.Mat)), 
+      1, sd, na.rm = TRUE)
+      error = matrix(error, ncol = length(E.class))
+      se = split(error, col(error))
+    }else {
+      se = lapply(1:length(E.class), function(x) NA)
+    }
+    out <- lapply(1:length(E.class), function(k) {
+      tmp = data.frame(Order.q = rep(q, length(data)), 
+                       Evenness = as.vector(qD[[k]]), s.e. = as.vector(se[[k]]), 
+                       Even.LCL = as.vector(qD[[k]] - qnorm(1 - (1 - 
+                                                                   conf)/2) * se[[k]]), Even.UCL = as.vector(qD[[k]] + 
+                                                                                                               qnorm(1 - (1 - conf)/2) * se[[k]]), Assemblage = rep(names(data), 
+                                                                                                                                                                    each = length(q)), Method = rep(method, length(q) * 
+                                                                                                                                                                                                      length(data)))
+      tmp$Even.LCL[tmp$Even.LCL < 0] <- 0
+      tmp
+    })
+  }
+  names(out) = paste("E", E.class, sep = "")
+  return(out)
+}
 # Generate Color Palette for ggplot2
 #
 # This function creates a color palette suitable for ggplot2 visualizations by evenly spacing colors in the HCL color space. The function ensures that the colors are well-distributed and visually distinct, making it ideal for categorical data where each category needs to be represented by a different color.
@@ -3749,5 +3941,25 @@ ggplotColors <- function(g){
   h <- cumsum(c(15, rep(d,g - 1))) # Create cumulative sums to define hue values
   hcl(h = h, c = 100, l = 65) # Convert HCL values to hexadecimal color codes
 }
+
+
+
+Coverage <- function(data,datatype,m){
+  iNEXT.3D:::Coverage(data,datatype,m)
+}
+
+PhD.m.est <- function(ai,Lis,m,q,nt,reft,cal){
+  iNEXT.3D:::PhD.m.est(ai,Lis,m,q,nt,reft,cal)
+}
+
+invChatPD_abu <- function(x,ai,Lis,q,Cs,n,reft,cal){
+  iNEXT.3D:::invChatPD_abu(x,ai,Lis,q,Cs,n,reft,cal)
+}
+
+bootstrap_population_multiple_assemblage <- function(data,data_gamma,datatype){
+  iNEXT.beta3D:::bootstrap_population_multiple_assemblage(data,data_gamma,datatype)
+}
+
+
 
 

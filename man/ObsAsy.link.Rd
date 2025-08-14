@@ -74,8 +74,9 @@ output_ObsAsy_qiTD
 # for interaction data with order q between 0 and 2 
 # (in increments of 0.2 by default)
 data(beetles_plotA)
-data(beetles_col_tree)
-output_ObsAsy_qiPD = ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
+data(beetles_row_tree)
+output_ObsAsy_qiPD = ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), 
+                                 row.tree = beetles_row_tree, nboot = 10)
 output_ObsAsy_qiPD
 
 
@@ -83,8 +84,9 @@ output_ObsAsy_qiPD
 # for interaction data with order q between 0 and 2 and FDtype = "AUC"
 # (in increments of 0.25 by default)
 data(beetles_plotA)
-data(beetles_col_distM)
-output_ObsAsy_qiFD = ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 10)
+data(beetles_row_distM)
+output_ObsAsy_qiFD = ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), 
+                                 row.distM = beetles_row_distM, FDtype = "AUC", nboot = 10)
 output_ObsAsy_qiFD
 
 }

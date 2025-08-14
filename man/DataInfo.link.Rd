@@ -30,7 +30,7 @@ DataInfo.link(
 a data.frame including basic data information.\cr\cr
 Basic information shared by TD, mean-PD and FD includes Network name (\code{Network}),
 number of observed interaction events in the reference sample (\code{n}), number of observed species in row assemblage (\code{S.obs(row)}), number of observed species in column assemblage (\code{S.obs(col)}), 
-number of observed interactions in the reference sample (\code{Link.obs}), the proportion of links between species that are realized in the network matrix (\code{Connectance}), estimator of the sample coverage of the reference sample (\code{Coverage}).\cr\cr
+number of observed interactions in the reference sample (\code{Link.obs}), the proportion of links between species that are realized in the network matrix (\code{Connectance}), estimator of the sample coverage of the reference sample (\code{SC(n)}).\cr\cr
 Other additional information is given below.\cr\cr
 (1) TD: the first ten frequency counts in the reference sample (\code{f1}--\code{f10}).\cr\cr
 (2) Mean-PD: the number of those singletons and doubletons in the node/branch set (\code{f1*},\code{f2*}) , 
@@ -40,7 +40,7 @@ the observed total branch length in the phylogenetic tree (\code{PD.obs}),  and 
 and the mean weighted pairwise distance between any two interactions (\code{d_mean}).\cr\cr.\cr\cr
 }
 \description{
-\code{DataInfo.link}: exhibits basic data information
+\code{DataInfo.link}: exhibit basic data information for three dimensions of biodiversity.
 }
 \examples{
 # Taxonomic network diversity for interaction data
@@ -50,12 +50,12 @@ DataInfo.link(data = beetles_plotA, diversity = 'TD')
 
 # Phylogenetic network diversity for interaction data
 data(beetles_plotA)
-data(beetles_col_tree)
-DataInfo.link(data = beetles_plotA, diversity = 'PD', col.tree = beetles_col_tree)
+data(beetles_row_tree)
+DataInfo.link(data = beetles_plotA, diversity = 'PD', row.tree = beetles_row_tree)
 
 
 # Functional network diversity for interaction data
 data(beetles_plotA)
-data(beetles_col_distM)
-DataInfo.link(data = beetles_plotA, diversity = 'FD', col.distM = beetles_col_distM)
+data(beetles_row_distM)
+DataInfo.link(data = beetles_plotA, diversity = 'FD', row.distM = beetles_row_distM)
 }

@@ -35,9 +35,9 @@ iNEXT.link (R package)
 
 `iNEXT.link` is an R package that extends the concepts of `iNEXT.3D` (Chao et al., 2021), `iNEXT.4step` (Chao et al., 2020) and `iNEXT.beta3D` (Chao et al., 2023) to ecological networks (Chiu et al., 2023). It is primarily designed to calculate and analyze various measures of diversity in ecological networks. Specifically, the package calculates three Hill numbers of order q (species richness, Shannon diversity, and Simpson diversity) in taxonomic diversity level, as well as phylogenetic and functional diversity levels.
 
-For single ecological networks, `iNEXT.link` provides tools for analyzing diversity. The package provides two types of rarefaction and extrapolation (R/E) sampling curves to estimate diversity and confidence intervals for single ecological networks. These include sample-size-based (or size-based) R/E curves and coverage-based R/E curves.
+For single ecological networks, `iNEXT.link` provides tools for analyzing diversity. The package provides two types of rarefaction and extrapolation (R/E) sampling curves to estimate diversity and confidence intervals for single ecological network. These include sample-size-based (or size-based) R/E curves and coverage-based R/E curves.
 
-Moreover, `iNEXT.link` offers dissimilarity-turnover curves for the coverage-based R/E curves for gamma, alpha, and beta diversity measures, which can be used to compare diversity patterns across different ecological networks.
+Moreover, `iNEXT.link` offers dissimilarity-turnover curves based on coverage-based R/E for gamma, alpha, and beta diversity measures, which can be used to compare diversity patterns across different ecological networks.
 
 
 ### SOFTWARE NEEDED TO RUN INEXT.3D IN R
@@ -71,7 +71,7 @@ library(iNEXT.link)
 
 In this document, we provide a quick introduction demonstrating how to run the package `iNEXT.link`(iNterpolation and EXTrapolation in Network diversity). `iNEXT.link` has several main functions: 
 
-## Functions for Single community:
+## Functions for single network:
 
 - **iNEXT.link** : Computes rarefaction/extrapolation taxonomic, phylogenetic, and functional diversity estimates and sample coverage estimates.
 
@@ -83,9 +83,12 @@ In this document, we provide a quick introduction demonstrating how to run the p
 
 - **Completeness.link** : Calculates estimated sample completeness with order q. 
 
-- **Spec.link** : Computes standardized specialization estimation under specified sample coverage(or observed) with order q.
+- **Spec.link.est** :  Computes standardized specialization estimation under specified sample coverage with order q.
 
-## Function for Multi-community:
+- **Spec.link.ObsAsy** :  Computes observed or asymptotic standardized specialization  with order q.
+
+
+## Function for Multi-networks:
 
 - **iNEXTbeta.link** : Computing standardized gamma, alpha, beta diversity, and four dissimilarity-turnover indices for three dimensions: taxonomic, phylogenetic and functional diversity at specified sample coverage.
 
@@ -94,7 +97,7 @@ In this document, we provide a quick introduction demonstrating how to run the p
 
 - **ggCompleteness.link** : Visualizing the output from the function `Completeness.link`
 
-- **ggSpec.link** : Visualizing the output from the function `Spec.link`
+- **ggSpec.link** : Visualizing the output from the function `Spec.link.est` and `Spec.link.ObsAsy`
 
 - **ggObsAsy.link** : Visualizing the output from the function `ObsAsy.link`
 
