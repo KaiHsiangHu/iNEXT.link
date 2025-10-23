@@ -19,16 +19,17 @@ Description: iNEXT.link is an R package that extends the concepts of iNEXT.3D (C
              networks (Chiu et al., 2023). It is designed to calculate and analyze various measures 
              of diversity in ecological networks. Specifically, the package calculates three Hill 
              numbers of order q (species richness, Shannon diversity, and Simpson diversity) in 
-             taxonomic diversity (TD) level, as well as phylogenetic diversity (PD) and functional 
-             diversity (FD) levels. For individual ecological networks, iNEXT.link provides tools 
-             for rarefaction and extrapolation (R/E), enabling diversity estimation and confidence 
-             intervals under both size-based and coverage-based standardization. Asymptotic 3D 
-             network diversity estimates are also available (see Chao et al., 2021). In addition, 
-             iNEXT.link offers dissimilarity-turnover curves based on coverage-based R/E for gamma, 
-             alpha, and beta diversity, allowing cross-network comparison of diversity patterns (see 
-             Chao et al., 2023). The package also assesses sample completeness for networks and 
-             supports coverage-based rarefaction and extrapolation for estimating specialization 
-             using five unevenness-based indices (see Chao et al., 2020).
+             taxonomic diversity (TD) level, as well as their generalizations (Hill-Chao numbers) 
+             for phylogenetic diversity (PD) and functional diversity (FD) levels. For individual 
+             ecological networks, iNEXT.link provides tools for rarefaction and extrapolation (R/E), 
+             enabling diversity estimation and confidence intervals under both size-based and 
+             coverage-based standardization. Asymptotic 3D network diversity estimates are also 
+             available (see Chao et al., 2021). In addition, iNEXT.link offers dissimilarity-turnover 
+             curves based on coverage-based R/E for gamma, alpha, and beta diversity, allowing 
+             cross-network comparison of diversity patterns (see Chao et al., 2023). 
+             The package also assesses sample completeness for networks and supports coverage-based 
+             rarefaction and extrapolation for estimating specialization using five unevenness-based 
+             indices (see Chao et al., 2020).
 License: GPL (>= 3)
 Depends: R (>= 4.0)
 Imports:

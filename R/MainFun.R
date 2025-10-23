@@ -268,6 +268,7 @@ ggCompleteness.link <- function(output){
 #' @import ape
 #' @import tidyverse
 #' @import magrittr
+#' @import ggplot2
 #' @import abind
 #' @import phytools
 #' @import phyclust
