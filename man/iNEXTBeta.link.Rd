@@ -11,7 +11,7 @@ iNEXTbeta.link(
   q = c(0, 1, 2),
   nboot = 30,
   conf = 0.95,
-  comparison = "pool",
+  by_pair = FALSE,
   row.tree = NULL,
   col.tree = NULL,
   PDtype = "meanPD",
@@ -36,7 +36,7 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
 
-\item{comparison}{selection of comparison method. \code{'pool'} compares all datasets in once, and \code{'pair'} compares will be computed for all pairs of datasets in the input list.}
+\item{by_pair}{a logical variable specifying whether to perform diversity decomposition for all pairs of assemblages or not. If \code{by_pair = TRUE}, alpha/beta/gamma diversity will be computed for all pairs of assemblages in the input data; if \code{by_pair = FALSE}, alpha/beta/gamma diversity will be computed for multiple assemblages (i.e, more than two assemblages) in the input data. Default is \code{FALSE}.}
 
 \item{row.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.}
 

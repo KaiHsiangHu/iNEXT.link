@@ -286,6 +286,7 @@ ggCompleteness.link <- function(output){
 #' @importFrom utils head
 #' @importFrom stats qnorm sd optimize quantile rbinom rmultinom
 #' @importFrom grDevices hcl
+#' @importFrom purrr map map_dfr
 #' 
 #' @return a list of three objects: \cr\cr
 #' (1) \code{$TDInfo} (\code{$PDInfo}, or \code{$FDInfo}) for summarizing data information for q = 0, 1 and 2. Refer to the output of \code{DataInfo.link} for details.
@@ -948,7 +949,7 @@ ggObsAsy.link <- function(output){
 #' @param data a \code{matrix}, \code{data.frame} (species by assemblages), or \code{list} of species abundance/incidence raw data.\cr
 #' @param diversity a choice of three-level diversity: 'TD' = 'Taxonomic', 'PD' = 'Phylogenetic', and 'FD' = 'Functional' under certain threshold.
 #' @param q a numerical vector of the order of Hill number. Default is \code{seq(0, 2, 0.2)}.
-#' @param base comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).
+#' @param base comparison base: sample-size-based (\code{base = "size"}) or coverage-based \cr (\code{base = "coverage"}).
 #' @param level a sequence specifying the particular sample sizes or sample coverages(between 0 and 1).
 #' If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes.
 #' If \code{base="coverage"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample coverage among all sites extrapolated to double reference sizes.
@@ -1193,7 +1194,6 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @param nboot a positive integer specifying the number of bootstrap replications when assessing
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
-#' @param comparison selection of comparison method. \code{'pool'} compares all datasets in once, and \code{'pair'} compares will be computed for all pairs of datasets in the input list.
 #' @param col.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of column assemblage in the pooled network column assemblage.
 #' @param row.tree (required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.
 #' @param PDtype (required only when \code{diversity = "PD"}), select PD type: \code{PDtype = "PD"}(effective total branch length) or
@@ -1203,6 +1203,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_value"} for FD under specified threshold value, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau value (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @param FDcut_number (required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is \code{30}.
+#' @param by_pair a logical variable specifying whether to perform diversity decomposition for all pairs of assemblages or not. If \code{by_pair = TRUE}, alpha/beta/gamma diversity will be computed for all pairs of assemblages in the input data; if \code{by_pair = FALSE}, alpha/beta/gamma diversity will be computed for multiple assemblages (i.e, more than two assemblages) in the input data. Default is \code{FALSE}. 
 #' @return A list of seven matrices with three diversity dimensions and four dissimilarity measures.
 #' \item{Dataset}{the name of datasets.}
 #' \item{Order.q}{the network diversity order of q.}
@@ -1250,7 +1251,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @export
 
 iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
-                          q = c(0, 1, 2), nboot = 30, conf = 0.95, comparison = 'pool',
+                          q = c(0, 1, 2), nboot = 30, conf = 0.95, by_pair = FALSE,
                           row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', row.distM = NULL, col.distM = NULL,
                           FDtype = "AUC", FDtau = NULL, FDcut_number = 30){
   
@@ -1263,7 +1264,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
   #   }
   # }
   
-  if(inherits(data[[1]], c("data.frame", "matrix"))){dat = list("Dataset" = data); }else{dat = data}
+  if (inherits(data[[1]], c("data.frame", "matrix"))) {dat = list("Dataset" = data); } else {dat = data}
 
   combined_list = lapply(dat, function(y){
 
@@ -1273,7 +1274,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
     return(long)
   })
 
-  if(comparison == 'pool'){
+  if(by_pair == FALSE){
     if(diversity == 'TD'){
     
     dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'TD',level = level, datatype = datatype,
@@ -1289,6 +1290,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
     class(dissimilarity) = 'iNEXTbeta3D'
     
   }else if(diversity == 'FD' & FDtype == 'tau_value'){
+    
     row_sp = c()
     col_sp = c()
     for(i in 1:length(dat)){
@@ -1364,16 +1366,18 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
     
     
     dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'FD', level = level, datatype = datatype,
-                                 q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDcut_number = FDcut_number)
+                                 q = q, nboot = nboot, conf = conf, FDdistM = distM, FDcut_number = FDcut_number)
   }
     dissimilarity[[1]]$gamma$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
     dissimilarity[[1]]$alpha$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
-    dissimilarity[[1]]$beta$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
+    dissimilarity[[1]]$beta$Dataset  <- paste(names(combined_list[[1]]),collapse = " vs. ")
     dissimilarity[[1]]$`1-C`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
     dissimilarity[[1]]$`1-U`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
     dissimilarity[[1]]$`1-V`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
     dissimilarity[[1]]$`1-S`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
-  }else if(comparison == 'pair'){
+    
+  }else if(by_pair == TRUE){
+    
     t <- length(names(combined_list[[1]]))
     dis <- list()
     if(diversity == 'TD'){
@@ -1394,7 +1398,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
           
         }
       }
-      dissimilarity <- list(Dataset_1 = list())
+      dissimilarity <- list(Dataset = list())
       for(i in 1:7){
         for(j in 1:length(dis)){
           if(j == 1){
@@ -1429,7 +1433,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
           
         }
       }
-      dissimilarity <- list(Dataset_1 = list())
+      dissimilarity <- list(Dataset = list())
       for(i in 1:7){
         for(j in 1:length(dis)){
           if(j == 1){
@@ -1494,7 +1498,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
           
         }
       }
-      dissimilarity <- list(Dataset_1 = list())
+      dissimilarity <- list(Dataset = list())
       for(i in 1:7){
         for(j in 1:length(dis)){
           if(j == 1){
@@ -1561,7 +1565,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
           
         }
       }
-      dissimilarity <- list(Dataset_1 = list())
+      dissimilarity <- list(Dataset = list())
       for(i in 1:7){
         for(j in 1:length(dis)){
           if(j == 1){
@@ -1573,9 +1577,9 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
         names(dissimilarity[[1]])[i] <- names(dis[[1]])[i]
       }
       
-      
     }
     }
+  
   return(dissimilarity)
 }
 
@@ -1773,8 +1777,6 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
 #' @param conf a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.
 #' @param E.class an integer vector between 1 to 5.
 #' @param level the type of specialization measure: Choose "weighted" for weighted species-level specialization (default), or "network" for network-level specialization.
-#' @importFrom iNEXT.4steps Evenness
-#' @importFrom purrr map map_dfr
 #' 
 #' @return A list of several tables containing estimated (or observed) evenness with order q.\cr
 #'         Each tables represents a class of specialization.
@@ -1951,8 +1953,6 @@ Spec.link.ObsAsy <- function(data, q = seq(0, 2, 0.2),
 #' @param E.class an integer vector between 1 to 5.
 #' @param SC a standardized coverage for calculating specialization index. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{SC = Cmax}).
 #' @param level the type of specialization measure: Choose "weighted" for weighted species-level specialization (default), or "network" for network-level specialization.
-#' @importFrom iNEXT.4steps Evenness
-#' @importFrom purrr map map_dfr
 #'
 #' 
 #' @return A list of several tables containing    estimated (or observed) evenness with order q.\cr

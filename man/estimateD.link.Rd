@@ -28,7 +28,7 @@ estimateD.link(
 
 \item{q}{a numerical vector of the order of Hill number. Default is \code{seq(0, 2, 0.2)}.}
 
-\item{base}{comparison base: sample-size-based (\code{base="size"}) or coverage-based \cr (\code{base="coverage"}).}
+\item{base}{comparison base: sample-size-based (\code{base = "size"}) or coverage-based \cr (\code{base = "coverage"}).}
 
 \item{level}{a sequence specifying the particular sample sizes or sample coverages(between 0 and 1).
 If \code{base="size"} and \code{level=NULL}, then this function computes the diversity estimates for the minimum sample size among all sites extrapolated to double reference sizes.

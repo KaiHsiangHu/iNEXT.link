@@ -1,32 +1,19 @@
-year <- sub("-.*", "", meta$Date)
-note <- sprintf("R package version %s", meta$Version)
-
-citHeader("To cite iNEXT.link in publications use:")
-
-citEntry(
-		 entry = 'manual',
-		 title = paste('iNEXT.link:', meta$Title),
-		 author = personList(as.person("Anne Chao"),
-    	                   as.person("Kai-Hsiang Hu")),
-		 year = year,
-		 note = note,
-		 url = "http://chao.stat.nthu.edu.tw/wordpress/software_download/inext-link/",
-		 textVersion = paste("Anne Chao and Kai-Hsiang Hu", year, "iNEXT.link: Network diversity iNterpolation/Extrapolation Estimation.", note, "URL: http://chao.stat.nthu.edu.tw/wordpress/software_download/inext-link/.")
-)
-
-citEntry(
-		 entry = 'Article',
+bibentry(
+		 bibtype = 'Article',
 		 title = 'Quantifying and estimating ecological network diversity based on incomplete sampling data.',
-         author = personList(as.person("Chun-Huo Chiu"),
-                             as.person("Anne Chao"),
-  		                       as.person("Sebastian Vogel"),
-  		                       as.person("Peter Kriegel"),
-  		                       as.person("Simon Thorn")),
+     author = c(person("Chun-Huo Chiu"),
+                person("Anne Chao"),
+  		          person("Sebastian Vogel"),
+  		          person("Peter Kriegel"),
+  		          person("Simon Thorn")),
 		 journal = 'Philosophical Transactions of the Royal Society B',
-		 year   = '2023',
-		 volume = "378",
-     doi    = '10.1098/rstb.2022.0183',
-  textVersion = paste('Chiu, C-H., Chao, A., Vogel, S., Kriegel, P. and Thorn, S. (2023). Quantifying and estimating ecological network diversity based on incomplete sampling data. Philosophical Transactions of the Royal Society B, 378: 20220183. https://doi.org/10.1098/rstb.2022.0183')
+		 year    = '2023',
+		 volume  = "378",
+		 issue   = "1881",
+     doi     = '10.1098/rstb.2022.0183',
+     header  = "To cite iNEXT.link in publications use:",
+		 textVersion = paste('Chiu, C-H., Chao, A., Vogel, S., Kriegel, P. and Thorn, S. (2023). Quantifying and estimating ecological network diversity based on incomplete sampling data. Philosophical Transactions of the Royal Society B, 378: 20220183. https://doi.org/10.1098/rstb.2022.0183')
 )
+
 
 

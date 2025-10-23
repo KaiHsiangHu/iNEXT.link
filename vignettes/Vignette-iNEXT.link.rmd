@@ -1,6 +1,6 @@
 ---
 title: "A Quick Introduction to iNEXT.link via Examples"
-author: "Anne Chao, Kai-Hsiang Hu, K.W. Chen, C.G. Lo, S.Y. Wang"
+author: "Anne Chao, Kai-Hsiang Hu"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
@@ -27,15 +27,15 @@ library(iNEXT.link)
 library(ggplot2)
 ```
 
-`iNEXT.link` is an R package that extends the concepts of `iNEXT.3D` (Chao et al., 2021), `iNEXT.4step` (Chao et al., 2020) and `iNEXT.beta3D` (Chao et al., 2023) to ecological networks (Chiu et al., 2023). In this document, we provide a brief overview of `iNEXT.link` and its functionalities. Detailed information about the `iNEXT.link` functions can be found in the `iNEXT.link` manual, which is also available on [Github](https://github.com/AnneChao). For users without an R background, an online version (https://chao.shinyapps.io/iNEXT_link/) of `iNEXT.link` is also available.
+`iNEXT.link` is an R package that extends the concepts of `iNEXT.3D` (Chao et al., 2021), `iNEXT.4step` (Chao et al., 2020) and `iNEXT.beta3D` (Chao et al., 2023) to ecological networks (Chiu et al., 2023). In this document, we provide a brief overview of `iNEXT.link` and its functionalities. Detailed information about the `iNEXT.link` functions can be found in the `iNEXT.link` manual, which is also available on [Github](https://github.com/AnneChao/iNEXT.link). For users without an R background, an online version (https://chao.shinyapps.io/iNEXT_link/) of `iNEXT.link` is also available.
 
 Chiu et al. (2023) adapted the unified 3D-diversity framework of Chao et al. (2021) to ecological networks, and generalized the previous diversity measures to the following three dimensions of network diversity (3D network diversity) for interaction data: 
 
 (1) Taxonomic network diversity that incorporates interaction richness and evenness among the strength (or frequency) of interactions. 
 
-(2) Phylogenetic network diversity that additionally considers species??? phylogeny.
+(2) Phylogenetic network diversity that additionally considers species' phylogeny.
 
-(3) Functional network diversity that additionally accounts for species??? traits. 
+(3) Functional network diversity that additionally accounts for species' traits. 
 
 iNEXT.link adapts iNEXT, iNEXT.3D, and iNEXT.4steps to quantify and estimate 3D network diversity based on incomplete sampling data. It also adapts iNEXT.beta3D to assess network alpha, beta and gamma diversity as well as the associated (dis)similarity measures. For the former adaption, the iNEXT.link methodology integrates the following four inference procedures: 
 
@@ -43,7 +43,7 @@ iNEXT.link adapts iNEXT, iNEXT.3D, and iNEXT.4steps to quantify and estimate 3D 
 
 The sample completeness of a network is characterized by profile depicting the sample completeness (developed in Chiu et al. 2023) with respect to an order q ??? 0. When q = 0, the completeness measure reduces to (an upper bound) of the proportion of the observed interaction richness relative to an estimated interaction richness. When q = 1, the completeness measure reduces to the network-version sample coverage (the proportion of the total number of interaction events that belong to detected ones). When q ??? 2, the completeness measure is disproportionally sensitive to highly frequent interactions. The proposed profile allows for tuning the effect of interaction frequency on the sample completeness. For a complete network (i.e., there are no undetected interactions), the estimated sample completeness profile will be a horizontal line at the level of unity for all orders of q > 0. In contrast, for an incomplete network, the sample completeness profile will be an increasing function of order q.
 
-**STEP 2. Sample-size- or size-based rarefaction and extrapolation analysis with 3D network diversity for q = 0, 1, and 2, and the asymptotic network diversity profile. Here “size??? means the number of interaction events.**
+**STEP 2. Sample-size- or size-based rarefaction and extrapolation analysis with 3D network diversity for q = 0, 1, and 2, and the asymptotic network diversity profile. Here size-based means the number of interaction events.**
 
 **(STEP 2a)** For each dimension of the 3D network diversity, first examine the pattern of the size-based rarefaction and extrapolation sampling curve up to double the reference sample size for q = 0, 1 and 2. If the curve stays at a fixed level (this often occurs for the measures of q = 1 and 2), then the asymptotic network-diversity estimate presented in the next step (Step 2b) can be used to accurately infer the true network diversity. Otherwise, the asymptotic diversity estimate represents only a lower bound (this often occurs for the measure of q = 0).
 
@@ -1361,7 +1361,7 @@ Because all the network diversity/dissimilarity estimates are computed for the s
 data(beetles_plotA)
 output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level = NULL, q = c(0, 1, 2))
 
-tmp = output_beta_qiTD$Dataset_1$beta
+tmp = output_beta_qiTD$Dataset$beta
 tmp[,c(3:5, 7:9)] = round(tmp[,c(3:5, 7:9)], 3)
 tmp = tmp[,-ncol(tmp)]
 tmp
@@ -1404,7 +1404,7 @@ data(beetles_row_tree)
 output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL, q = c(0, 1, 2), 
                                   row.tree = beetles_row_tree)
 
-tmp = output_beta_qiPD$Dataset_1$beta
+tmp = output_beta_qiPD$Dataset$beta
 tmp[,c(3:5, 7:9)] = round(tmp[,c(3:5, 7:9)], 3)
 tmp = tmp[,-ncol(tmp)]
 tmp
@@ -1449,7 +1449,7 @@ data(beetles_row_distM)
 output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2), 
                                   row.distM = beetles_row_distM, FDtype = "AUC", nboot = 0)
 
-tmp = output_beta_qiFD$Dataset_1$beta
+tmp = output_beta_qiFD$Dataset$beta
 tmp[,c(3:5, 7:9)] = round(tmp[,c(3:5, 7:9)], 3)
 tmp = tmp[,-ncol(tmp)]
 tmp
