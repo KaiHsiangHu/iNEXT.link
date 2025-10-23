@@ -15,12 +15,6 @@ This dataset contains two quantitative plant-beetle interaction networks from tw
   $ Open is a matrix with 238 beetles(rows) and 6 plant (columns). \cr
   $ Closed is a matrix with 238 beetles(rows) and 6 plant (columns). \cr
 }
-\details{
-%%  ~~ If necessary, more details than the __description__ above ~~
-}
-\source{
-%%  ~~ reference to a publication or URL from which the data were obtained ~~
-}
 \references{
 Vogel, S., et al. (2020). "Optimizing enrichment of deadwood for biodiversity by varying sun   exposure and tree species: an experimental approach." Journal of Applied Ecology 57(10): 2075-2085.
 }

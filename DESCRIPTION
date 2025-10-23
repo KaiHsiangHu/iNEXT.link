@@ -2,43 +2,54 @@ Package: iNEXT.link
 Type: Package
 Title: Network Diversity Interpolation and Extrapolation Estimation
 Version: 1.0.0
-Author: Anne Chao[aut,cre], Kai-Hsiang Hu[ctb]
+Author: Anne Chao [aut,cre], Kai-Hsiang Hu [ctb]
 Maintainer: Anne Chao <chao@stat.nthu.edu.tw>
+Authors@R: 
+  c(person("Anne", 
+           "Chao", 
+           role = c("aut","cre"),
+           email = "chao@stat.nthu.edu.tw"),
+    person("KaiHsiang", 
+           "Hu", 
+           role = "ctb",
+           email = "river19951224@gmail.com"))
 URL: https://sites.google.com/view/chao-lab-website/software/inext-link?authuser=0
 Description: iNEXT.link is an R package that extends the concepts of iNEXT.3D (Chao et al., 2021), iNEXT.4step (Chao et al., 2020) and iNEXT.beta3D (Chao et al., 2023) to ecological networks (Chiu et al., 2023). iNEXT.link is primarily designed to calculate and analyze various measures of diversity in ecological networks. Specifically, the package calculates three Hill numbers of order q (species richness, Shannon diversity, and Simpson diversity) in taxonomic diversity level, as well as phylogenetic and functional diversity levels. 
               For single ecological networks, iNEXT.link provides tools for analyzing diversity. The package provides two types of rarefaction and extrapolation (R/E) sampling curves to estimate diversity and confidence intervals for single ecological network. These include sample-size-based (or size-based) R/E curves and coverage-based R/E curves. 
               Moreover, iNEXT.link offers dissimilarity-turnover curves based on coverage-based R/E for gamma, alpha, and beta diversity measures, which can be used to compare diversity patterns across different ecological networks. It also supports coverage-based rarefaction and extrapolation for estimating specialization using five unevenness-based indices.
 License: GPL (>= 3)
-Suggests: knitr,
-    rmarkdown,
-    ggpubr
+Depends: R (>= 4.0)
 Imports:
+    ape,
     tidyverse,
     magrittr,
+    ggplot2,
     abind,
     phytools,
-    dplyr,
-    ggplot2,
-    colorRamps,
-    tidyr,
-    tidytree,
-    tibble,
-    stats,
-    ape,
-    sets,
     phyclust,
-    future.apply,
-    future,
-    reshape2,
-    utils,
+    tidytree,
+    colorRamps,
     iNEXT.3D,
     iNEXT.4steps,
     iNEXT.beta3D,
+    future,
+    future.apply,
     ade4,
+    tidyr,
+    tibble,
+    reshape2,
+    sets,
+    dplyr,
+    utils,
     grDevices,
-    purrr
-Encoding: UTF-8
+    purrr,
+    stats
+Suggests: knitr,
+    rmarkdown,
+    ggpubr
+BugReports: https://github.com/AnneChao/iNEXT.link/issues
 LazyData: true
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 ByteCompile: true
+Repository: CRAN

@@ -585,6 +585,7 @@ datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   res = res%>%t()%>%as.data.frame()
   return(res)
 }
+
 datainf <- function(data, datatype){
   #if (!inherits(data, "data.frame")) data <- as.data.frame(data)
   res <- matrix(0,16,1,dimnames=list(1:16, "value"))
@@ -623,6 +624,7 @@ datainf <- function(data, datatype){
   res = res%>%t()%>%as.data.frame()
   return(res)
 }
+
 plot_tree2 <- function(mat){
   #number of lower level must be large than or equal to the number of higher level
   t <- apply(mat,MARGIN = 1, function(x) length(unique(x)))
@@ -814,6 +816,7 @@ my_PhD.m.est <- function (ai, Lis, m, q, nt, cal)
   out <- matrix(out, ncol = length(m))
   return(out)
 }
+
 sample.boot <- function(exdata,B) {
   gamma <- rowSums(exdata)
   n <- sum(sapply(unique(gamma), function(x){x*sum(gamma == x)}))
@@ -888,7 +891,10 @@ sample.boot.PD <- function(data,phydata,B,row.tree = NULL,col.tree = NULL) {
       ai <- rmultinom(1,ni,p)
       tmp <- matrix(ai[1:length(tmp)],nrow(tmp),ncol(tmp),dimnames = list(rownames(tmp),colnames(tmp)))
       out <- create.aili(tmp,row.tree = row.tree,col.tree = col.tree)
-      out <- rbind(out,data.frame(branch.abun = ifelse(length(ai)>length(tmp),ai[-c(1:length(tmp))],0),branch.length=g0, tgroup="Tip",interaction = paste("Unseen species",la[la >length(tmp)]-length(tmp))))
+      out <- rbind(out,data.frame(branch.abun = ifelse(length(ai)>length(tmp),ai[-c(1:length(tmp))],0),
+                                  branch.length=g0, 
+                                  tgroup="Tip",
+                                  interaction = paste("Unseen species",la[la >length(tmp)]-length(tmp))))
       out
     })
     names(out) <- names(data)
@@ -931,8 +937,10 @@ sample.boot.phy <- function(data,B,row.tree = NULL,col.tree = NULL) {
   # transfrom pi from S1xS1 to B1xB2
   seen_interaction_aili = create.aili(pi_matrix,row.tree,col.tree)
   
-  if (f0 > 0) unseen_interaction_aili = data.frame(branch.abun = rep(pi$unseen,f0), branch.length = g0 / f0,
-                                                   tgroup = "Tip",interaction = "unseen") else unseen_interaction_aili = data.frame()
+  if (f0 > 0) unseen_interaction_aili = data.frame(branch.abun = rep(pi$unseen,f0), 
+                                                   branch.length = g0 / f0,
+                                                   tgroup = "Tip",
+                                                   interaction = "unseen") else unseen_interaction_aili = data.frame()
   p <- rbind(seen_interaction_aili,unseen_interaction_aili)%>%
     mutate(branch.abun = ifelse(tgroup == 'Root', 1, branch.abun))
 
@@ -1058,11 +1066,10 @@ get.netphydiv_iNE <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, kno
     phydata <- create.aili(data,row.tree = row.tree,col.tree = col.tree)
     tbar <- sum(phydata$branch.length*phydata$branch.abun)/n
     boot.sam <- sample.boot.phy(data,B,row.tree = row.tree,col.tree = col.tree)
-    sc <- Coverage(data,datatype = "abundance",m,nt =n)
-    # sc <- coverage(data,m)
+    sc <- iNEXT.3D:::Coverage(data,datatype = "abundance",m)
     sc.sd <- lapply(boot.sam,function(x){
       x <- x[x$tgroup == "Tip",]$branch.abun
-      Coverage(x,datatype = "abundance",m,nt =n)
+      iNEXT.3D:::Coverage(x,datatype = "abundance",m)
     })
     sc.sd <- do.call(cbind,sc.sd)
     sc.sd <- sapply(1:length(m), function(x){
@@ -1971,7 +1978,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
       qPDm <- iNEXT.3D:::PhD.m.est(ai = aL$treeNabu$branch.abun,
                                    Lis = aL$BLbyT, m = m[[i]], q = q, nt = n, reft = reft,
                                    cal = cal) %>% as.numeric()
-      covm = Coverage(x, datatype, m[[i]])
+      covm = iNEXT.3D:::Coverage(x, datatype, m[[i]])
       if (unconditional_var) {
         goalSC <- unique(covm)
         qPD_unc <- unique(invChatPD_inc(x = rowSums(x),
@@ -1999,11 +2006,10 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
             isn0 <- ai_B > 0
             qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], m = m[[i]], q = q, nt = n,
                                            reft = reft, cal = cal) %>% as.numeric()
-            covm_b = Coverage(c(n, ai_B[isn0 & tgroup_B ==
-                                          "Tip"]), "incidence_freq", m[[i]])
-            qPD_unc_b <- unique(invChatPD_inc(x = ai_B[isn0 &
-                                                         tgroup_B == "Tip"], ai = ai_B[isn0], Lis = Li_b[isn0,
-                                                                                                         , drop = F], q = q, Cs = goalSC, n = n,
+            covm_b = iNEXT.3D:::Coverage(c(n, ai_B[isn0 & tgroup_B == "Tip"]), "incidence_freq", m[[i]])
+            qPD_unc_b <- unique(invChatPD_inc(x = ai_B[isn0 & tgroup_B == "Tip"], 
+                                              ai = ai_B[isn0], 
+                                              Lis = Li_b[isn0, , drop = F], q = q, Cs = goalSC, n = n,
                                               reft = reft, cal = cal))$qPD
             return(c(qPDm_b, covm_b, qPD_unc_b))
           }) %>% apply(., 1, sd)
@@ -2014,7 +2020,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
             isn0 <- ai_B > 0
             qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], m = m[[i]], q = q, nt = n,
                                            reft = reft, cal = cal) %>% as.numeric()
-            covm_b = Coverage(c(n, ai_B[isn0 & tgroup_B ==
+            covm_b = iNEXT.3D:::Coverage(c(n, ai_B[isn0 & tgroup_B ==
                                           "Tip"]), "incidence_freq", m[[i]])
             return(c(qPDm_b, covm_b))
           }) %>% apply(., 1, sd)
@@ -2309,9 +2315,9 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
   out <- tryCatch(FUN(e), error = function(e) {
     return()
   })
-  index <- iNEXT.3D:::ObsAsy3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), 
-                               datatype = datatype, nboot = nboot, conf = 0.95,
-                               FDtype = 'tau_values', FDtau = NULL)
+  index <- iNEXT.3D::ObsAsy3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), 
+                              datatype = datatype, nboot = nboot, conf = 0.95,
+                              FDtype = 'tau_values', FDtau = NULL)
   index <- index %>% arrange(., Assemblage)
   LCL <- index$qFD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qFD.UCL[index$Method == "Asymptotic"]
@@ -2559,7 +2565,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
   out <- tryCatch(FUN(e), error = function(e) {
     return()
   })
-  index <- iNEXT.3D:::ObsAsy3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), datatype = datatype, nboot = nboot, conf = 0.95)
+  index <- iNEXT.3D::ObsAsy3D(data = data1, diversity = "FD", FDdistM = distM, q = c(0, 1, 2), datatype = datatype, nboot = nboot, conf = 0.95)
   index = index[order(index$Assemblage), ]
   LCL <- index$qFD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qFD.UCL[index$Method == "Asymptotic"]
@@ -3432,8 +3438,7 @@ estimatelinkFD = function (data, row.distM = NULL, col.distM = NULL, datatype = 
     if (datatype == "abundance") {
       level <- sapply(dat, function(x) {
         ni <- sum(x)
-        iNEXT.3D:::Coverage(data = x, datatype = datatype, m = 2 *
-                              ni)
+        iNEXT.3D:::Coverage(data = x, datatype = datatype, m = 2 * ni)
       })
     }
     else if (datatype == "incidence_freq") {
@@ -3838,11 +3843,9 @@ Evenness_asym <- function (data, q = seq(0, 2, 0.2), datatype = "abundance",
   }
   if (is.null(SC) == TRUE) {
     if (datatype == "abundance") 
-      SC = sapply(data, function(x) iNEXT.3D:::Coverage(x, 
-                                                        "abundance", 2 * sum(x))) %>% min
+      SC = sapply(data, function(x) iNEXT.3D:::Coverage(x, "abundance", 2 * sum(x))) %>% min
     if (datatype == "incidence_freq") 
-      SC = sapply(data, function(x) iNEXT.3D:::Coverage(x, 
-                                                        "incidence_freq", 2 * x[1])) %>% min
+      SC = sapply(data, function(x) iNEXT.3D:::Coverage(x, "incidence_freq", 2 * x[1])) %>% min
   }
   if ((length(SC) != 1) | (SC < 0) | (SC > 1) | (is.numeric(SC) == 
                                                  F)) 
@@ -3942,23 +3945,6 @@ ggplotColors <- function(g){
   hcl(h = h, c = 100, l = 65) # Convert HCL values to hexadecimal color codes
 }
 
-
-
-Coverage <- function(data,datatype,m){
-  iNEXT.3D:::Coverage(data,datatype,m)
-}
-
-PhD.m.est <- function(ai,Lis,m,q,nt,reft,cal){
-  iNEXT.3D:::PhD.m.est(ai,Lis,m,q,nt,reft,cal)
-}
-
-invChatPD_abu <- function(x,ai,Lis,q,Cs,n,reft,cal){
-  iNEXT.3D:::invChatPD_abu(x,ai,Lis,q,Cs,n,reft,cal)
-}
-
-bootstrap_population_multiple_assemblage <- function(data,data_gamma,datatype){
-  iNEXT.beta3D:::bootstrap_population_multiple_assemblage(data,data_gamma,datatype)
-}
 
 
 

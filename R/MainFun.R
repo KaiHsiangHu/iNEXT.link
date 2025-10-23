@@ -53,11 +53,6 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
   
   data_new = data
   
-  row.tree = row.tree
-  col.tree = col.tree
-  row.distM = row.distM
-  col.distM = col.distM
-  
   # if(class(data == list)){
   #   if(names(data[[1]])[1] == names(data_new[[1]])[1]){
   #     row.tree = row.tree
@@ -116,27 +111,28 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
     }
     
   }else if(diversity == 'TD'){
+    
     if(inherits(data_new, "list")){
       table <- lapply(data_new, function(y){datainf(data = y, datatype = datatype)})%>%do.call(rbind,.)
       rownames(table) <- names(data_new)
       table = tibble::rownames_to_column(table, var = "Networks")
     }else{
       table <- datainf(data = data_new, datatype = datatype)
-      rownames(table) <- "Assemblage1"
+      rownames(table) <- "Network1"
       table = tibble::rownames_to_column(table, var = "Networks")
     }
   }else if(diversity == 'FD'){
     
     if(inherits(data_new, "list")){
       table <- lapply(data_new, function(y){datainffun(data = y, datatype = datatype,
-                                                               row.distM = row.distM,col.distM = col.distM)})%>%
+                                                       row.distM = row.distM,col.distM = col.distM)})%>%
         do.call(rbind,.)
       rownames(table) <- names(data_new)
       table = tibble::rownames_to_column(table, var = "Networks")
     }else{
       table <- datainffun(data = data_new, datatype = datatype,
                           row.distM = row.distM,col.distM = col.distM)
-      rownames(table) <- "Assemblage1"
+      rownames(table) <- "Network1"
       table = tibble::rownames_to_column(table, var = "Networks")
     }
 
@@ -193,6 +189,8 @@ Completeness.link <- function(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95)
   #     data[[i]] <- data[[i]]
   #   }
   # }
+  
+  if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Network1 = data)
   
   data_long <- lapply(data, function(tab){
     as.matrix(tab)%>%c()}
@@ -270,7 +268,6 @@ ggCompleteness.link <- function(output){
 #' @import ape
 #' @import tidyverse
 #' @import magrittr
-#' @import ggplot2
 #' @import abind
 #' @import phytools
 #' @import phyclust
@@ -283,7 +280,6 @@ ggCompleteness.link <- function(output){
 #' @import future.apply
 #' @import ade4
 #' @import tidyr
-#' @import tibble
 #' @import reshape2
 #' @import sets
 #' @import dplyr
@@ -355,7 +351,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                        endpoint = NULL, knots = 40, conf = 0.95, nboot = 30,
                        row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', row.distM = NULL, col.distM = NULL,
                        FDtype = "AUC", FDtau = NULL
-){
+                       ) {
   
   datatype = "abundance"
   nT = NULL
@@ -370,6 +366,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
   #   }
   # }
   
+  if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Network1 = data)
   data_new = data
   
   
@@ -784,6 +781,7 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
                         row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
   
   datatype = "abundance"
+  if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Network1 = data)
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) )
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -1012,6 +1010,8 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
                           row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
   
   datatype = "abundance"
+  if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Network1 = data)
+  
   # for(i in 1:length(data)){
   #   if(nrow(data[[i]]) > ncol(data[[i]])){
   #     data[[i]] <- as.data.frame(t(data[[i]]))
@@ -1038,10 +1038,10 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
     
     if(datatype=='abundance'){
 
-      if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Region_1 = data)
+      # if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Network1 = data)
 
       if(inherits(data, "list")){
-        if(is.null(names(data))) region_names = paste0("Region_", 1:length(data)) else region_names = names(data)
+        if(is.null(names(data))) region_names = paste0("Network_", 1:length(data)) else region_names = names(data)
         Ns = sapply(data, ncol)
         data_list = data
       }
@@ -1057,7 +1057,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
       
       level <- sapply(data, function(x) {
         ni <- sum(x)
-        Coverage(data = x, datatype = datatype, m = 2 * ni)
+        iNEXT.3D:::Coverage(data = x, datatype = datatype, m = 2 * ni)
       })
       
       level <- min(level)
@@ -1075,12 +1075,12 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
           }else{
             size_m = level
           }
-          level = Coverage(data_2d,m= size_m, datatype = 'abundance')
+          level = iNEXT.3D:::Coverage(data_2d,m= size_m, datatype = 'abundance')
 
         }
 
 
-        ref= Coverage(data_2d, m = n, datatype = 'abundance')
+        ref= iNEXT.3D:::Coverage(data_2d, m = n, datatype = 'abundance')
         #
         aL_table = create.aili(data_2d, row.tree = row.tree, col.tree = col.tree) %>%
           select(branch.abun, branch.length, tgroup)%>%
@@ -1089,7 +1089,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
         ## boot
         tbar <- sum(aL_table$branch.length*aL_table$branch.abun)/n
         
-        qPDm <-PhD.m.est(ai = aL_table$branch.abun,
+        qPDm <-iNEXT.3D:::PhD.m.est(ai = aL_table$branch.abun,
                                     Lis = aL_table$branch.length%>%as.matrix(),
                                     m = size_m,
                                     q = q,nt = n, reft = tbar,cal = PDtype) %>% as.vector()
@@ -1099,7 +1099,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
           boot.sam <- sample.boot.phy(data_2d,nboot,row.tree = row.tree,col.tree = col.tree)
           PD.sd <- lapply(1:length(boot.sam), function(i){
             if(base == "size"){
-              tmp = PhD.m.est(ai = boot.sam[[i]]$branch.abun,
+              tmp = iNEXT.3D:::PhD.m.est(ai = boot.sam[[i]]$branch.abun,
                                          Lis = boot.sam[[i]]$branch.length%>%as.matrix(),
                                          m = size_m,
                                          q = q,nt = n, reft = tbar, cal = PDtype)%>%
@@ -1112,14 +1112,14 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
               colnames(Li_b) = paste0("T",tbar)
               isn0 <- ai_B > 0
               
-              tmp = invChatPD_abu(x = x_B, 
-                                  ai = ai_B[isn0], 
-                                  Lis = Li_b[isn0, , drop = F], 
-                                  q = q, 
-                                  Cs = level, 
-                                  n = sum(x_B),
-                                  reft = tbar, 
-                                  cal = PDtype)$qPD%>%as.vector()%>%as.data.frame()
+              tmp = iNEXT.3D:::invChatPD_abu(x = x_B, 
+                                             ai = ai_B[isn0], 
+                                             Lis = Li_b[isn0, , drop = F], 
+                                             q = q, 
+                                             Cs = level, 
+                                             n = sum(x_B),
+                                             reft = tbar, 
+                                             cal = PDtype)$qPD%>%as.vector()%>%as.data.frame()
             }
             
             return(tmp)
@@ -1155,7 +1155,9 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
     output <- rename(output, c(qiPD = "qPD", qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
     
     return(output)
+    
   }else if(diversity == 'FD'& FDtype == 'tau_values'){
+    
     output = estimatelinkFD(data, row.distM = row.distM, col.distM = col.distM, datatype = datatype, q = q,
                             base = base, threshold = FDtau, level = level, nboot = nboot,
                             conf = conf)
@@ -1163,7 +1165,9 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
     output <- rename(output, c(qiFD = "qFD", qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
     
     return(output)
+    
   }else if(diversity == 'FD'& FDtype == 'AUC'){
+    
     output = estimatelinkAUC(data, row.distM = row.distM, col.distM = col.distM, datatype = datatype, q = q,
                              base = base, level = level, nboot = nboot,
                              conf = conf)
@@ -1236,7 +1240,8 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' data(beetles_plotA)
 #' data(beetles_row_distM)
 #' output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, 
-#'                                   q = c(0, 1, 2),row.distM = beetles_row_distM, FDtype = "AUC", nboot = 10)
+#'                                   q = c(0, 1, 2), nboot = 10, 
+#'                                   row.distM = beetles_row_distM, FDtype = "AUC")
 #' output_beta_qiFD
 #'
 #' @references
@@ -1258,7 +1263,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
   #   }
   # }
   
-  if(inherits(data[[1]], "data.frame")){dat = list(data); }else{dat = data}
+  if(inherits(data[[1]], c("data.frame", "matrix"))){dat = list("Dataset" = data); }else{dat = data}
 
   combined_list = lapply(dat, function(y){
 
@@ -1798,6 +1803,7 @@ Spec.link.ObsAsy <- function(data, q = seq(0, 2, 0.2),
   
   datatype = "abundance"
   diversity = 'TD'
+  if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Network1 = data)
   
   long = lapply(data, function(da){da%>%as.data.frame()%>%gather(key = "col_sp", value = "abundance")%>%.[,2]})
   if ( !(method %in% c("Asymptotic", "Observed")) )
@@ -1844,7 +1850,7 @@ Spec.link.ObsAsy <- function(data, q = seq(0, 2, 0.2),
           # plan(multisession)
           se = do.call(rbind,future_lapply(1:nboot, function(i){
             
-            bootstrap_population = bootstrap_population_multiple_assemblage(data = sub, data_gamma = rowSums(sub), datatype = 'abundance')
+            bootstrap_population = iNEXT.beta3D:::bootstrap_population_multiple_assemblage(data = sub, data_gamma = rowSums(sub), datatype = 'abundance')
             bootstrap_sample = sapply(1:ncol(sub), function(k) rmultinom(n = 1, size = sum(sub[,k]), prob = bootstrap_population[,k]))
             
             if(method == "Observed"){
@@ -1970,14 +1976,16 @@ Spec.link.ObsAsy <- function(data, q = seq(0, 2, 0.2),
 
 
 Spec.link.est <- function(data, q = seq(0, 2, 0.2),
-                      nboot = 30,
-                      conf = 0.95,
-                      E.class = c(1:5),
-                      SC = NULL, level = "weighted"){
+                          nboot = 30,                      
+                          conf = 0.95,
+                          E.class = c(1:5),
+                          SC = NULL, 
+                          level = "weighted"){
   
   method = "Estimated"
   datatype = "abundance"
   diversity = 'TD'
+  if(inherits(data, c("data.frame", "matrix", "integer"))) data = list(Network1 = data)
   
   if ( !(level %in% c("weighted", "network")) )
     stop("Please select one of below level: 'weighted', 'network'", call. = FALSE)
@@ -1995,7 +2003,7 @@ Spec.link.est <- function(data, q = seq(0, 2, 0.2),
   long = lapply(data, function(da){da%>%as.data.frame()%>%gather(key = "col_sp", value = "abundance")%>%.[,2]})
   
   if(method == "Estimated"){
-    if (is.null(SC)) SC = sapply(long, function(x) Coverage(x, datatype = 'abundance', 2 * sum(x))) %>% min
+    if (is.null(SC)) SC = sapply(long, function(x) iNEXT.3D:::Coverage(x, datatype = 'abundance', 2 * sum(x))) %>% min
   }else{
     if(is.null(SC)){
       SC = DataInfo.link(data, diversity="TD")$Coverage
@@ -2029,7 +2037,7 @@ Spec.link.est <- function(data, q = seq(0, 2, 0.2),
           # plan(multisession)
           se = do.call(rbind,future_lapply(1:nboot, function(i){
             
-            bootstrap_population = bootstrap_population_multiple_assemblage(data = sub, data_gamma = rowSums(sub), datatype = 'abundance')
+            bootstrap_population = iNEXT.beta3D:::bootstrap_population_multiple_assemblage(data = sub, data_gamma = rowSums(sub), datatype = 'abundance')
             bootstrap_sample = sapply(1:ncol(sub), function(k) rmultinom(n = 1, size = sum(sub[,k]), prob = bootstrap_population[,k]))
             
             res_boost = iNEXT.4steps::Evenness(bootstrap_sample, q = q,datatype = datatype,
