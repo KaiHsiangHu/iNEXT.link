@@ -81,8 +81,8 @@ output_est_qiTD
 # Phylogenetic network diversity for interaction data with two target sizes (1500 and 3000)
 data(beetles_plotA)
 data(beetles_row_tree)
-output_est_qiPD <- estimateD.link(beetles_plotA, diversity = 'PD', 
-                                  base = "size", level = c(1500, 3000), nboot = 10, row.tree = beetles_row_tree)
+output_est_qiPD <- estimateD.link(beetles_plotA, diversity = 'PD', nboot = 10, 
+                                  base = "size", level = c(1500, 3000), row.tree = beetles_row_tree)
 output_est_qiPD
 
 ## Functional network diversity for interaction data with two target coverages (93\% and 97\%)
