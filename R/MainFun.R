@@ -280,6 +280,7 @@ ggCompleteness.link <- function(output){
 #' @import future.apply
 #' @import ade4
 #' @import tidyr
+#' @import tibble
 #' @import reshape2
 #' @import sets
 #' @import dplyr
