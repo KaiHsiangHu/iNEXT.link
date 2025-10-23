@@ -11,7 +11,6 @@ iNEXTbeta.link(
   q = c(0, 1, 2),
   nboot = 30,
   conf = 0.95,
-  by_pair = FALSE,
   row.tree = NULL,
   col.tree = NULL,
   PDtype = "meanPD",
@@ -19,7 +18,8 @@ iNEXTbeta.link(
   col.distM = NULL,
   FDtype = "AUC",
   FDtau = NULL,
-  FDcut_number = 30
+  FDcut_number = 30,
+  by_pair = FALSE
 )
 }
 \arguments{
@@ -35,8 +35,6 @@ iNEXTbeta.link(
 sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.}
 
 \item{conf}{a positive number < 1 specifying the level of confidence interval. Default is \code{0.95}.}
-
-\item{by_pair}{a logical variable specifying whether to perform diversity decomposition for all pairs of assemblages or not. If \code{by_pair = TRUE}, alpha/beta/gamma diversity will be computed for all pairs of assemblages in the input data; if \code{by_pair = FALSE}, alpha/beta/gamma diversity will be computed for multiple assemblages (i.e, more than two assemblages) in the input data. Default is \code{FALSE}.}
 
 \item{row.tree}{(required only when \code{diversity = "PD"}), a phylogenetic tree of row assemblage in the pooled network row assemblage.}
 
@@ -54,6 +52,8 @@ sampling uncertainty and constructing confidence intervals. Bootstrap replicatio
 \item{FDtau}{(required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau value (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).}
 
 \item{FDcut_number}{(required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is \code{30}.}
+
+\item{by_pair}{a logical variable specifying whether to perform diversity decomposition for all pairs of assemblages or not. If \code{by_pair = TRUE}, alpha/beta/gamma diversity will be computed for all pairs of assemblages in the input data; if \code{by_pair = FALSE}, alpha/beta/gamma diversity will be computed for multiple assemblages (i.e, more than two assemblages) in the input data. Default is \code{FALSE}.}
 }
 \value{
 A list of seven matrices with three diversity dimensions and four dissimilarity measures.

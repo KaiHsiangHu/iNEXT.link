@@ -1251,9 +1251,9 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @export
 
 iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
-                          q = c(0, 1, 2), nboot = 30, conf = 0.95, by_pair = FALSE,
-                          row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', row.distM = NULL, col.distM = NULL,
-                          FDtype = "AUC", FDtau = NULL, FDcut_number = 30){
+                          q = c(0, 1, 2), nboot = 30, conf = 0.95,
+                          row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', 
+                          row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL, FDcut_number = 30, by_pair = FALSE){
   
   datatype = 'abundance'
   # for(i in 1:length(data)){
