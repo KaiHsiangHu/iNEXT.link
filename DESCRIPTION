@@ -51,7 +51,6 @@ Imports:
     tidyr,
     tibble,
     reshape2,
-    sets,
     dplyr,
     utils,
     grDevices,
