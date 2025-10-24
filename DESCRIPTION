@@ -51,6 +51,7 @@ Imports:
     utils,
     grDevices,
     purrr,
+    tidyr,
     stats
 Suggests: knitr,
     rmarkdown,
