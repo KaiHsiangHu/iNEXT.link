@@ -282,7 +282,7 @@ ggCompleteness.link <- function(output){
 #' @import tibble
 #' @import reshape2
 #' @import dplyr
-#' @importFrom ape node.depth.edgelength
+#' @importFrom ape node.depth.edgelength drop.tip
 #' @importFrom phyclust get.rooted.tree.height
 #' @importFrom utils head
 #' @importFrom stats qnorm sd optimize quantile rbinom rmultinom
