@@ -10,13 +10,11 @@ This dataset includes species pairwise symmetric distance matrix for 238 species
 }
 \usage{data("beetles_row_distM")}
 \format{
-  A data frame with 264 species on the following 264 species.
-  \describe{
-    \item{\code{Tachyta_nana}}{a numeric vector}
-    \item{\code{Plegaderus_vulneratus}}{a numeric vector}
-    \item{\code{Plegaderus_caesus}}{a numeric vector}
-    ....... \cr
-  }
+  \code{beetles_row_distM} is a 264 x 264 (species by species) symmetric data.frame. Each element of the data.frame is between zero (for species pairs with identical traits) and one. \cr
+  $ Tachyta_nana          : num  0 0.203 0.243 0.257 0.262 ... \cr
+  $ Plegaderus_vulneratus : num  0.203 0 0.222 0.236 0.24 ... \cr
+  $ Plegaderus_caesus     : num  0.2435 0.2217 0 0.0536 0.0182 ... \cr
+  ....... \cr
 }
 \references{
 Vogel, S., et al. (2020). Optimizing enrichment of deadwood for biodiversity by varying sun   exposure and tree species: an experimental approach. Journal of Applied Ecology 57(10): 2075-2085.

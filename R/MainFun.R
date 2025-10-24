@@ -265,20 +265,15 @@ ggCompleteness.link <- function(output){
 #' @param col.distM (required only when \code{diversity = "FD"}), a species pairwise distance matrix for all species of column assemblage in the pooled network column assemblage.
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
-#' @import tidyverse
 #' @import magrittr
 #' @import ggplot2
 #' @import abind
-#' @import phytools
 #' @import tidytree
-#' @import colorRamps
 #' @import iNEXT.3D
 #' @import iNEXT.4steps
 #' @import iNEXT.beta3D
 #' @import future
 #' @import future.apply
-#' @import ade4
-#' @import tidyr
 #' @import tibble
 #' @import reshape2
 #' @import dplyr
