@@ -282,6 +282,7 @@ ggCompleteness.link <- function(output){
 #' @import tibble
 #' @import reshape2
 #' @import dplyr
+#' @importFrom sets as.set set set_union
 #' @importFrom ape node.depth.edgelength drop.tip
 #' @importFrom phyclust get.rooted.tree.height
 #' @importFrom utils head
