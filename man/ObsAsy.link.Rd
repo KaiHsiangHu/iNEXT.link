@@ -62,6 +62,7 @@ a table of diversity table including the following arguments.
 \code{ObsAsy.link}: The asymptotic (or observed) diversity of order q
 }
 \examples{
+\donttest{
 # Compute the observed and asymptotic taxonomic network diversity 
 # for interaction data with order q between 0 and 2 
 # (in increments of 0.2 by default)
@@ -69,7 +70,7 @@ data(beetles_plotA)
 output_ObsAsy_qiTD = ObsAsy.link(data = beetles_plotA, diversity = 'TD', q = seq(0, 2, 0.2))
 output_ObsAsy_qiTD
 
-\donttest{
+
 # Compute the observed and asymptotic phylogenetic network diversity
 # for interaction data with order q between 0 and 2 
 # (in increments of 0.2 by default)

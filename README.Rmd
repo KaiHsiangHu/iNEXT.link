@@ -442,7 +442,7 @@ Abundance_TD
 ```{r echo=FALSE}
 Abundance_TD = iNEXTbeta.link(data = beetles, diversity = 'TD', level = NULL, q = c(0, 1, 2))
 
-lapply(Abundance_TD$Dataset_1, function(x) {
+lapply(Abundance_TD$Dataset, function(x) {
     tmp = x[1:6,]
     tmp[,c(3,4,5,7,8,9)] = round(tmp[,c(3,4,5,7,8,9)], 3)
     tmp

@@ -16,13 +16,14 @@ a figure of asymptotic or empirical (observed) diversity in q-profile.\cr\cr
 \code{ggObsAsy.link} Plots q-profile based on the output of \code{ObsAsy.link} using the ggplot2 package.\cr
 }
 \examples{
+\donttest{
 # Plot q-profile of taxonomic network diversity for interaction data
 # with order q between 0 and 2 (in increments of 0.2 by default).
 data(beetles_plotA)
 output_ObsAsy_qiTD = ObsAsy.link(data = beetles_plotA, diversity = 'TD', q = seq(0, 2, 0.2))
 ggObsAsy.link(output_ObsAsy_qiTD)
 
-\donttest{
+
 # Plot q-profile of phylogenetic network diversity for interaction data
 # with order q between 0 and 2 (in increments of 0.2 by default).
 data(beetles_plotA)
