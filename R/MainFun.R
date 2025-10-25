@@ -168,13 +168,16 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
 #'         \item{s.e.}{standard error of the estimated network completeness.}
 #'         \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the expected network completeness of order q at the specified level (with a default value of \code{0.95}).}
 #'         \item{Dataset}{the dataset name.}
-#'
+#' 
+#' 
 #' @examples
+#' \donttest{
 #' # Sample Completeness for interaction data
 #' data(beetles_plotA)
 #' output_com = Completeness.link(beetles_plotA)
 #' output_com
-#'
+#' } 
+#' 
 #' @references
 #' Chao, A., Y. Kubota, D. Zeleny, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
 #' @export
@@ -207,12 +210,15 @@ Completeness.link <- function(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95)
 #'
 #' @param output a table generated from Completeness.link function
 #' @return a figure of estimated sample completeness with order q
-#'
+#' 
+#' 
 #' @examples
+#' \donttest{
 #' # Plot the completeness curve
 #' data(beetles_plotA)
 #' output_com = Completeness.link(beetles_plotA)
 #' ggCompleteness.link(output_com)
+#' }
 #' 
 #' @references
 #' Chao, A., Y. Kubota, D. Zeleny, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
@@ -267,7 +273,6 @@ ggCompleteness.link <- function(output){
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @import magrittr
 #' @import ggplot2
-#' @import abind
 #' @import tidytree
 #' @import iNEXT.3D
 #' @import iNEXT.4steps
@@ -277,7 +282,8 @@ ggCompleteness.link <- function(output){
 #' @import tibble
 #' @import reshape2
 #' @import dplyr
-#' @importFrom tidyr gather
+#' @importFrom abind abind
+#' @importFrom tidyr gather unite
 #' @importFrom sets as.set set set_union
 #' @importFrom ape node.depth.edgelength drop.tip
 #' @importFrom phyclust get.rooted.tree.height
@@ -313,6 +319,7 @@ ggCompleteness.link <- function(output){
 #' 
 #' 
 #' @examples
+#' \donttest{
 #' # Compute standardized estimates of taxonomic network diversity for interaction data with
 #' # order q = 0, 1, 2
 #' data(beetles_plotA)
@@ -338,6 +345,7 @@ ggCompleteness.link <- function(output){
 #' output_qiFD = iNEXT.link(data = beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 20, 
 #'                          row.distM = beetles_row_distM, FDtype = "AUC")
 #' output_qiFD
+#' }
 #'
 #' @references
 #' Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M. and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. 
@@ -627,7 +635,9 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
 #'  use different colors for combinations of diversity orders and assemblage (\code{color.var = "Both"}).  
 #' @return a \code{ggplot2} object for sample-size-based rarefaction/extrapolation curve (\code{type = 1}), sample completeness curve (\code{type = 2}), and coverage-based rarefaction/extrapolation curve (\code{type = 3}).
 #' 
+#' 
 #' @examples
+#' \donttest{
 #' # Plot three types of curves of taxonomic network diversity with facet.var = "Assemblage"
 #' # for interaction data with order q = 0, 1, 2
 #' data(beetles_plotA)
@@ -651,6 +661,8 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
 #' output_qiFD = iNEXT.link(data = beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 0, 
 #'                          row.distM = beetles_row_distM, FDtype = "AUC")
 #' ggiNEXT.link(output_qiFD)
+#' }
+#' 
 #' @export
 
 ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", color.var = "Order.q"){
@@ -746,7 +758,8 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
 #' \item{Method}{\code{"Asymptotic"} means asymptotic network diversity and \code{"Observed"} means observed network diversity.}
 #' \item{Reftime}{the reference times for qiPD.}
 #' \item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length),\code{"meanPD"} (effective number of equally divergent lineages) for qiPD.}
-#'
+#' 
+#' 
 #' @examples
 #' # Compute the observed and asymptotic taxonomic network diversity 
 #' # for interaction data with order q between 0 and 2 
@@ -755,7 +768,7 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
 #' output_ObsAsy_qiTD = ObsAsy.link(data = beetles_plotA, diversity = 'TD', q = seq(0, 2, 0.2))
 #' output_ObsAsy_qiTD
 #' 
-#'
+#' \donttest{
 #' # Compute the observed and asymptotic phylogenetic network diversity
 #' # for interaction data with order q between 0 and 2 
 #' # (in increments of 0.2 by default)
@@ -774,6 +787,7 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
 #' output_ObsAsy_qiFD = ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), 
 #'                                  row.distM = beetles_row_distM, FDtype = "AUC", nboot = 10)
 #' output_ObsAsy_qiFD
+#' }
 #' 
 #' @export
 ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, conf = 0.95, method = c("Asymptotic", "Observed"),
@@ -873,7 +887,8 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
 #'
 #' @param output the output of the functions \code{ObsAsy.link} .\cr
 #' @return a figure of asymptotic or empirical (observed) diversity in q-profile.\cr\cr
-#'
+#' 
+#' 
 #' @examples
 #' # Plot q-profile of taxonomic network diversity for interaction data
 #' # with order q between 0 and 2 (in increments of 0.2 by default).
@@ -881,7 +896,7 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
 #' output_ObsAsy_qiTD = ObsAsy.link(data = beetles_plotA, diversity = 'TD', q = seq(0, 2, 0.2))
 #' ggObsAsy.link(output_ObsAsy_qiTD)
 #'
-#'
+#' \donttest{
 #' # Plot q-profile of phylogenetic network diversity for interaction data
 #' # with order q between 0 and 2 (in increments of 0.2 by default).
 #' data(beetles_plotA)
@@ -899,8 +914,8 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
 #' output_ObsAsy_qiFD = ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), 
 #'                                  row.distM = beetles_row_distM, FDtype = "AUC", nboot = 10)
 #' ggObsAsy.link(output_ObsAsy_qiFD)
+#' }
 #'
-
 #' @export
 ggObsAsy.link <- function(output){
   
@@ -974,15 +989,16 @@ ggObsAsy.link <- function(output){
 #' \item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for the network diversity of order q at the specified level (with a default value of \code{0.95}).}
 #' \item{Reftime}{reference times for PD.}
 #' \item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length), \code{"meanPD"} (effective number of equally divergent lineages).}
-#'
+#' 
+#' 
 #' @examples
-#' \donttest{
 #' # Taxonomic network diversity for interaction data with two target coverages(93% and 97%)
 #' data(beetles_plotA)
 #' output_est_qiTD <- estimateD.link(beetles_plotA, diversity = 'TD', q = c(0,1,2),
 #'                                   base = "coverage", level = c(0.93, 0.97))
 #' output_est_qiTD
 #' 
+#' \donttest{
 #' # Phylogenetic network diversity for interaction data with two target sizes (1500 and 3000)
 #' data(beetles_plotA)
 #' data(beetles_row_tree)
@@ -990,14 +1006,14 @@ ggObsAsy.link <- function(output){
 #'                                   base = "size", level = c(1500, 3000), row.tree = beetles_row_tree)
 #' output_est_qiPD
 #' 
+#' 
 #' ## Functional network diversity for interaction data with two target coverages (93% and 97%)
 #' data(beetles_plotA)
 #' data(beetles_row_distM)
 #' output_est_qiFD = estimateD.link(data = beetles_plotA, diversity = 'FD', q = c(0, 1, 2),
 #'                                  base = "coverage", level = c(0.93, 0.97), nboot = 10,
 #'                                  row.distM = beetles_row_distM, FDtype = "AUC")
-#'output_est_qiFD
-#' 
+#' output_est_qiFD
 #' 
 #' }
 #' @export
@@ -1215,6 +1231,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' 
 #' 
 #' @examples
+#' \donttest{
 #' ## Taxonomic network diversity for interaction data
 #' # Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and 
 #' # related statistics
@@ -1222,7 +1239,8 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level = NULL, 
 #'                                   q = c(0, 1, 2))
 #' output_beta_qiTD
-#'
+#' 
+#' 
 #' ## Phylogenetic network diversity for interaction data
 #' # Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and
 #' # related statistics
@@ -1231,8 +1249,8 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL,
 #'                                   q = c(0, 1, 2),row.tree = beetles_row_tree, nboot = 10)
 #' output_beta_qiPD
-#'
-#'
+#' 
+#' 
 #' ## Functional network diversity for interaction data
 #' # Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and 
 #' # related statistics
@@ -1242,7 +1260,8 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #'                                   q = c(0, 1, 2), nboot = 10, 
 #'                                   row.distM = beetles_row_distM, FDtype = "AUC")
 #' output_beta_qiFD
-#'
+#' }
+#' 
 #' @references
 #' Chao, A., Thorn, S., Chiu, C.-H., Moyes, F., Hu, K.-H., Chazdon, R. L., Wu, J., Dornelas, M., Zeleny, D., Colwell, R. K., and Magurran, A. E. (2023). Rarefaction and extrapolation with beta diversity under a framework of Hill numbers: the iNEXT.beta3D standardization. 
 #' \emph{Ecological Monographs e1588.} \cr\cr
@@ -1594,7 +1613,9 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
 #'
 #' @return a figure for gamma, alpha, and beta diversity or four dissimilarity measures.
 #' 
+#' 
 #' @examples
+#' \donttest{
 #' ## Taxonomic network diversity for interaction data
 #' # Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and 
 #' # related statistics
@@ -1603,7 +1624,8 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
 #'                                   q = c(0, 1, 2))
 #' ggiNEXTbeta.link(output_beta_qiTD, type = 'B')
 #' ggiNEXTbeta.link(output_beta_qiTD, type = 'D')
-#'
+#' 
+#' 
 #' ## Phylogenetic network diversity for interaction data
 #' # Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and 
 #' # related statistics
@@ -1625,7 +1647,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
 #'                                   nboot = 10)
 #' ggiNEXTbeta.link(output_beta_qiFD, type = 'B')
 #' ggiNEXTbeta.link(output_beta_qiFD, type = 'D')
-#'
+#' }
 #'
 #' @export
 
@@ -1789,11 +1811,13 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
 #'         
 #'
 #' @examples
+#' \donttest{
 #' data(beetles)
 #' output_spec_ObsAsy = Spec.link.ObsAsy(beetles)
 #' output_spec_ObsAsy
-#' @export
+#' }
 #' 
+#' @export
 
 Spec.link.ObsAsy <- function(data, q = seq(0, 2, 0.2),
                           method = "Asymptotic",
@@ -1966,12 +1990,13 @@ Spec.link.ObsAsy <- function(data, q = seq(0, 2, 0.2),
 #'         
 #'
 #' @examples
+#' \donttest{
 #' data(beetles)
 #' output_spec = Spec.link.est(beetles)
 #' output_spec
-#' @export
+#' }
 #' 
-
+#' @export
 
 Spec.link.est <- function(data, q = seq(0, 2, 0.2),
                           nboot = 30,                      
@@ -2127,11 +2152,15 @@ Spec.link.est <- function(data, q = seq(0, 2, 0.2),
 #' 
 #' @param output a table generated from Specialization function
 #' @return a figure of estimated sample completeness with order q
-#'
+#' 
+#' 
 #' @examples
+#' \donttest{
 #' data(beetles_plotA)
 #' output_spec = Spec.link.est(beetles_plotA, nboot = 5)
 #' ggSpec.link(output_spec)
+#' }
+#' 
 #' @export
 
 ggSpec.link = function (output)

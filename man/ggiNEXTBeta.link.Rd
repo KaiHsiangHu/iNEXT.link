@@ -19,6 +19,7 @@ a figure for gamma, alpha, and beta diversity or four dissimilarity measures.
 \code{ggiNEXTbeta.link}: ggplot for Interpolation and extrapolation of beta diversity with order q
 }
 \examples{
+\donttest{
 ## Taxonomic network diversity for interaction data
 # Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and 
 # related statistics
@@ -27,6 +28,7 @@ output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level 
                                   q = c(0, 1, 2))
 ggiNEXTbeta.link(output_beta_qiTD, type = 'B')
 ggiNEXTbeta.link(output_beta_qiTD, type = 'D')
+
 
 ## Phylogenetic network diversity for interaction data
 # Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and 
@@ -49,6 +51,6 @@ output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level 
                                   nboot = 10)
 ggiNEXTbeta.link(output_beta_qiFD, type = 'B')
 ggiNEXTbeta.link(output_beta_qiFD, type = 'D')
-
+}
 
 }

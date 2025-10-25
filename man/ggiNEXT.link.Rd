@@ -36,6 +36,7 @@ a \code{ggplot2} object for sample-size-based rarefaction/extrapolation curve (\
 \code{ggiNEXT.link} is a \code{ggplot} extension for an \code{iNEXT.link} object to plot sample-size- and coverage-based rarefaction/extrapolation sampling curves along with a bridging sample completeness curve.
 }
 \examples{
+\donttest{
 # Plot three types of curves of taxonomic network diversity with facet.var = "Assemblage"
 # for interaction data with order q = 0, 1, 2
 data(beetles_plotA)
@@ -59,4 +60,6 @@ data(beetles_row_distM)
 output_qiFD = iNEXT.link(data = beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 0, 
                          row.distM = beetles_row_distM, FDtype = "AUC")
 ggiNEXT.link(output_qiFD)
+}
+
 }

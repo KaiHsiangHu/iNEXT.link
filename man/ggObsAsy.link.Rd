@@ -22,7 +22,7 @@ data(beetles_plotA)
 output_ObsAsy_qiTD = ObsAsy.link(data = beetles_plotA, diversity = 'TD', q = seq(0, 2, 0.2))
 ggObsAsy.link(output_ObsAsy_qiTD)
 
-
+\donttest{
 # Plot q-profile of phylogenetic network diversity for interaction data
 # with order q between 0 and 2 (in increments of 0.2 by default).
 data(beetles_plotA)
@@ -40,5 +40,6 @@ data(beetles_row_distM)
 output_ObsAsy_qiFD = ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), 
                                  row.distM = beetles_row_distM, FDtype = "AUC", nboot = 10)
 ggObsAsy.link(output_ObsAsy_qiFD)
+}
 
 }

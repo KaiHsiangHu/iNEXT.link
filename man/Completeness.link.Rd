@@ -28,10 +28,12 @@ a matrix of estimated sample completeness with order q:
 \code{Completeness.link}: Estimation of Sample Completeness with order q
 }
 \examples{
+\donttest{
 # Sample Completeness for interaction data
 data(beetles_plotA)
 output_com = Completeness.link(beetles_plotA)
 output_com
+} 
 
 }
 \references{

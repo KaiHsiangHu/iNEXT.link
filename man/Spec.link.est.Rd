@@ -46,7 +46,10 @@ A list of several tables containing    estimated (or observed) evenness with ord
 Standardized estimation of specialization with order q
 }
 \examples{
+\donttest{
 data(beetles)
 output_spec = Spec.link.est(beetles)
 output_spec
+}
+
 }

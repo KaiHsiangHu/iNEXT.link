@@ -71,6 +71,7 @@ A list of seven matrices with three diversity dimensions and four dissimilarity 
 \code{iNEXTbeta.link} Interpolation and extrapolation of beta diversity with order q.
 }
 \examples{
+\donttest{
 ## Taxonomic network diversity for interaction data
 # Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and 
 # related statistics
@@ -78,6 +79,7 @@ data(beetles_plotA)
 output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level = NULL, 
                                   q = c(0, 1, 2))
 output_beta_qiTD
+
 
 ## Phylogenetic network diversity for interaction data
 # Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and
@@ -98,6 +100,7 @@ output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level 
                                   q = c(0, 1, 2), nboot = 10, 
                                   row.distM = beetles_row_distM, FDtype = "AUC")
 output_beta_qiFD
+}
 
 }
 \references{

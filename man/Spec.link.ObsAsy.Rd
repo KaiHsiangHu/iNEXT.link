@@ -46,7 +46,10 @@ A list of several tables containing estimated (or observed) evenness with order 
 Asymptotic estimation (or observed) of specialization with order q
 }
 \examples{
+\donttest{
 data(beetles)
 output_spec_ObsAsy = Spec.link.ObsAsy(beetles)
 output_spec_ObsAsy
+}
+
 }

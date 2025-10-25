@@ -88,6 +88,7 @@ a list of three objects: \cr\cr
 Interpolation (rarefaction) and extrapolation of network diversity
 }
 \examples{
+\donttest{
 # Compute standardized estimates of taxonomic network diversity for interaction data with
 # order q = 0, 1, 2
 data(beetles_plotA)
@@ -113,6 +114,7 @@ data(beetles_row_distM)
 output_qiFD = iNEXT.link(data = beetles_plotA, diversity = 'FD', q = c(0,1,2), nboot = 20, 
                          row.distM = beetles_row_distM, FDtype = "AUC")
 output_qiFD
+}
 
 }
 \references{

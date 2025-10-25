@@ -16,10 +16,12 @@ a figure of estimated sample completeness with order q
 \code{ggCompleteness.link} The figure for estimation of Sample Completeness with order q
 }
 \examples{
+\donttest{
 # Plot the completeness curve
 data(beetles_plotA)
 output_com = Completeness.link(beetles_plotA)
 ggCompleteness.link(output_com)
+}
 
 }
 \references{

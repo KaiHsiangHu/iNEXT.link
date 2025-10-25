@@ -6,7 +6,7 @@ utils::globalVariables(c(
   "aL_table", "abun", "as.Node", "branch.abun", "branch.length", 
   "col.name", "data_gamma", "diagonalNetwork", "div_type", "even.class", 
   "invChatPD_inc", "label", "map", "node", "nt", "phyBranchAL_Inc", 
-  "phylotr", "qPD", "row.name", "s.e.", "sd", "spe.c", "spe.r", "tgroup","Estimate"
+  "phylotr", "qPD", "row.name", "s.e.", "sd", "spe.c", "spe.r", "tgroup","Estimate", "e"
 ))
 
 

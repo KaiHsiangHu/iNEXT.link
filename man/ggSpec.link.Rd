@@ -16,7 +16,10 @@ a figure of estimated sample completeness with order q
 \code{ggSpec.link}: Plots q-profile based on the output of \code{Spec.link.est} and \code{Spec.link.ObsAsy} using the ggplot2 package
 }
 \examples{
+\donttest{
 data(beetles_plotA)
 output_spec = Spec.link.est(beetles_plotA, nboot = 5)
 ggSpec.link(output_spec)
+}
+
 }
